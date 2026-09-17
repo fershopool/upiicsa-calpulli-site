@@ -1,4 +1,3 @@
-import './styles/app.css';
 import { el, $, announce } from './utils/dom.js';
 import { routes, routeForPath } from './config/routes.js';
 import { environment } from './config/environment.js';
@@ -7,6 +6,11 @@ import { getContactUrl, getOllinUrl } from './services/external-channel.service.
 import { renderShell, renderFooter } from './components/shell.js';
 import { functionCard, spaceCard, roadmapCard } from './components/cards.js';
 import { readCategory, goWithCategory } from './utils/url-state.js';
+
+const stylesheet = document.createElement('link');
+stylesheet.rel = 'stylesheet';
+stylesheet.href = new URL('./styles/app.css', import.meta.url);
+document.head.append(stylesheet);
 
 const functionsData = getFunctions(); const spaces = getSpaces(); const roadmap = getRoadmap();
 const asset = (path) => `${(environment.baseUrl || '/').replace(/\/+$/, '')}/${path}`;
