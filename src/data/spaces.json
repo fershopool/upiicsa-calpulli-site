@@ -1,0 +1,7 @@
+[
+  {"id":"space-1","title":"Edificios","description":"Categoría conceptual para recorrer la estructura del plantel.","icon":"⌂","contentStatus":"demo","isDemo":true},
+  {"id":"space-2","title":"Salones","description":"Categoría conceptual para encontrar espacios de aprendizaje.","icon":"□","contentStatus":"demo","isDemo":true},
+  {"id":"space-3","title":"Servicios","description":"Categoría conceptual para consultar apoyos y áreas de atención.","icon":"＋","contentStatus":"demo","isDemo":true},
+  {"id":"space-4","title":"Áreas académicas","description":"Categoría conceptual para organizar información académica.","icon":"∿","contentStatus":"demo","isDemo":true},
+  {"id":"space-5","title":"Puntos de interés","description":"Categoría conceptual para destacar lugares relevantes.","icon":"✧","contentStatus":"demo","isDemo":true}
+]

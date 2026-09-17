@@ -1,0 +1,4 @@
+import { el } from '../utils/dom.js';
+export function functionCard(item) { return el('article', { className: 'function-card' }, [el('div', { className: 'function-icon', text: item.icon, attrs: { 'aria-hidden': 'true' } }), el('span', { className: 'demo', text: 'Función prevista' }), el('h3', { text: item.title }), el('p', { className: 'muted', text: item.description })]); }
+export function spaceCard(item) { return el('article', { className: 'space-card' }, [el('div', { className: 'space-icon', text: item.icon, attrs: { 'aria-hidden': 'true' } }), el('h3', { text: item.title }), el('p', { className: 'muted', text: item.description })]); }
+export function roadmapCard(item) { return el('article', { className: 'stage' }, [el('span', { className: 'stage-number', text: item.number }), el('h3', { text: item.title }), el('p', { className: 'muted', text: item.description }), el('span', { className: 'status', text: item.status })]); }

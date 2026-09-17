@@ -1,0 +1,6 @@
+[
+  {"number":"01","title":"Concepto","description":"Identidad y experiencia inicial.","status":"Base definida"},
+  {"number":"02","title":"Desarrollo","description":"Aplicación y servicios principales.","status":"En curso"},
+  {"number":"03","title":"Piloto","description":"Pruebas con la comunidad UPIICSA.","status":"Siguiente etapa"},
+  {"number":"04","title":"Lanzamiento","description":"Disponibilidad progresiva.","status":"Posterior al piloto"}
+]

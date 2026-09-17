@@ -1,0 +1,7 @@
+[
+  {"id":"informacion","title":"Mantente informado","description":"Consulta noticias, avisos, convocatorias y publicaciones de áreas institucionales.","icon":"▤","contentStatus":"demo","isDemo":true},
+  {"id":"camino","title":"Encuentra tu camino","description":"Ubica salones, edificios, áreas y servicios dentro de UPIICSA.","icon":"⌖","contentStatus":"demo","isDemo":true},
+  {"id":"servicios","title":"Descubre servicios","description":"Explora un directorio organizado de servicios académicos y administrativos.","icon":"▦","contentStatus":"demo","isDemo":true},
+  {"id":"favoritos","title":"Guarda lo importante","description":"Conserva en favoritos los contenidos que quieras consultar después.","icon":"☆","contentStatus":"demo","isDemo":true},
+  {"id":"sucede","title":"Descubre lo que sucede","description":"Conoce actividades, eventos, iniciativas y oportunidades dentro del plantel.","icon":"✦","contentStatus":"demo","isDemo":true}
+]
