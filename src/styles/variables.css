@@ -1,2 +1,41 @@
-:root{color-scheme:light;--cream:#F7F0DF;--maize-bg:#EFE2C2;--ivory:#FFFCF5;--obsidian:#12332D;--stone:#52645F;--jade:#006B4F;--jade-dark:#00513D;--yellow:#F2C230;--turquoise:#16B8A6;--grana:#B51F46;--line:#C8D1C9;--dark:#073B32;--focus:#007D73;--max:1200px;--shadow:0 12px 32px rgb(18 51 45 / 10%)}
-[data-theme="dark"]{color-scheme:dark;--cream:#102C25;--maize-bg:#25463C;--ivory:#18372F;--obsidian:#FFF8E8;--stone:#B8CEC4;--jade:#6ED7B2;--jade-dark:#8BE6C4;--yellow:#F5CC54;--turquoise:#5DE2D1;--line:#426158;--dark:#061F1A;--focus:#8BE6C4;--shadow:0 12px 32px rgb(0 0 0 / 28%)}
+:root {
+  color-scheme: light;
+  --cream: #F7F0DF;
+  --maize-bg: #EFE2C2;
+  --ivory: #FFFCF5;
+  --obsidian: #12332D;
+  --stone: #52645F;
+  --jade: #006B4F;
+  --jade-dark: #00513D;
+  --yellow: #F2C230;
+  --turquoise: #16B8A6;
+  --grana: #B51F46;
+  --line: #C8D1C9;
+  --dark: #073B32;
+  --on-dark: #FFFCF5;
+  --on-dark-muted: #DDEBE5;
+  --on-dark-subtle: #C8D8D1;
+  --focus: #007D73;
+  --max: 1200px;
+  --shadow: 0 12px 32px rgb(18 51 45 / 10%);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --cream: #102C25;
+  --maize-bg: #25463C;
+  --ivory: #18372F;
+  --obsidian: #FFF8E8;
+  --stone: #B8CEC4;
+  --jade: #6ED7B2;
+  --jade-dark: #8BE6C4;
+  --yellow: #F5CC54;
+  --turquoise: #5DE2D1;
+  --line: #426158;
+  --dark: #061F1A;
+  --on-dark: #FFF8E8;
+  --on-dark-muted: #DDEBE5;
+  --on-dark-subtle: #C8D8D1;
+  --focus: #8BE6C4;
+  --shadow: 0 12px 32px rgb(0 0 0 / 28%);
+}
