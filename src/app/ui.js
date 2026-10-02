@@ -1,4 +1,5 @@
 import { el } from '../utils/dom.js';
+import mediaMap from '../data/media-map.json' with { type: 'json' };
 
 // Tokens de la paleta cultural del MVP móvil: [fondo, texto] con contraste AA.
 const TOKENS = { mayaBlue: ['#2D78B8', '#FFFFFF'], turquoise: ['#149D98', '#06201C'], jade: ['#13745E', '#FFFFFF'], mexicanPink: ['#C83F83', '#FFFFFF'], cempasuchil: ['#DA8A0B', '#1F1400'], cochineal: ['#A93647', '#FFFFFF'] };
@@ -19,8 +20,16 @@ export function avatar(name, token, size = 'md') {
   return el('span', { className: `avatar avatar-${size}`, style: `background:${bg};color:${fg}`, attrs: { 'aria-hidden': 'true' }, text: initials });
 }
 
-// Las imágenes del MVP son claves "bundled" sin archivo: se muestra un mosaico abstracto determinista.
+// Las claves "bundled" del seed no tienen archivo: se muestra un mosaico abstracto determinista.
+// Si data/media-map.json mapea la clave a un archivo de assets/media/, se muestra esa imagen.
+const IMAGE_SIZE = { 'media-wide': [1280, 720], 'media-story': [900, 1200] };
 export function mediaTile(key, label, className = '') {
+  const file = mediaMap[key];
+  if (file) {
+    const [width, height] = IMAGE_SIZE[className.split(' ').find((name) => IMAGE_SIZE[name])] || [800, 600];
+    const image = el('img', { src: `../src/assets/media/${file}`, alt: label, loading: 'lazy', width, height });
+    return el('div', { className: `media has-image ${className}`.trim() }, [image]);
+  }
   const [c1] = TOKENS[tokenFor(key)];
   const [c2] = TOKENS[tokenFor(`${key}:2`)];
   return el('div', { className: `media ${className}`.trim(), style: `--c1:${c1};--c2:${c2}`, attrs: { role: 'img', 'aria-label': `Imagen de ejemplo: ${label}` } });

@@ -48,12 +48,14 @@ function nav() {
   const link = ([path, label, d]) => el('a', { href: `#${path}`, attrs: { 'data-tab': path } }, [icon(d), el('span', { text: label })]);
   return el('nav', { className: 'tabs', attrs: { 'aria-label': 'Secciones' } }, TABS.map(link));
 }
+const THEME_NAME = { system: 'del sistema', dark: 'oscuro', light: 'claro' };
 function themeButton() {
-  const button = el('button', { className: 'theme-button', type: 'button', text: '◐', attrs: { 'aria-label': 'Cambiar tema' } });
+  const button = el('button', { className: 'theme-button', type: 'button', text: '◐' });
+  const label = () => button.setAttribute('aria-label', `Cambiar tema (actual: ${THEME_NAME[root.dataset.theme] || 'del sistema'})`); label();
   button.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : root.dataset.theme === 'light' ? 'system' : 'dark';
-    root.dataset.theme = next; savePreferences({ theme: next });
-    announce(`Tema ${next === 'system' ? 'del sistema' : next === 'dark' ? 'oscuro' : 'claro'} activado`);
+    root.dataset.theme = next; savePreferences({ theme: next }); label();
+    announce(`Tema ${THEME_NAME[next]} activado`);
   });
   return button;
 }
