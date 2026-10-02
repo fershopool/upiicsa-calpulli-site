@@ -4,7 +4,7 @@ import { environment } from '../config/environment.js';
 import { getPreferences, savePreferences } from '../services/local-storage.service.js';
 import { getOllinUrl } from '../services/external-channel.service.js';
 
-const navItems = [['Inicio', routes.home, 'home'], ['Conoce Calpulli', '#que-es-calpulli', 'calpulli'], ['Funciones', '#funciones', 'funciones'], ['Explora UPIICSA', routes.explora, 'explora'], ['Comunidad', '#comunidad', 'comunidad'], ['Proyecto', routes.proyecto, 'proyecto']];
+const navItems = [['Inicio', routes.home, 'home'], ['Conoce Calpulli', '#que-es-calpulli', 'calpulli'], ['Funciones', '#funciones', 'funciones'], ['Explora UPIICSA', routes.explora, 'explora'], ['Demo', withBase('/app/'), 'app'], ['Comunidad', '#comunidad', 'comunidad'], ['Proyecto', routes.proyecto, 'proyecto']];
 function asset(path) { return withBase(`/${path}`); }
 function hrefFor(value) { return value.startsWith('#') && routeForPath() !== 'home' ? withBase(value) : value; }
 

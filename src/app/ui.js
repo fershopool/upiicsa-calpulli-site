@@ -1,0 +1,75 @@
+import { el } from '../utils/dom.js';
+
+// Tokens de la paleta cultural del MVP móvil: [fondo, texto] con contraste AA.
+const TOKENS = { mayaBlue: ['#2D78B8', '#FFFFFF'], turquoise: ['#149D98', '#06201C'], jade: ['#13745E', '#FFFFFF'], mexicanPink: ['#C83F83', '#FFFFFF'], cempasuchil: ['#DA8A0B', '#1F1400'], cochineal: ['#A93647', '#FFFFFF'] };
+const TOKEN_KEYS = Object.keys(TOKENS);
+const TZ = 'America/Mexico_City';
+
+export const PRIORITY_LABEL = { featured: 'Destacado', important: 'Importante', urgent: 'Urgente' };
+export const MODE_LABEL = { 'in-person': 'Presencial', online: 'En línea', hybrid: 'Híbrido' };
+export const CONTACT_LABEL = { whatsapp: 'WhatsApp', telegram: 'Telegram', email: 'Correo', instagram: 'Instagram', phone: 'Teléfono', other: 'Contacto' };
+
+export const normalize = (text) => String(text).normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+function hash(text) { let h = 0; for (const char of String(text)) h = (h * 31 + char.codePointAt(0)) >>> 0; return h; }
+export const tokenFor = (key) => TOKEN_KEYS[hash(key) % TOKEN_KEYS.length];
+
+export function avatar(name, token, size = 'md') {
+  const [bg, fg] = TOKENS[token] || TOKENS.jade;
+  const initials = String(name).split(/\s+/).slice(0, 2).map((word) => word[0]).join('').toUpperCase();
+  return el('span', { className: `avatar avatar-${size}`, style: `background:${bg};color:${fg}`, attrs: { 'aria-hidden': 'true' }, text: initials });
+}
+
+// Las imágenes del MVP son claves "bundled" sin archivo: se muestra un mosaico abstracto determinista.
+export function mediaTile(key, label, className = '') {
+  const [c1] = TOKENS[tokenFor(key)];
+  const [c2] = TOKENS[tokenFor(`${key}:2`)];
+  return el('div', { className: `media ${className}`.trim(), style: `--c1:${c1};--c2:${c2}`, attrs: { role: 'img', 'aria-label': `Imagen de ejemplo: ${label}` } });
+}
+
+export function badge(text, kind = '') { return el('span', { className: `badge ${kind}`.trim(), text }); }
+export function chip(label, pressed, onToggle, lead) {
+  const button = el('button', { className: 'chip', type: 'button', attrs: { 'aria-pressed': String(pressed) } }, [lead, label]);
+  button.addEventListener('click', onToggle);
+  return button;
+}
+export function emptyState(title, text, action) { return el('div', { className: 'empty-state' }, [el('h2', { text: title }), el('p', { className: 'muted', text }), action]); }
+export function linkButton(label, href, secondary = true) { return el('a', { className: `button${secondary ? ' secondary' : ''}`, href, text: label }); }
+
+const relative = new Intl.RelativeTimeFormat('es-MX', { numeric: 'auto' });
+const absolute = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short', year: 'numeric', timeZone: TZ });
+const full = new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: TZ });
+export function relativeTime(iso, now = Date.now()) {
+  const minutes = Math.round((Date.parse(iso) - now) / 60000);
+  if (Math.abs(minutes) < 60) return relative.format(minutes, 'minute');
+  const hours = Math.round(minutes / 60);
+  if (Math.abs(hours) < 48) return relative.format(hours, 'hour');
+  const days = Math.round(hours / 24);
+  return Math.abs(days) < 8 ? relative.format(days, 'day') : absolute.format(new Date(iso));
+}
+export const fullDate = (iso) => full.format(new Date(iso));
+export const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+const SVG = 'http://www.w3.org/2000/svg';
+export function icon(path) {
+  const svg = document.createElementNS(SVG, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('class', 'icon');
+  const node = document.createElementNS(SVG, 'path'); node.setAttribute('d', path); svg.append(node);
+  return svg;
+}
+
+// <dialog> nativo: foco atrapado, Esc y ::backdrop sin código extra.
+export function openDialog(title, content, { onClose, className = '' } = {}) {
+  const close = el('button', { className: 'dialog-close', type: 'button', text: '×', attrs: { 'aria-label': 'Cerrar' } });
+  const dialog = el('dialog', { className: `dialog ${className}`.trim(), attrs: { 'aria-label': title } }, [close, ...[content].flat()]);
+  close.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+  dialog.addEventListener('close', () => { dialog.remove(); onClose?.(); });
+  document.body.append(dialog); dialog.showModal();
+  return dialog;
+}
+export const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+export function contactList(contacts) {
+  if (!contacts?.length) return null;
+  return el('ul', { className: 'contact-list' }, contacts.map((contact) => el('li', {}, [el('strong', { text: `${CONTACT_LABEL[contact.type] || 'Contacto'}: ` }), contact.value, el('span', { className: 'muted', text: ` (${contact.label})` })])));
+}
