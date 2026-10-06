@@ -14,7 +14,8 @@ export const normalize = (text) => String(text).normalize('NFD').replace(/\p{M}/
 function hash(text) { let h = 0; for (const char of String(text)) h = (h * 31 + char.codePointAt(0)) >>> 0; return h; }
 export const tokenFor = (key) => TOKEN_KEYS[hash(key) % TOKEN_KEYS.length];
 
-export function avatar(name, token, size = 'md') {
+export function avatar(name, token, size = 'md', image) {
+  if (image?.type === 'data') return el('img', { className: `avatar avatar-${size}`, src: image.url, alt: '', style: 'object-fit:cover', attrs: { 'aria-hidden': 'true' } });
   const [bg, fg] = TOKENS[token] || TOKENS.jade;
   const initials = String(name).split(/\s+/).slice(0, 2).map((word) => word[0]).join('').toUpperCase();
   return el('span', { className: `avatar avatar-${size}`, style: `background:${bg};color:${fg}`, attrs: { 'aria-hidden': 'true' }, text: initials });
@@ -33,6 +34,13 @@ export function mediaTile(key, label, className = '') {
   const [c1] = TOKENS[tokenFor(key)];
   const [c2] = TOKENS[tokenFor(`${key}:2`)];
   return el('div', { className: `media ${className}`.trim(), style: `--c1:${c1};--c2:${c2}`, attrs: { role: 'img', 'aria-label': `Imagen de ejemplo: ${label}` } });
+}
+
+// Imagen subida en Gestión ({type:'data'}) o clave del seed (mosaico / archivo mapeado).
+export function mediaFrom(media, label, className = '') {
+  if (media?.type !== 'data') return mediaTile(media?.key || label, label, className);
+  const [width, height] = IMAGE_SIZE[className.split(' ').find((name) => IMAGE_SIZE[name])] || [800, 600];
+  return el('div', { className: `media has-image ${className}`.trim() }, [el('img', { src: media.url, alt: label, loading: 'lazy', width, height })]);
 }
 
 export function badge(text, kind = '') { return el('span', { className: `badge ${kind}`.trim(), text }); }

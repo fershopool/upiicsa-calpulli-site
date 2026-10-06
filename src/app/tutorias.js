@@ -1,13 +1,13 @@
 import { el } from '../utils/dom.js';
 import { tutors } from './store.js';
-import { MODE_LABEL, avatar, badge, chip, contactList, emptyState, normalize, plural, tokenFor } from './ui.js';
+import { MODE_LABEL, avatar, badge, chip, contactList, emptyState, mediaFrom, normalize, plural, tokenFor } from './ui.js';
 
 const NOTICE = 'El contacto y acuerdo de tutoría se realiza fuera de UPIICSA Calpulli.';
-const matchesMode = (tutor, mode) => !mode || tutor.modes.includes(mode) || tutor.modes.includes('hybrid');
+const matchesMode = (tutor, mode) => !mode || (tutor.modes || []).includes(mode) || (tutor.modes || []).includes('hybrid');
 
 export function tutorCard(tutor) {
   const subjects = [...new Set(tutor.offers.map((offer) => offer.subject))];
-  return el('article', { className: 'card tutor-card' }, [el('div', { className: 'post-head' }, [avatar(tutor.displayName, tokenFor(tutor.id), 'lg'), el('div', {}, [el('h3', { text: tutor.displayName }), el('p', { className: 'muted', text: tutor.modes.map((mode) => MODE_LABEL[mode]).join(' · ') })])]), el('p', { text: tutor.description }), el('ul', { className: 'tags', attrs: { 'aria-label': 'Materias' } }, subjects.slice(0, 3).map((subject) => el('li', { text: subject }))), el('a', { className: 'button secondary', href: `#/tutor/${tutor.id}`, text: 'Ver perfil' })]);
+  return el('article', { className: 'card tutor-card' }, [el('div', { className: 'post-head' }, [avatar(tutor.displayName, tokenFor(tutor.id), 'lg', tutor.avatar), el('div', {}, [el('h3', { text: tutor.displayName }), el('p', { className: 'muted', text: (tutor.modes || []).map((mode) => MODE_LABEL[mode]).join(' · ') })])]), el('p', { text: tutor.description }), el('ul', { className: 'tags', attrs: { 'aria-label': 'Materias' } }, subjects.slice(0, 3).map((subject) => el('li', { text: subject }))), el('a', { className: 'button secondary', href: `#/tutor/${tutor.id}`, text: 'Ver perfil' })]);
 }
 
 export function tutorias({ state, params, setParam }) {
@@ -35,5 +35,5 @@ export function tutorias({ state, params, setParam }) {
 export function perfilTutor({ state, id }) {
   const tutor = tutors(state).find((item) => item.id === id);
   if (!tutor) return emptyState('Tutor no disponible', 'Este perfil ya no está disponible.', el('a', { className: 'button', href: '#/tutorias', text: 'Volver a Tutorías' }));
-  return el('div', {}, [el('a', { className: 'back', href: '#/tutorias', text: '← Tutorías' }), el('div', { className: 'post-head profile-head' }, [avatar(tutor.displayName, tokenFor(tutor.id), 'xl'), el('div', {}, [el('h1', { text: tutor.displayName }), el('p', { className: 'muted', text: tutor.modes.map((mode) => MODE_LABEL[mode]).join(' · ') })])]), el('p', { text: tutor.description }), el('h2', { text: 'Materias' }), el('ul', { className: 'offer-list' }, tutor.offers.map((offer) => el('li', {}, [el('strong', { text: offer.subject }), offer.description ? el('p', { text: offer.description }) : null, el('p', { className: 'muted' }, [offer.modes.map((mode) => MODE_LABEL[mode]).join(' · '), offer.availabilityLabel ? ` · ${offer.availabilityLabel}` : ''])]))), el('h2', { text: 'Contacto' }), contactList(tutor.externalContacts), el('p', { className: 'notice', text: NOTICE }), badge('Datos de demostración')]);
+  return el('div', {}, [el('a', { className: 'back', href: '#/tutorias', text: '← Tutorías' }), tutor.cover?.type === 'data' ? mediaFrom(tutor.cover, `Portada de ${tutor.displayName}`, 'media-wide cover') : null, el('div', { className: 'post-head profile-head' }, [avatar(tutor.displayName, tokenFor(tutor.id), 'xl', tutor.avatar), el('div', {}, [el('h1', { text: tutor.displayName }), el('p', { className: 'muted', text: (tutor.modes || []).map((mode) => MODE_LABEL[mode]).join(' · ') })])]), el('p', { text: tutor.description }), el('h2', { text: 'Materias' }), el('ul', { className: 'offer-list' }, tutor.offers.map((offer) => el('li', {}, [el('strong', { text: offer.subject }), offer.description ? el('p', { text: offer.description }) : null, el('p', { className: 'muted' }, [(offer.modes || []).map((mode) => MODE_LABEL[mode]).join(' · '), offer.availabilityLabel ? ` · ${offer.availabilityLabel}` : ''])]))), el('h2', { text: 'Contacto' }), contactList(tutor.externalContacts), el('p', { className: 'notice', text: NOTICE }), badge('Datos de demostración')]);
 }

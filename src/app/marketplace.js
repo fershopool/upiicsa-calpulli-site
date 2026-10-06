@@ -1,15 +1,15 @@
 import { el } from '../utils/dom.js';
 import { products } from './store.js';
-import { avatar, chip, contactList, emptyState, linkButton, mediaTile, normalize, openDialog, plural, tokenFor } from './ui.js';
+import { avatar, chip, contactList, emptyState, linkButton, mediaFrom, normalize, openDialog, plural, tokenFor } from './ui.js';
 
 function productDialog(state, product) {
   const owner = state.byId.entrepreneurs[product.entrepreneurId];
-  openDialog(product.name, [mediaTile(product.media[0]?.key || product.id, product.name, 'media-wide'), el('h2', { text: product.name }), product.priceLabel ? el('p', { className: 'price', text: product.priceLabel }) : null, el('p', { className: 'muted', text: `${product.category} · ${owner.displayName}` }), product.description ? el('p', { text: product.description }) : null, contactList(owner.externalContacts), el('p', { className: 'notice', text: 'Calpulli solo muestra el catálogo: no hay compras ni pagos aquí. El trato se acuerda directamente con el emprendimiento.' }), linkButton('Ver emprendimiento', `#/emprendimiento/${owner.id}`, false)]);
+  openDialog(product.name, [mediaFrom(product.media?.[0] || { key: product.id }, product.name, 'media-wide'), el('h2', { text: product.name }), product.priceLabel ? el('p', { className: 'price', text: product.priceLabel }) : null, el('p', { className: 'muted', text: `${product.category} · ${owner.displayName}` }), product.description ? el('p', { text: product.description }) : null, contactList(owner.externalContacts), el('p', { className: 'notice', text: 'Calpulli solo muestra el catálogo: no hay compras ni pagos aquí. El trato se acuerda directamente con el emprendimiento.' }), linkButton('Ver emprendimiento', `#/emprendimiento/${owner.id}`, false)]);
 }
 
 export function productCard(state, product) {
   const owner = state.byId.entrepreneurs[product.entrepreneurId];
-  const card = el('button', { className: 'card product-card', type: 'button' }, [mediaTile(product.media[0]?.key || product.id, product.name), el('div', { className: 'card-body' }, [el('strong', { text: product.name }), product.priceLabel ? el('span', { className: 'price', text: product.priceLabel }) : null, el('span', { className: 'muted', text: `${owner.displayName} · ${product.category}` })])]);
+  const card = el('button', { className: 'card product-card', type: 'button' }, [mediaFrom(product.media?.[0] || { key: product.id }, product.name), el('div', { className: 'card-body' }, [el('strong', { text: product.name }), product.priceLabel ? el('span', { className: 'price', text: product.priceLabel }) : null, el('span', { className: 'muted', text: `${owner.displayName} · ${product.category}` })])]);
   card.addEventListener('click', () => productDialog(state, product));
   return card;
 }
@@ -23,7 +23,7 @@ export function marketplace({ state, params, setParam }) {
   const chips = el('div', { className: 'rail', attrs: { role: 'group', 'aria-label': 'Filtrar por categoría' } });
   const grid = el('div', { className: 'grid-cards' });
   const count = el('p', { className: 'muted', attrs: { 'aria-live': 'polite' } });
-  const owners = el('div', { className: 'rail' }, state.entrepreneurs.filter((owner) => owner.isActive).map((owner) => el('a', { className: 'chip', href: `#/emprendimiento/${owner.id}` }, [avatar(owner.displayName, tokenFor(owner.id), 'xs'), owner.displayName])));
+  const owners = el('div', { className: 'rail' }, state.entrepreneurs.filter((owner) => owner.isActive).map((owner) => el('a', { className: 'chip', href: `#/emprendimiento/${owner.id}` }, [avatar(owner.displayName, tokenFor(owner.id), 'xs', owner.avatar), owner.displayName])));
 
   function paint() {
     chips.replaceChildren(chip('Todas', !category, () => pick('')), ...categories.map((name) => chip(name, category === name, () => pick(name))));

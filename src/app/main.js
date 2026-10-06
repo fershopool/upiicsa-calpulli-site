@@ -1,6 +1,6 @@
 import { el, $, announce } from '../utils/dom.js';
 import { getPreferences, savePreferences } from '../services/local-storage.service.js';
-import { loadState } from './store.js';
+import { GESTION_STORAGE_KEY, loadState } from './store.js';
 import { icon } from './ui.js';
 import { inicio } from './inicio.js';
 import { feria } from './feria.js';
@@ -26,7 +26,7 @@ const ROUTES = {
   tutor: { view: perfilTutor, tab: '/tutorias', title: 'Tutor' },
 };
 
-const state = loadState();
+let state = loadState();
 let leaveHooks = [];
 const root = document.documentElement;
 root.dataset.theme = getPreferences().theme || 'system';
@@ -61,7 +61,7 @@ function themeButton() {
 }
 
 function shell() {
-  const header = el('header', { className: 'app-header' }, [el('div', { className: 'app-bar' }, [el('a', { className: 'brand', href: '#/', attrs: { 'aria-label': 'UPIICSA Calpulli, avisos' } }, [el('img', { src: '../src/assets/brand/logo.png', alt: 'UPIICSA Calpulli' })]), nav(), el('a', { className: 'site-link', href: '../', text: 'Sobre el proyecto' }), themeButton()]), el('p', { className: 'demo-banner', text: 'Demo con datos ficticios · Proyecto en desarrollo para la comunidad UPIICSA' })]);
+  const header = el('header', { className: 'app-header' }, [el('div', { className: 'app-bar' }, [el('a', { className: 'brand', href: '#/', attrs: { 'aria-label': 'UPIICSA Calpulli, avisos' } }, [el('img', { src: '../src/assets/brand/logo.png', alt: 'UPIICSA Calpulli' })]), nav(), el('a', { className: 'site-link', href: '../', text: 'Sobre el proyecto' }), el('a', { className: 'site-link', href: '../gestion/', text: 'Gestión' }), themeButton()]), el('p', { className: 'demo-banner', text: 'Demo con datos ficticios · Proyecto en desarrollo para la comunidad UPIICSA' })]);
   const footer = el('footer', { className: 'app-footer' }, [el('a', { href: '../privacidad/', text: 'Privacidad' }), el('a', { href: '../contacto/', text: 'Contacto' }), el('span', { className: 'muted', text: 'Tema y favoritos se guardan solo en este navegador.' })]);
   $('#app').replaceWith(el('div', { className: 'app' }, [el('a', { className: 'skip-link', href: '#contenido-principal', text: 'Saltar al contenido' }), header, el('main', { id: 'contenido-principal', className: 'app-main', attrs: { tabindex: '-1' } }), footer, el('div', { id: 'site-live', className: 'sr-only', attrs: { 'aria-live': 'polite', 'aria-atomic': 'true' } })]));
 }
@@ -86,3 +86,7 @@ function render({ focus = true } = {}) {
 shell();
 render({ focus: false });
 window.addEventListener('hashchange', () => render());
+// Gestión comparte localStorage con la demo: se recarga el estado sin recargar la página.
+const refresh = () => { state = loadState(); render({ focus: false }); };
+window.addEventListener('storage', (event) => { if (event.key === GESTION_STORAGE_KEY || event.key === null) refresh(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });

@@ -1,6 +1,8 @@
 import seed from '../data/seed.json' with { type: 'json' };
 
 const FAVORITES_KEY = 'calpulli:v1:favorites';
+const GESTION_KEY = 'calpulli:gestion:v1'; // misma clave que escribe /gestion/
+const COLLECTIONS = ['departments', 'entrepreneurs', 'tutors', 'stands', 'standRequests', 'fairs', 'institutionalPosts', 'stories', 'products', 'entrepreneurPosts', 'tutoringOffers'];
 const SEEN_KEY = 'calpulli:v1:stories-seen';
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 const PRIORITY_RANK = { normal: 0, featured: 1, important: 2, urgent: 3 };
@@ -22,11 +24,17 @@ export function nextFairDate(now = Date.now()) {
   return candidate.toISOString();
 }
 
+export const GESTION_STORAGE_KEY = GESTION_KEY;
 export function loadState() {
   const text = JSON.stringify(seed);
   const state = shiftDates(text, Date.now() - Date.parse(seed.meta.createdAt));
-  state.fair = state.fairs[0];
-  if (state.fair.status === 'upcoming') state.fair.nextDate = nextFairDate();
+  // Lo guardado en Gestión (mismo navegador/origen) sustituye las colecciones de la semilla; sus fechas ya están al presente.
+  try {
+    const saved = JSON.parse(localStorage.getItem(GESTION_KEY));
+    if (saved?.data && typeof saved.data === 'object') COLLECTIONS.forEach((name) => { state[name] = Array.isArray(saved.data[name]) ? saved.data[name] : []; });
+  } catch { /* JSON inválido o sin acceso: se usa la semilla */ }
+  state.fair = state.fairs[0] || shiftDates(JSON.stringify(seed.fairs[0]), Date.now() - Date.parse(seed.meta.createdAt));
+  if (state.fair.status === 'upcoming' && !(Date.parse(state.fair.nextDate) > Date.now())) state.fair.nextDate = nextFairDate();
   state.byId = Object.fromEntries(['departments', 'entrepreneurs', 'tutors', 'stands'].map((key) => [key, Object.fromEntries(state[key].map((item) => [item.id, item]))]));
   pruneFavorites(feed(state).map((post) => post.id));
   return state;

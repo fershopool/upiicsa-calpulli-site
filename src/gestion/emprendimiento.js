@@ -1,5 +1,6 @@
 import { el, announce } from '../utils/dom.js';
-import { badge, emptyState, openDialog, CONTACT_LABEL, MODE_LABEL, fullDate } from '../app/ui.js';
+import { badge, emptyState, openDialog, avatar, tokenFor, CONTACT_LABEL, MODE_LABEL, fullDate } from '../app/ui.js';
+import { imagePicker, toggleRow, settingsLayout, imageUrl, profileShell } from './social.js';
 import { field, formData, checkbox, confirmDelete } from './forms.js';
 import { list, get, upsert, remove } from './store.js';
 
@@ -81,74 +82,202 @@ export function crudSection(ctx, { title, noun, rows, line, editor }) {
   return el('section', { attrs: { 'aria-label': title } }, [el('div', { className: 'toolbar' }, [el('h2', { text: title }), btn(`Nuevo ${noun}`, () => open(null), 'small')]), items.length ? el('ul', { className: 'g-list' }, items) : el('p', { className: 'muted', text: 'Aún no hay registros.' })]);
 }
 
+// --- Piezas nuevas compartidas con tutor.js (estilo red social) -----------------------------------
+
+const media1 = (item) => item?.media?.find((m) => m.type === 'data') || null;
+// Devuelve el foco a la pestaña activa si el diálogo cerrado dejó el foco en <body> (el trigger pudo redibujarse).
+const restoreFocus = () => window.setTimeout(() => { if (document.activeElement === document.body) document.querySelector('.sp-tab[aria-selected=true]')?.focus(); }, 30);
+
+// Selector de imagen que se redibuja solo. get() -> media|null, set(media|null).
+export function mediaField(label, get, set, max = 800) {
+  const box = el('div');
+  const draw = () => box.replaceChildren(imagePicker({ label, value: get(), max, onChange: (m) => { set(m); draw(); } }));
+  draw(); return box;
+}
+
+// Diálogo con formView. editor = {build(v,e,item), save(v,item)->errores|null, values(item)}.
+export function editDialog(ctx, noun, item, editor) {
+  const title = `${item ? 'Editar' : 'Nuevo'} ${noun}`;
+  const dialog = openDialog(title, [el('h2', { text: title }), formView((v, e) => editor.build(v, e, item), (v) => editor.save(v, item), { values: editor.values(item), onCancel: () => dialog.close(), onSaved: () => { dialog.close(); announce(`${noun} guardado`); ctx.rerender(); } })], { onClose: restoreFocus });
+  return dialog;
+}
+
+// Pestañas en URL (?tab=). tabs: [[key,label,build]]. Devuelve {active, body, onTab}.
+export function tabState(ctx, tabs) {
+  const active = tabs.some(([k]) => k === ctx.params.get('tab')) ? ctx.params.get('tab') : tabs[0][0];
+  const onTab = (key, focus) => { ctx.setParam('tab', key); ctx.setParam('s', ''); ctx.rerender(); if (focus) window.setTimeout(() => document.querySelector('.sp-tab[aria-selected=true]')?.focus(), 30); };
+  const [, , build] = tabs.find(([k]) => k === active);
+  return { active, onTab, body: el('div', { className: 'ep-body', attrs: { role: 'tabpanel' } }, [build()]), tabs: tabs.map(([k, l]) => [k, l]) };
+}
+
+const drafts = new Map(); const pendingErrors = new Map();
+const norm = (d) => JSON.stringify({ ...d, contacts: (d.contacts || []).filter((c) => c.value || c.label).map(({ type, label, value }) => ({ type, label, value })) });
+
+// Ajustes con borrador, indicador de cambios sin guardar, guardado explícito y vista previa en vivo.
+// cfg = {collection, entity, admin, toDraft(e), toRecord(d), validate(d)->errores, where:{campo:sección}, sections:(d,api)->[[key,label,nodo|fn]], preview(d)->nodo}
+export function profileSettings(ctx, cfg) {
+  const key = `${cfg.collection}:${cfg.entity.id}`;
+  const saved = cfg.toDraft(cfg.entity);
+  const d = drafts.get(key) || structuredClone(saved);
+  drafts.set(key, d);
+  const errors = pendingErrors.get(key) || {}; pendingErrors.delete(key);
+  let contactsNode = null;
+  const sync = () => { if (contactsNode?.isConnected) d.contacts = contactsNode.read(); };
+  const dirty = () => { sync(); return norm(d) !== norm(saved); };
+  const status = el('span', { className: 'ep-dirty', attrs: { 'aria-live': 'polite' } });
+  const previewBox = el('section', { className: 'ep-preview', attrs: { 'aria-label': 'Vista previa de la tarjeta pública' } });
+  const refresh = () => { const x = dirty(); status.textContent = x ? 'Cambios sin guardar' : 'Todo guardado'; status.classList.toggle('is-dirty', x); previewBox.replaceChildren(el('h2', { text: 'Vista previa de tu tarjeta pública' }), cfg.preview(d)); };
+
+  const api = {
+    errors, d,
+    field(label, prop, opts = {}) {
+      const node = field(label, prop, { value: d[prop] ?? '', error: errors[prop], 'data-prop': prop, ...opts });
+      if (opts.maxlength) {
+        const count = el('span', { className: 'muted ep-count', attrs: { 'aria-hidden': 'true' } }); const input = node.querySelector('textarea,input');
+        const upd = () => { count.textContent = `${input.value.length}/${opts.maxlength}`; }; upd(); input.addEventListener('input', upd); node.append(count);
+      }
+      return node;
+    },
+    pick(label, prop, shape, max) { return imagePicker({ label, value: d[prop], max, shape, onChange: (m) => { sync(); d[prop] = m; ctx.rerender(); } }); },
+    contacts() { contactsNode = contactsEditor(d.contacts, errors.contacts); return contactsNode; },
+    toggle(label, hint, checked, onChange) { return toggleRow(label, hint, checked, (v) => { onChange(v); refresh(); }); },
+    error: (prop) => (errors[prop] ? el('span', { className: 'field-error', text: errors[prop], attrs: { role: 'alert' } }) : null),
+    reload() { sync(); ctx.rerender(); },
+  };
+  const sections = cfg.sections(d, api);
+  const activeSection = sections.some(([k]) => k === ctx.params.get('s')) ? ctx.params.get('s') : sections[0][0];
+
+  const save = () => {
+    sync();
+    const errs = cfg.validate(d);
+    if (Object.keys(errs).length) {
+      pendingErrors.set(key, errs); ctx.setParam('s', cfg.where[Object.keys(errs)[0]] || sections[0][0]); ctx.rerender(); announce('Revisa los campos marcados');
+      window.setTimeout(() => document.querySelector('.sp-panel [aria-invalid]')?.focus(), 50); return;
+    }
+    upsert(cfg.collection, cfg.toRecord(d)); drafts.delete(key); announce('Cambios guardados'); ctx.rerender();
+  };
+  const bar = el('div', { className: 'ep-savebar card' }, [status, el('div', { className: 'row-actions' }, [el('button', { className: 'button secondary small', type: 'button', text: 'Descartar', onclick: () => { drafts.delete(key); ctx.rerender(); } }), el('button', { className: 'button', type: 'button', text: 'Guardar cambios', onclick: save })])]);
+  const layout = settingsLayout(sections, activeSection, (k) => { sync(); ctx.setParam('s', k); ctx.rerender(); });
+  const root = el('div', { className: 'stack ep-settings' }, [bar, layout, previewBox]);
+  root.addEventListener('input', (e) => { const p = e.target.dataset?.prop; if (p) d[p] = e.target.value; refresh(); });
+  root.addEventListener('change', () => refresh());
+  root.addEventListener('click', () => window.setTimeout(refresh, 0));
+  refresh();
+  return root;
+}
+
+export const previewCard = (d, id, subtitle) => el('div', { className: 'card ep-card-preview' }, [imageUrl(d.avatar) ? el('img', { className: 'avatar avatar-xl ep-prev-photo', src: imageUrl(d.avatar), alt: '' }) : avatar(d.displayName || '?', tokenFor(id), 'xl'), el('div', {}, [el('strong', { text: d.displayName || 'Sin nombre' }), subtitle ? el('p', { className: 'muted', text: subtitle }) : null, el('p', { text: d.description || 'Sin descripción.' })])]);
+
+export const activeToggle = (api, d, noun, admin) => admin ? api.toggle(`${noun} activo`, 'Controla si aparece públicamente.', d.isActive, (v) => { d.isActive = v; }) : el('p', { className: 'muted', text: `Estado: ${d.isActive ? 'activo' : 'inactivo'}. Solo la administración puede cambiarlo.` });
+
 // --- Vista de emprendimiento -------------------------------------------------------------------
 
-export function emprendimiento(ctx) {
-  const { profile } = ctx;
-  const admin = profile.role === 'admin';
-  const { id, selector } = pickEntity(ctx, 'entrepreneurs', 'un emprendimiento', 'displayName');
-  const emp = id && get('entrepreneurs', id);
-  const root = el('div', { className: 'stack' }, [el('h1', { text: 'Mi emprendimiento' }), selector]);
-  if (!emp) return (root.append(emptyState('Sin emprendimiento', admin ? 'Elige un emprendimiento arriba.' : 'Tu perfil aún no está vinculado a un emprendimiento. Pide a un administrador que lo vincule.')), root);
+const statusBadge = (p) => (p.isHiddenByModerator ? badge('Oculto por moderación', 'status-off') : p.isPublished ? badge('Publicado', 'status-ok') : badge('Borrador', 'status-off'));
 
-  // 1) Perfil
-  const profileForm = formView((v, e) => [
-    field('Nombre', 'displayName', { required: true, value: v.displayName, error: e.displayName }),
-    field('Categoría', 'category', { control: 'select', required: true, value: v.category, options: catOptions('Elige…'), error: e.category }),
-    field('Descripción', 'description', { control: 'textarea', value: v.description }),
-    contactsEditor(v.contacts, e.contacts), admin && checkbox('Emprendimiento activo', 'isActive', v.isActive),
-  ], (v) => {
-    const errs = {};
-    if (!v.displayName?.trim()) errs.displayName = 'El nombre es obligatorio.';
-    if (!CATEGORIES.includes(v.category)) errs.category = 'Elige una categoría.';
-    const c = validateContacts(v.contacts);
-    if (Object.keys(c.errors).length) errs.contacts = c.errors;
-    if (Object.keys(errs).length) return errs;
-    upsert('entrepreneurs', { id: emp.id, displayName: v.displayName.trim(), category: v.category, description: v.description?.trim() || '', externalContacts: c.rows, ...(admin && { isActive: v.isActive }) });
-    announce('Perfil guardado'); ctx.rerender(); return null;
-  }, { values: { displayName: emp.displayName, category: emp.category, description: emp.description, contacts: emp.externalContacts || [], isActive: emp.isActive !== false }, submitLabel: 'Guardar perfil' });
-  root.append(el('section', { attrs: { 'aria-label': 'Perfil' } }, [el('h2', { text: 'Perfil' }), profileForm]));
+// Compositor (nuevo o edición). onDone se llama tras guardar; onCancel opcional.
+function composer(ctx, id, item, { onDone, onCancel } = {}) {
+  let media = media1(item) ? [media1(item)] : (item?.media ?? []);
+  const draw = (v, errs = {}) => {
+    let pub = !!v.isPublished;
+    const form = el('form', { className: `ep-composer${item ? '' : ' card'}`, attrs: { novalidate: '', 'aria-label': item ? 'Editar publicación' : 'Nueva publicación' } }, [
+      field('Título', 'title', { required: true, value: v.title, error: errs.title }),
+      field('Texto', 'body', { control: 'textarea', required: true, value: v.body, error: errs.body }),
+      mediaField('Imagen (opcional)', () => media1({ media }), (m) => { media = m ? [m] : []; }, 900),
+      toggleRow('Publicar', 'Si está apagado se guarda como borrador.', pub, (c) => { pub = c; }),
+      item?.isHiddenByModerator ? el('p', { className: 'notice', text: 'Un moderador ocultó esta publicación; no puedes revertirlo.' }) : null,
+      el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: item ? 'Guardar publicación' : 'Publicar' }), onCancel && btn('Cancelar', onCancel)]),
+    ]);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = formData(form); const errs2 = {};
+      if (!fd.title?.trim()) errs2.title = 'El título es obligatorio.';
+      if (!fd.body?.trim()) errs2.body = 'El texto es obligatorio.';
+      if (Object.keys(errs2).length) { const fresh = draw({ ...fd, isPublished: pub }, errs2); form.replaceWith(fresh); fresh.querySelector('[aria-invalid]')?.focus(); announce('Revisa los campos marcados'); return; }
+      upsert('entrepreneurPosts', { ...(item && { id: item.id }), entrepreneurId: id, title: fd.title.trim(), body: fd.body.trim(), isPublished: pub, publishedAt: pub ? item?.publishedAt || new Date().toISOString() : item?.publishedAt || null, isHiddenByModerator: item?.isHiddenByModerator ?? false, media }, 'entrepreneur-post');
+      announce('Publicación guardada'); onDone();
+    });
+    return form;
+  };
+  return draw({ title: item?.title, body: item?.body, isPublished: item ? !!item.isPublished : true });
+}
 
-  // 2) Productos
-  root.append(crudSection(ctx, {
-    title: 'Productos', noun: 'producto', rows: list('products', (p) => p.entrepreneurId === id),
-    line: (p) => [el('strong', { text: p.name }), ' ', badge(p.isActive ? 'Activo' : 'Oculto', p.isActive ? 'status-ok' : 'status-off'), p.priceLabel && el('p', { text: `${p.priceLabel}${p.category ? ` · ${p.category}` : ''}` }), p.description && el('p', { className: 'muted', text: p.description })],
-    editor: {
-      collection: 'products', values: (p) => ({ name: p?.name, description: p?.description, priceLabel: p?.priceLabel, category: p?.category, isActive: p ? p.isActive !== false : true }),
-      build: (v, e) => [field('Nombre', 'name', { required: true, value: v.name, error: e.name }), field('Descripción', 'description', { control: 'textarea', value: v.description }), field('Precio (texto libre)', 'priceLabel', { value: v.priceLabel, hint: 'Ej. $85 MXN' }), field('Categoría', 'category', { control: 'select', value: v.category, options: catOptions('Sin categoría') }), checkbox('Visible en el marketplace', 'isActive', v.isActive)],
-      save: (v, p) => {
-        if (!v.name?.trim()) return { name: 'El nombre es obligatorio.' };
-        upsert('products', { ...(p && { id: p.id }), entrepreneurId: id, name: v.name.trim(), description: v.description?.trim() || '', priceLabel: v.priceLabel?.trim() || '', category: v.category || '', isActive: v.isActive, media: p?.media ?? [] }, 'product'); return null;
-      },
+function postsTab(ctx, id) {
+  const posts = list('entrepreneurPosts', (p) => p.entrepreneurId === id).sort((a, b) => String(b.publishedAt || b.updatedAt).localeCompare(String(a.publishedAt || a.updatedAt)));
+  const edit = (p) => { let dialog; dialog = openDialog('Editar publicación', [el('h2', { text: 'Editar publicación' }), composer(ctx, id, p, { onCancel: () => dialog.close(), onDone: () => { dialog.close(); ctx.rerender(); } })], { onClose: restoreFocus }); };
+  const cards = posts.map((p) => el('article', { className: 'card sp-post ep-post' }, [
+    imageUrl(media1(p)) ? el('img', { className: 'ep-post-img', src: imageUrl(media1(p)), alt: `Imagen de la publicación «${p.title}»` }) : null,
+    el('div', { className: 'ep-card-head' }, [el('h3', { text: p.title }), statusBadge(p)]),
+    p.publishedAt && p.isPublished ? el('p', { className: 'muted', text: fullDate(p.publishedAt) }) : null,
+    el('p', { text: p.body }),
+    el('div', { className: 'row-actions' }, [btn('Editar', () => edit(p)), btn('Eliminar', () => { if (confirmDelete(`la publicación «${p.title}»`)) { remove('entrepreneurPosts', p.id); announce('Publicación eliminada'); ctx.rerender(); } }, 'danger small')]),
+  ]));
+  return el('div', { className: 'sp-feed' }, [el('h2', { text: 'Nueva publicación' }), composer(ctx, id, null, { onDone: ctx.rerender }), el('h2', { text: 'Tus publicaciones' }), cards.length ? cards : el('p', { className: 'muted', text: 'Aún no hay publicaciones. Escribe la primera arriba.' })]);
+}
+
+function productsTab(ctx, id) {
+  const editor = (p) => { let media = p ? [...(p.media ?? [])] : []; return {
+    values: (it) => ({ name: it?.name, description: it?.description, priceLabel: it?.priceLabel, category: it?.category, isActive: it ? it.isActive !== false : true }),
+    build: (v, e) => [field('Nombre', 'name', { required: true, value: v.name, error: e.name }), field('Descripción', 'description', { control: 'textarea', value: v.description }), field('Precio (texto libre)', 'priceLabel', { value: v.priceLabel, hint: 'Ej. $85 MXN' }), field('Categoría', 'category', { control: 'select', value: v.category, options: catOptions('Sin categoría') }), mediaField('Foto del producto', () => media1({ media }), (m) => { media = m ? [m] : []; }, 800), checkbox('Visible en el marketplace', 'isActive', v.isActive)],
+    save: (v, it) => {
+      if (!v.name?.trim()) return { name: 'El nombre es obligatorio.' };
+      upsert('products', { ...(it && { id: it.id }), entrepreneurId: id, name: v.name.trim(), description: v.description?.trim() || '', priceLabel: v.priceLabel?.trim() || '', category: v.category || '', isActive: v.isActive, media }, 'product'); return null;
     },
-  }));
+  }; };
+  const rows = list('products', (p) => p.entrepreneurId === id);
+  const cards = rows.map((p) => el('li', { className: `card ep-product${p.isActive ? '' : ' is-off'}` }, [
+    imageUrl(media1(p)) ? el('img', { src: imageUrl(media1(p)), alt: p.name }) : el('div', { className: 'ep-ph', attrs: { 'aria-hidden': 'true' }, text: p.name[0] }),
+    el('div', { className: 'ep-product-body' }, [el('strong', { text: p.name }), p.priceLabel ? el('span', { className: 'ep-price', text: p.priceLabel }) : null, badge(p.isActive ? 'Activo' : 'Inactivo', p.isActive ? 'status-ok' : 'status-off')]),
+    el('div', { className: 'row-actions' }, [btn('Editar', () => editDialog(ctx, 'producto', p, editor(p))), btn('Eliminar', () => { if (confirmDelete(`el producto «${p.name}»`)) { remove('products', p.id); announce('Producto eliminado'); ctx.rerender(); } }, 'danger small')]),
+  ]));
+  return el('section', { attrs: { 'aria-label': 'Productos' } }, [el('div', { className: 'toolbar' }, [el('h2', { text: 'Catálogo' }), btn('Nuevo producto', () => editDialog(ctx, 'producto', null, editor(null)), 'small')]), cards.length ? el('ul', { className: 'g-list ep-grid' }, cards) : el('p', { className: 'muted', text: 'Aún no hay productos.' })]);
+}
 
-  // 3) Publicaciones
-  root.append(crudSection(ctx, {
-    title: 'Publicaciones', noun: 'publicación', rows: list('entrepreneurPosts', (p) => p.entrepreneurId === id),
-    line: (p) => [el('strong', { text: p.title }), ' ', badge(p.isPublished ? 'Publicada' : 'Borrador', p.isPublished ? 'status-ok' : 'status-off'), p.isHiddenByModerator && [' ', badge('Oculta por moderación', 'status-off')], p.publishedAt && el('p', { className: 'muted', text: fullDate(p.publishedAt) }), el('p', { text: p.body })],
-    editor: {
-      collection: 'entrepreneurPosts', values: (p) => ({ title: p?.title, body: p?.body, isPublished: !!p?.isPublished }),
-      build: (v, e, p) => [field('Título', 'title', { required: true, value: v.title, error: e.title }), field('Texto', 'body', { control: 'textarea', required: true, value: v.body, error: e.body }), checkbox('Publicada', 'isPublished', v.isPublished), p?.isHiddenByModerator && el('p', { className: 'notice', text: 'Un moderador ocultó esta publicación; no puedes revertirlo.' })],
-      save: (v, p) => {
-        const errs = {};
-        if (!v.title?.trim()) errs.title = 'El título es obligatorio.';
-        if (!v.body?.trim()) errs.body = 'El texto es obligatorio.';
-        if (Object.keys(errs).length) return errs;
-        upsert('entrepreneurPosts', { ...(p && { id: p.id }), entrepreneurId: id, title: v.title.trim(), body: v.body.trim(), isPublished: v.isPublished, publishedAt: v.isPublished ? p?.publishedAt || new Date().toISOString() : p?.publishedAt || null, isHiddenByModerator: p?.isHiddenByModerator ?? false, media: p?.media ?? [] }, 'entrepreneur-post'); return null;
-      },
-    },
-  }));
-
-  // 4) Puesto en la feria (el módulo feria.js aprueba o rechaza)
-  const stand = list('stands', (s) => s.assignedEntrepreneurId === id)[0];
+function fairTab(ctx, id, stand) {
   const requests = list('standRequests', (r) => r.entrepreneurId === id);
   const pending = requests.find((r) => r.status === 'pending');
-  const fair = list('fairs')[0];
   const last = requests.at(-1);
-  const fairBody = stand ? el('p', {}, [badge(`Puesto ${stand.number}`, 'status-ok'), ' Tienes un puesto asignado en la feria.'])
-    : pending ? el('p', {}, [badge('Solicitud pendiente'), ' Esperando respuesta de la coordinación.'])
-      : [last?.status === 'rejected' && el('p', {}, [badge('Solicitud rechazada', 'status-off'), ' Puedes volver a solicitar.']), el('p', { className: 'muted', text: 'Aún no tienes puesto asignado.' }), fair ? btn('Solicitar puesto', () => { upsert('standRequests', { fairId: fair.id, entrepreneurId: id, status: 'pending', createdAt: new Date().toISOString() }, 'standreq'); announce('Solicitud enviada'); ctx.rerender(); }, 'small') : el('p', { className: 'muted', text: 'No hay feria registrada.' })];
-  root.append(el('section', { attrs: { 'aria-label': 'Puesto en la feria', 'aria-live': 'polite' } }, [el('h2', { text: 'Puesto en la feria' }), fairBody]));
+  const fair = list('fairs')[0];
+  const STATE = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada' };
+  const body = stand ? el('p', {}, [badge(`Puesto ${stand.number}`, 'status-ok'), ' Tienes un puesto asignado en la feria.'])
+    : [pending ? el('p', {}, [badge('Solicitud pendiente'), ' Esperando respuesta de la coordinación.']) : [last ? el('p', {}, [badge(`Solicitud ${(STATE[last.status] || last.status).toLowerCase()}`, last.status === 'rejected' ? 'status-off' : ''), last.status === 'rejected' ? ' Puedes volver a solicitar.' : '']) : null, el('p', { className: 'muted', text: 'Aún no tienes puesto asignado.' }), fair ? btn('Solicitar puesto', () => { upsert('standRequests', { fairId: fair.id, entrepreneurId: id, status: 'pending', createdAt: new Date().toISOString() }, 'standreq'); announce('Solicitud enviada'); ctx.rerender(); }, 'small') : el('p', { className: 'muted', text: 'No hay feria registrada.' })]];
+  return el('section', { className: 'card ep-fair', attrs: { 'aria-label': 'Puesto en la feria', 'aria-live': 'polite' } }, [el('h2', { text: fair ? `Feria: ${fair.name || fair.title || 'próxima feria'}` : 'Feria' }), body]);
+}
+
+function settingsTab(ctx, emp, admin) {
+  return profileSettings(ctx, {
+    collection: 'entrepreneurs', entity: emp, admin,
+    toDraft: (e) => ({ displayName: e.displayName || '', category: e.category || '', description: e.description || '', avatar: imageUrl(e.avatar) ? e.avatar : null, cover: imageUrl(e.cover) ? e.cover : null, gallery: (e.gallery || []).filter((g) => g.type === 'data'), contacts: structuredClone(e.externalContacts || []), isActive: e.isActive !== false }),
+    validate: (d) => {
+      const errs = {};
+      if (!d.displayName.trim()) errs.displayName = 'El nombre es obligatorio.';
+      if (!CATEGORIES.includes(d.category)) errs.category = 'Elige una categoría.';
+      if (d.description.length > 300) errs.description = 'Máximo 300 caracteres.';
+      const c = validateContacts(d.contacts); if (Object.keys(c.errors).length) errs.contacts = c.errors;
+      return errs;
+    },
+    where: { displayName: 'perfil', category: 'perfil', description: 'perfil', contacts: 'contacto' },
+    toRecord: (d) => ({ id: emp.id, displayName: d.displayName.trim(), category: d.category, description: d.description.trim(), avatar: d.avatar || emp.avatar, cover: d.cover, gallery: d.gallery, externalContacts: validateContacts(d.contacts).rows, ...(admin && { isActive: d.isActive }) }),
+    preview: (d) => previewCard(d, emp.id, d.category),
+    sections: (d, api) => [
+      ['perfil', 'Editar perfil', () => [el('h2', { text: 'Editar perfil' }), api.pick('Foto de perfil', 'avatar', 'round', 256), api.pick('Portada', 'cover', 'wide', 1200), api.field('Nombre', 'displayName', { required: true }), api.field('Categoría', 'category', { control: 'select', required: true, options: catOptions('Elige…') }), api.field('Descripción', 'description', { control: 'textarea', maxlength: 300, rows: 4 })]],
+      ['galeria', 'Galería', () => [el('h2', { text: `Galería (${d.gallery.length} de 6)` }), d.gallery.length ? el('ul', { className: 'ep-gallery' }, d.gallery.map((g, i) => el('li', {}, [el('img', { src: g.url, alt: `Foto ${i + 1} de la galería` }), btn('Quitar', () => { d.gallery.splice(i, 1); announce('Foto quitada'); api.reload(); })]))) : el('p', { className: 'muted', text: 'Aún no hay fotos.' }), d.gallery.length < 6 ? imagePicker({ label: 'Agregar foto', value: null, max: 800, onChange: (m) => { if (m) { d.gallery.push(m); api.reload(); } } }) : el('p', { className: 'muted', text: 'Llegaste al máximo de 6 fotos.' })]],
+      ['contacto', 'Contacto', () => [el('h2', { text: 'Contacto' }), api.contacts()]],
+      ['cuenta', 'Cuenta', () => [el('h2', { text: 'Cuenta' }), activeToggle(api, d, 'Emprendimiento', admin)]],
+    ],
+  });
+}
+
+export function emprendimiento(ctx) {
+  const admin = ctx.profile.role === 'admin';
+  const { id, selector } = pickEntity(ctx, 'entrepreneurs', 'un emprendimiento', 'displayName');
+  const emp = id && get('entrepreneurs', id);
+  const root = el('div', { className: 'stack' }, [selector]);
+  if (!emp) return (root.append(emptyState('Sin emprendimiento', admin ? 'Elige un emprendimiento arriba.' : 'Tu perfil aún no está vinculado a un emprendimiento. Pide a un administrador que lo vincule.')), root);
+
+  const posts = list('entrepreneurPosts', (p) => p.entrepreneurId === id).length;
+  const products = list('products', (p) => p.entrepreneurId === id).length;
+  const stand = list('stands', (s) => s.assignedEntrepreneurId === id)[0];
+  const t = tabState(ctx, [['posts', 'Publicaciones', () => postsTab(ctx, id)], ['products', 'Productos', () => productsTab(ctx, id)], ['fair', 'Feria', () => fairTab(ctx, id, stand)], ['settings', 'Ajustes', () => settingsTab(ctx, emp, admin)]]);
+  root.append(profileShell({ id, name: emp.displayName, subtitle: emp.category, avatarMedia: emp.avatar, coverMedia: emp.cover, stats: [[posts, 'publicaciones'], [products, 'productos'], [stand ? `#${stand.number}` : 'Sin', 'puesto']], badges: [badge(emp.isActive !== false ? 'Activo' : 'Inactivo', emp.isActive !== false ? 'status-ok' : 'status-off'), stand ? badge(`Con puesto ${stand.number}`, 'status-ok') : null], tabs: t.tabs, active: t.active, onTab: t.onTab }), t.body);
   return root;
 }

@@ -2,7 +2,9 @@ import seed from '../data/seed.json' with { type: 'json' };
 
 // Persistencia local (sin backend): todo vive en localStorage bajo una sola clave.
 // ponytail: sin autenticación real; "entrar como" es un selector de demo. Al añadir backend, sustituir load()/save() y session.
-const KEY = 'calpulli:gestion:v1';
+// Misma clave que lee la demo pública (/app/): al compartir origen, lo guardado aquí se ve allí.
+export const STORAGE_KEY = 'calpulli:gestion:v1';
+const KEY = STORAGE_KEY;
 const COLLECTIONS = ['departments', 'entrepreneurs', 'tutors', 'stands', 'standRequests', 'fairs', 'institutionalPosts', 'stories', 'products', 'entrepreneurPosts', 'tutoringOffers'];
 
 export const ROLES = {
@@ -18,8 +20,13 @@ const now = () => new Date().toISOString();
 export const uid = (prefix) => `${prefix}-${crypto.randomUUID().slice(0, 8)}`;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// La semilla trae fechas fijas; se corren al presente una sola vez para que lo nuevo y lo sembrado convivan sin desfase.
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+const shifted = (value, delta) => JSON.parse(JSON.stringify(value), (_k, v) => (typeof v === 'string' && ISO.test(v) ? new Date(Date.parse(v) + delta).toISOString() : v));
+
 function initial() {
-  const data = Object.fromEntries(COLLECTIONS.map((name) => [name, structuredClone(seed[name] || [])]));
+  const delta = Date.now() - Date.parse(seed.meta.createdAt);
+  const data = Object.fromEntries(COLLECTIONS.map((name) => [name, shifted(seed[name] || [], delta)]));
   const t = now();
   const first = (collection) => data[collection][0]?.id;
   const profiles = [

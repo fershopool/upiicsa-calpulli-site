@@ -1,149 +1,263 @@
 import { el, announce } from '../utils/dom.js';
-import { badge, emptyState, openDialog, fullDate, CONTACT_LABEL, PRIORITY_LABEL } from '../app/ui.js';
-import { get, list, upsert, remove, uid } from './store.js';
-import { field, formData, checkbox, confirmDelete } from './forms.js';
+import { avatar, badge, emptyState, openDialog, relativeTime, CONTACT_LABEL, PRIORITY_LABEL } from '../app/ui.js';
+import { get, list, upsert, remove, uid, profiles } from './store.js';
+import { field, formData, confirmDelete } from './forms.js';
+import { profileShell, imagePicker, toggleRow, settingsLayout, imageUrl } from './social.js';
 
-const ACCENTS = [['mayaBlue', 'Azul maya'], ['turquoise', 'Turquesa'], ['jade', 'Jade'], ['mexicanPink', 'Rosa mexicano'], ['cempasuchil', 'Cempasúchil'], ['cochineal', 'Cochinilla']];
+// Colores de acento (mismos tokens que app/ui.js) para las muestras tocables.
+const ACCENTS = [['mayaBlue', 'Azul maya', '#2D78B8'], ['turquoise', 'Turquesa', '#149D98'], ['jade', 'Jade', '#13745E'], ['mexicanPink', 'Rosa mexicano', '#C83F83'], ['cempasuchil', 'Cempasúchil', '#DA8A0B'], ['cochineal', 'Cochinilla', '#A93647']];
 const PRIORITIES = [['normal', 'Normal'], ['featured', 'Destacado'], ['important', 'Importante'], ['urgent', 'Urgente']];
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_DESC = 200;
 const pad = (n) => String(n).padStart(2, '0');
-// ISO -> valor de <input type="datetime-local"> en hora local, y de vuelta.
+// ISO <-> valor de <input type="datetime-local"> (hora local).
 const toLocal = (iso) => { if (!iso) return ''; const d = new Date(iso); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
-const toIso = (local) => (local ? new Date(local).toISOString() : '');
+const toIso = (local) => (local ? new Date(local).toISOString() : undefined);
+const storyLive = (s, t = Date.now()) => s.isActive && (!s.startsAt || Date.parse(s.startsAt) <= t) && (!s.expiresAt || Date.parse(s.expiresAt) > t);
 
 export function departamento({ profile, params, setParam, rerender }) {
   const isAdmin = profile.role === 'admin';
   const id = isAdmin ? params.get('id') : profile.linkedId;
   const dept = id ? get('departments', id) : null;
-  const wrap = el('div', { className: 'stack' });
-  const live = el('p', { className: 'sr-only', attrs: { 'aria-live': 'polite' } });
-  const done = (message) => { announce(message); rerender(); };
+  const wrap = el('div', { className: 'stack dp' });
 
-  if (isAdmin) {
+  const picker = isAdmin ? el('div', { className: 'toolbar' }, [(() => {
     const select = el('select', { id: 'dept-pick', name: 'id' }, [el('option', { value: '', text: 'Elige un departamento' }), ...list('departments').map((d) => el('option', { value: d.id, text: d.name, selected: d.id === id }))]);
-    select.addEventListener('change', () => { setParam('id', select.value); rerender(); });
-    wrap.append(el('div', { className: 'toolbar' }, [el('label', { className: 'field', attrs: { for: 'dept-pick' } }, [el('span', { text: 'Departamento' }), select])]));
-  }
-  if (!dept) return el('div', {}, [wrap, emptyState('Sin departamento', isAdmin ? 'Elige un departamento para gestionarlo.' : 'Tu perfil no está vinculado a un departamento. Pide al administrador que lo vincule.')]);
+    select.addEventListener('change', () => { setParam('id', select.value); setParam('tab', ''); rerender(); });
+    return el('label', { className: 'field', attrs: { for: 'dept-pick' } }, [el('span', { text: 'Departamento' }), select]);
+  })()]) : null;
+  if (!dept) return el('div', { className: 'stack' }, [picker, emptyState('Sin departamento', isAdmin ? 'Elige un departamento para gestionarlo.' : 'Tu perfil no está vinculado a un departamento. Pide al administrador que lo vincule.')]);
 
-  // ---- 1) Perfil ----
-  function profileForm(values, errors = {}) {
-    const contacts = values.contact.map((c) => ({ ...c }));
-    const form = el('form', { className: 'card stack', attrs: { novalidate: '' } });
-    const list_ = el('div', { className: 'stack' });
-    const paintContacts = () => {
-      list_.replaceChildren(...contacts.map((c, i) => {
-        const err = errors[`contact-${i}`];
-        const set = (key) => (e) => { c[key] = e.target.value; };
-        const type = field('Tipo', `ctype-${i}`, { control: 'select', value: c.type, options: Object.entries(CONTACT_LABEL).map(([v, t]) => [v, t]) });
-        const label = field('Etiqueta', `clabel-${i}`, { value: c.label });
-        const value = field('Valor', `cvalue-${i}`, { value: c.value, error: err });
-        type.querySelector('select').addEventListener('change', set('type'));
-        label.querySelector('input').addEventListener('input', set('label'));
-        value.querySelector('input').addEventListener('input', set('value'));
-        const del = el('button', { className: 'button secondary small', type: 'button', text: 'Quitar', attrs: { 'aria-label': `Quitar contacto ${i + 1}` } });
-        del.addEventListener('click', () => { contacts.splice(i, 1); paintContacts(); });
-        return el('fieldset', { className: 'form-grid' }, [el('legend', { text: `Contacto ${i + 1}` }), type, label, value, del]);
-      }));
-    };
-    paintContacts();
-    const add = el('button', { className: 'button secondary small', type: 'button', text: 'Añadir contacto' });
-    add.addEventListener('click', () => { contacts.push({ id: uid('contact'), type: 'email', label: '', value: '' }); paintContacts(); });
+  const TABS = [['avisos', 'Avisos'], ['historias', 'Historias'], ['ajustes', 'Ajustes']];
+  const state = { tab: TABS.some(([k]) => k === params.get('tab')) ? params.get('tab') : 'avisos', menu: 'perfil', dirty: false, errors: {}, composer: null };
+  const fromDept = (d) => ({ name: d.name, shortName: d.shortName || '', description: d.description || '', accentToken: d.accentToken || 'mayaBlue', avatar: d.avatar || null, cover: d.cover || null, contact: (d.contact || []).map((c) => ({ ...c })), isActive: d.isActive !== false });
+  let draft = fromDept(dept);
+  const current = () => get('departments', dept.id) || dept;
+  const accentHex = (token) => (ACCENTS.find(([k]) => k === token) || ACCENTS[0])[2];
+
+  const focusTab = () => wrap.querySelector('[role=tab][aria-selected=true]')?.focus();
+  // Diálogo: al cerrar, el foco vuelve al disparador (o a la pestaña activa si ya no existe).
+  const dialog = (title, content, opener) => openDialog(title, content, { onClose: () => (opener?.isConnected ? opener : wrap.querySelector('[role=tab][aria-selected=true]'))?.focus() });
+  // Imagen con vista previa que se repinta sola al elegir/quitar.
+  const pickerHost = (opts, onChange) => {
+    const host = el('div', {});
+    const draw = (value) => host.replaceChildren(imagePicker({ ...opts, value, onChange: (m) => { onChange(m); draw(m); } }));
+    draw(opts.value); return host;
+  };
+
+  // ---------- Avisos ----------
+  function composerView() {
+    const v = state.composer || { title: '', body: '', priority: 'normal', now: true, errors: {} };
+    const form = el('form', { className: 'card dp-composer stack', attrs: { novalidate: '', 'aria-label': 'Publicar aviso' } });
+    let publishNow = v.now;
     form.append(
-      el('h2', { text: 'Perfil del departamento' }),
-      el('div', { className: 'form-grid' }, [
-        field('Nombre', 'name', { value: values.name, required: true, error: errors.name }),
-        field('Nombre corto', 'shortName', { value: values.shortName, required: true, error: errors.shortName }),
-        field('Color de acento', 'accentToken', { control: 'select', value: values.accentToken, options: ACCENTS }),
-      ]),
-      field('Descripción', 'description', { control: 'textarea', value: values.description }),
-      el('h3', { text: 'Contactos' }), list_, add,
-      isAdmin ? checkbox('Departamento activo', 'isActive', values.isActive) : null,
-      el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: 'Guardar perfil' })]),
+      el('div', { className: 'dp-who' }, [headAvatar(), el('strong', { text: `¿Qué quieres avisar, ${current().shortName || current().name}?` })]),
+      field('Título', 'title', { value: v.title, required: true, error: v.errors?.title }),
+      field('Texto', 'body', { control: 'textarea', value: v.body, required: true, error: v.errors?.body }),
+      el('div', { className: 'dp-composer-row' }, [field('Prioridad', 'priority', { control: 'select', value: v.priority, options: PRIORITIES }), toggleRow('Publicar ahora', 'Si lo apagas se guarda como borrador.', publishNow, (c) => { publishNow = c; })]),
+      el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: 'Publicar' })]),
     );
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const d = formData(form);
-      const next = { name: d.name.trim(), shortName: d.shortName.trim(), description: d.description.trim(), accentToken: d.accentToken, contact: contacts, isActive: isAdmin ? !!d.isActive : dept.isActive };
-      const errs = {};
-      if (!next.name) errs.name = 'El nombre es obligatorio.';
-      if (!next.shortName) errs.shortName = 'El nombre corto es obligatorio.';
-      contacts.forEach((c, i) => { if (!c.value.trim()) errs[`contact-${i}`] = 'El valor es obligatorio.'; else if (c.type === 'email' && !EMAIL.test(c.value.trim())) errs[`contact-${i}`] = 'Escribe un correo válido.'; });
-      if (Object.keys(errs).length) { form.replaceWith(profileForm(next, errs)); announce('Revisa los campos marcados.'); return; }
-      upsert('departments', { id: dept.id, ...next, contact: contacts.map((c) => ({ ...c, label: c.label.trim() || CONTACT_LABEL[c.type], value: c.value.trim() })) });
-      done('Perfil guardado.');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), priority: d.priority, now: publishNow };
+      const errors = { ...(!next.title && { title: 'El título es obligatorio.' }), ...(!next.body && { body: 'El texto es obligatorio.' }) };
+      if (Object.keys(errors).length) { state.composer = { ...next, errors }; form.replaceWith(composerView()); announce('Revisa los campos marcados.'); wrap.querySelector('.dp-composer [aria-invalid]')?.focus(); return; }
+      upsert('institutionalPosts', { departmentId: dept.id, media: [], views: 0, visibility: { showDepartment: true, showLocation: false }, title: next.title, body: next.body, priority: next.priority, isPublished: next.now, publishedAt: next.now ? new Date().toISOString() : undefined }, 'inst');
+      state.composer = null; announce(next.now ? 'Aviso publicado.' : 'Borrador guardado.'); paint(); wrap.querySelector('.dp-composer input')?.focus();
     });
     return form;
   }
-
-  // ---- Diálogo genérico crear/editar ----
-  function editor(title, buildFields, validate, save) {
-    const show = (values, errors = {}) => {
+  function headAvatar(size = 'md') {
+    const d = current(); const url = imageUrl(d.avatar);
+    return url ? el('img', { className: `avatar avatar-${size} dp-round`, src: url, alt: '' }) : avatar(d.name, d.accentToken || 'mayaBlue', size);
+  }
+  function postDialog(post, opener) {
+    const show = (v, errors = {}) => {
       const form = el('form', { className: 'stack', attrs: { novalidate: '' } });
-      form.append(...buildFields(values, errors), el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: 'Guardar' }), el('button', { className: 'button secondary', type: 'button', text: 'Cancelar', onclick: () => form.closest('dialog').close() })]));
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const d = formData(form); const next = { ...d, flag: !!d.flag };
-        const errs = validate(next);
-        if (Object.keys(errs).length) { form.replaceWith(show(next, errs)); announce('Revisa los campos marcados.'); return; }
-        const dialog = form.closest('dialog'); save(next); dialog.close(); done('Guardado.');
+      let published = !!v.published;
+      form.append(
+        el('h2', { text: 'Editar aviso' }),
+        field('Título', 'title', { value: v.title, required: true, error: errors.title }),
+        field('Texto', 'body', { control: 'textarea', value: v.body, required: true, error: errors.body }),
+        field('Prioridad', 'priority', { control: 'select', value: v.priority, options: PRIORITIES }),
+        toggleRow('Publicado', post.isHiddenByModerator ? 'Oculto por moderación: no se mostrará aunque esté publicado.' : '', published, (c) => { published = c; }),
+        el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: 'Guardar' }), el('button', { className: 'button secondary', type: 'button', text: 'Cancelar', onclick: () => form.closest('dialog').close() })]),
+      );
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), priority: d.priority, published };
+        const errs = { ...(!next.title && { title: 'El título es obligatorio.' }), ...(!next.body && { body: 'El texto es obligatorio.' }) };
+        if (Object.keys(errs).length) { form.replaceWith(show(next, errs)); announce('Revisa los campos marcados.'); dlg.querySelector('[aria-invalid]')?.focus(); return; }
+        upsert('institutionalPosts', { id: post.id, title: next.title, body: next.body, priority: next.priority, isPublished: next.published, publishedAt: next.published && !post.publishedAt ? new Date().toISOString() : post.publishedAt });
+        dlg.close(); announce('Aviso guardado.'); paint();
       });
       return form;
     };
-    return (values) => openDialog(title, [el('h2', { text: title }), show(values)]);
+    const dlg = dialog('Editar aviso', [show({ title: post.title, body: post.body, priority: post.priority || 'normal', published: post.isPublished })], opener);
+  }
+  function postCard(p) {
+    const d = current();
+    const state_ = p.isHiddenByModerator ? badge('Oculto por moderación', 'urgent') : p.isPublished ? badge('Publicado') : badge('Borrador');
+    const edit = el('button', { className: 'button secondary small', type: 'button', text: 'Editar', attrs: { 'aria-label': `Editar ${p.title}` } });
+    edit.addEventListener('click', () => postDialog(p, edit));
+    const del = el('button', { className: 'button danger small', type: 'button', text: 'Eliminar', attrs: { 'aria-label': `Eliminar ${p.title}` } });
+    del.addEventListener('click', () => { if (confirmDelete(`el aviso "${p.title}"`)) { remove('institutionalPosts', p.id); announce('Aviso eliminado.'); paint(); focusTab(); } });
+    const when = p.publishedAt || p.createdAt;
+    return el('li', { className: 'card sp-post' }, [
+      el('div', { className: 'dp-who' }, [headAvatar(), el('div', { className: 'dp-grow' }, [el('strong', { text: d.name }), el('div', { className: 'muted', text: [when ? relativeTime(when) : 'Sin publicar', p.priority && p.priority !== 'normal' ? PRIORITY_LABEL[p.priority] : null].filter(Boolean).join(' · ') })]), state_]),
+      el('h3', { text: p.title }), el('p', { text: p.body }),
+      el('div', { className: 'toolbar' }, [el('span', { className: 'muted', text: `${p.views || 0} ${p.views === 1 ? 'vista' : 'vistas'}` }), el('div', { className: 'row-actions' }, [edit, del])]),
+    ]);
+  }
+  function avisosView() {
+    const posts = list('institutionalPosts', (p) => p.departmentId === dept.id).sort((a, b) => Date.parse(b.publishedAt || b.createdAt || 0) - Date.parse(a.publishedAt || a.createdAt || 0));
+    return el('div', { className: 'sp-feed' }, [composerView(), posts.length ? el('ul', { className: 'g-list' }, posts.map(postCard)) : el('p', { className: 'muted', text: 'Aún no hay avisos. Publica el primero arriba.' })]);
   }
 
-  // ---- 2) Avisos ----
-  const openPost = (post) => editor(post ? 'Editar aviso' : 'Nuevo aviso', (v, e) => [
-    field('Título', 'title', { value: v.title, required: true, error: e.title }),
-    field('Texto', 'body', { control: 'textarea', value: v.body, required: true, error: e.body }),
-    field('Prioridad', 'priority', { control: 'select', value: v.priority, options: PRIORITIES }),
-    checkbox('Publicado', 'flag', !!v.flag),
-    post?.isHiddenByModerator ? el('p', { className: 'notice', text: 'Este aviso está oculto por moderación; no podrás mostrarlo aunque esté publicado.' }) : null,
-  ], (v) => ({ ...(!v.title?.trim() && { title: 'El título es obligatorio.' }), ...(!v.body?.trim() && { body: 'El texto es obligatorio.' }) }), (v) => {
-    const base = { title: v.title.trim(), body: v.body.trim(), priority: v.priority, isPublished: v.flag };
-    const publishedAt = v.flag && !post?.publishedAt ? new Date().toISOString() : post?.publishedAt;
-    if (post) upsert('institutionalPosts', { id: post.id, ...base, publishedAt });
-    else upsert('institutionalPosts', { departmentId: dept.id, media: [], views: 0, visibility: { showDepartment: true, showLocation: false }, ...base, publishedAt }, 'inst');
-  })({ title: post?.title || '', body: post?.body || '', priority: post?.priority || 'normal', flag: post?.isPublished });
-  const posts = list('institutionalPosts', (p) => p.departmentId === dept.id);
-  const postState = (p) => (p.isHiddenByModerator ? badge('Oculto por moderación', 'urgent') : p.isPublished ? badge('Publicado') : badge('Borrador'));
-  const newPost = el('button', { className: 'button', type: 'button', text: 'Nuevo aviso', onclick: () => openPost(null) });
+  // ---------- Historias ----------
+  function storyDialog(story, opener) {
+    let media = story?.media?.find((m) => m.type === 'data') || null;
+    const show = (v, errors = {}) => {
+      const form = el('form', { className: 'stack', attrs: { novalidate: '' } });
+      let active = v.active;
+      form.append(
+        el('h2', { text: story ? 'Editar historia' : 'Nueva historia' }),
+        field('Título', 'title', { value: v.title, required: true, error: errors.title }),
+        field('Texto', 'body', { control: 'textarea', value: v.body }),
+        el('div', { className: 'form-grid' }, [field('Inicia', 'startsAt', { type: 'datetime-local', value: v.startsAt, error: errors.startsAt }), field('Expira', 'expiresAt', { type: 'datetime-local', value: v.expiresAt, error: errors.expiresAt })]),
+        pickerHost({ label: 'Imagen (opcional)', value: media, max: 1080 }, (m) => { media = m; }),
+        toggleRow('Activa', 'Solo se ve entre inicio y expiración.', active, (c) => { active = c; }),
+        el('div', { className: 'form-actions' }, [
+          el('button', { className: 'button', type: 'submit', text: 'Guardar' }),
+          el('button', { className: 'button secondary', type: 'button', text: 'Cancelar', onclick: () => dlg.close() }),
+          story ? el('button', { className: 'button danger', type: 'button', text: 'Eliminar', onclick: () => { if (confirmDelete(`la historia "${story.title}"`)) { remove('stories', story.id); dlg.close(); announce('Historia eliminada.'); paint(); } } }) : null,
+        ]),
+      );
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), startsAt: d.startsAt, expiresAt: d.expiresAt, active };
+        const errs = { ...(!next.title && { title: 'El título es obligatorio.' }), ...(next.startsAt && next.expiresAt && next.expiresAt <= next.startsAt && { expiresAt: 'Debe ser posterior al inicio.' }) };
+        if (Object.keys(errs).length) { form.replaceWith(show(next, errs)); announce('Revisa los campos marcados.'); dlg.querySelector('[aria-invalid]')?.focus(); return; }
+        const base = { title: next.title, body: next.body, startsAt: toIso(next.startsAt), expiresAt: toIso(next.expiresAt), isActive: next.active, media: media ? [{ type: 'data', url: media.url }] : [] };
+        if (story) upsert('stories', { id: story.id, ...base }); else upsert('stories', { departmentId: dept.id, views: 0, ...base }, 'story');
+        dlg.close(); announce('Historia guardada.'); paint();
+      });
+      return form;
+    };
+    const dlg = dialog(story ? 'Editar historia' : 'Nueva historia', [show({ title: story?.title || '', body: story?.body || '', startsAt: toLocal(story?.startsAt), expiresAt: toLocal(story?.expiresAt), active: story ? story.isActive : true })], opener);
+  }
+  function historiasView() {
+    const stories = list('stories', (s) => s.departmentId === dept.id);
+    const add = el('button', { className: 'dp-story', type: 'button', attrs: { 'aria-label': 'Nueva historia' } }, [el('span', { className: 'dp-ring dp-add', text: '+' }), el('span', { className: 'dp-story-label', text: 'Nueva' })]);
+    add.addEventListener('click', () => storyDialog(null, add));
+    const circles = stories.map((s) => {
+      const live = storyLive(s); const url = imageUrl(s.media?.find((m) => m.type === 'data'));
+      const b = el('button', { className: 'dp-story', type: 'button', attrs: { 'aria-label': `Editar historia ${s.title} (${live ? 'activa' : 'expirada o inactiva'})` } }, [
+        el('span', { className: `dp-ring ${live ? 'live' : 'off'}` }, [url ? el('img', { className: 'dp-round', src: url, alt: '' }) : avatar(s.title, current().accentToken || 'mayaBlue', 'lg')]),
+        el('span', { className: 'dp-story-label', text: s.title }), badge(live ? 'Activa' : 'Expirada', live ? '' : 'urgent'),
+      ]);
+      b.addEventListener('click', () => storyDialog(s, b)); return b;
+    });
+    return el('div', { className: 'stack' }, [el('div', { className: 'dp-stories' }, [add, ...circles]), stories.length ? null : el('p', { className: 'muted', text: 'Aún no hay historias. Toca "+" para crear la primera.' })]);
+  }
 
-  // ---- 3) Historias ----
-  const openStory = (story) => editor(story ? 'Editar historia' : 'Nueva historia', (v, e) => [
-    field('Título', 'title', { value: v.title, required: true, error: e.title }),
-    field('Texto', 'body', { control: 'textarea', value: v.body }),
-    el('div', { className: 'form-grid' }, [field('Inicia', 'startsAt', { type: 'datetime-local', value: v.startsAt, error: e.startsAt }), field('Expira', 'expiresAt', { type: 'datetime-local', value: v.expiresAt, error: e.expiresAt })]),
-    checkbox('Activa', 'flag', !!v.flag),
-  ], (v) => ({ ...(!v.title?.trim() && { title: 'El título es obligatorio.' }), ...(v.startsAt && v.expiresAt && v.expiresAt <= v.startsAt && { expiresAt: 'Debe ser posterior al inicio.' }) }), (v) => {
-    const base = { title: v.title.trim(), body: v.body.trim(), startsAt: toIso(v.startsAt) || undefined, expiresAt: toIso(v.expiresAt) || undefined, isActive: v.flag };
-    if (story) upsert('stories', { id: story.id, ...base });
-    else upsert('stories', { departmentId: dept.id, media: [], views: 0, ...base }, 'story');
-  })({ title: story?.title || '', body: story?.body || '', startsAt: toLocal(story?.startsAt), expiresAt: toLocal(story?.expiresAt), flag: story ? story.isActive : true });
-  const stories = list('stories', (s) => s.departmentId === dept.id);
-  const newStory = el('button', { className: 'button', type: 'button', text: 'Nueva historia', onclick: () => openStory(null) });
+  // ---------- Ajustes ----------
+  let previewNode = null; let saveInfo = null;
+  const touch = () => { state.dirty = true; if (saveInfo) { saveInfo.textContent = 'Cambios sin guardar'; saveInfo.classList.add('dirty'); } updatePreview(); };
+  function previewCard() {
+    const url = imageUrl(draft.cover); const hex = accentHex(draft.accentToken);
+    const ph = imageUrl(draft.avatar);
+    return el('div', { className: 'card dp-preview', attrs: { 'aria-label': 'Vista previa en la demo pública', role: 'group' } }, [
+      el('div', { className: 'dp-prev-cover', style: url ? `background-image:url(${url})` : `background:${hex}` }),
+      el('div', { className: 'dp-prev-body' }, [ph ? el('img', { className: 'avatar avatar-lg dp-round', src: ph, alt: '' }) : avatar(draft.name || '?', draft.accentToken, 'lg'), el('strong', { text: draft.name || 'Nombre del departamento' }), el('p', { className: 'muted', text: draft.description || 'Sin descripción.' })]),
+    ]);
+  }
+  function updatePreview() { if (!previewNode?.isConnected) return; const n = previewCard(); previewNode.replaceWith(n); previewNode = n; }
 
-  const row = (title, meta, badges, onEdit, onDelete, what) => el('li', { className: 'card stack' }, [
-    el('div', { className: 'toolbar' }, [el('h3', { text: title }), el('div', { className: 'row-actions' }, badges)]),
-    el('p', { className: 'muted', text: meta }),
-    el('div', { className: 'row-actions' }, [
-      el('button', { className: 'button secondary small', type: 'button', text: 'Editar', attrs: { 'aria-label': `Editar ${title}` }, onclick: onEdit }),
-      el('button', { className: 'button danger small', type: 'button', text: 'Eliminar', attrs: { 'aria-label': `Eliminar ${title}` }, onclick: () => { if (confirmDelete(what)) { onDelete(); done('Eliminado.'); } } }),
-    ]),
-  ]);
+  function perfilSection() {
+    const e = state.errors;
+    const name = field('Nombre', 'name', { value: draft.name, required: true, error: e.name });
+    const short = field('Nombre corto', 'shortName', { value: draft.shortName, required: true, error: e.shortName });
+    const desc = field('Descripción', 'description', { control: 'textarea', value: draft.description, maxlength: String(MAX_DESC) });
+    const counter = el('span', { className: 'muted dp-count', text: `${draft.description.length}/${MAX_DESC}` });
+    const bind = (label, key, after) => label.querySelector('input,textarea').addEventListener('input', (ev) => { draft[key] = ev.target.value; after?.(); touch(); });
+    bind(name, 'name'); bind(short, 'shortName'); bind(desc, 'description', () => { counter.textContent = `${draft.description.length}/${MAX_DESC}`; });
+    const swatches = el('div', { className: 'dp-swatches', attrs: { role: 'group', 'aria-label': 'Color de acento' } }, ACCENTS.map(([key, label, hex]) => {
+      const b = el('button', { className: 'dp-swatch', type: 'button', style: `background:${hex}`, attrs: { 'aria-label': label, 'aria-pressed': String(draft.accentToken === key), title: label } });
+      b.addEventListener('click', () => { draft.accentToken = key; swatches.querySelectorAll('.dp-swatch').forEach((s) => s.setAttribute('aria-pressed', String(s === b))); touch(); });
+      return b;
+    }));
+    previewNode = previewCard();
+    return el('div', { className: 'stack' }, [
+      el('h2', { text: 'Editar perfil' }),
+      pickerHost({ label: 'Foto de perfil', value: draft.avatar, shape: 'round', max: 256 }, (m) => { draft.avatar = m; touch(); }),
+      pickerHost({ label: 'Portada', value: draft.cover, shape: 'wide', max: 1280 }, (m) => { draft.cover = m; touch(); }),
+      el('div', { className: 'form-grid' }, [name, short]),
+      el('div', {}, [desc, counter]),
+      el('div', {}, [el('strong', { text: 'Color de acento' }), swatches]),
+      el('h3', { text: 'Vista previa' }), previewNode,
+    ]);
+  }
+  function contactoSection() {
+    const e = state.errors;
+    const box = el('div', { className: 'stack' });
+    const draw = () => box.replaceChildren(...(draft.contact.length ? draft.contact.map((c, i) => {
+      const type = field('Tipo', `ctype-${i}`, { control: 'select', value: c.type, options: Object.entries(CONTACT_LABEL) });
+      const label = field('Etiqueta', `clabel-${i}`, { value: c.label });
+      const value = field('Valor', `cvalue-${i}`, { value: c.value, error: e[`contact-${i}`] });
+      type.querySelector('select').addEventListener('change', (ev) => { c.type = ev.target.value; touch(); });
+      label.querySelector('input').addEventListener('input', (ev) => { c.label = ev.target.value; touch(); });
+      value.querySelector('input').addEventListener('input', (ev) => { c.value = ev.target.value; touch(); });
+      const del = el('button', { className: 'button secondary small', type: 'button', text: 'Quitar', attrs: { 'aria-label': `Quitar contacto ${i + 1}` } });
+      del.addEventListener('click', () => { draft.contact.splice(i, 1); state.errors = {}; touch(); draw(); (box.querySelector('fieldset button') || add).focus(); });
+      return el('fieldset', { className: 'form-grid' }, [el('legend', { text: `Contacto ${i + 1}` }), type, label, value, del]);
+    }) : [el('p', { className: 'muted', text: 'Sin contactos todavía.' })]));
+    const add = el('button', { className: 'button secondary small', type: 'button', text: 'Añadir contacto' });
+    add.addEventListener('click', () => { draft.contact.push({ id: uid('contact'), type: 'email', label: '', value: '' }); touch(); draw(); box.querySelector('fieldset:last-of-type select')?.focus(); });
+    draw();
+    return el('div', { className: 'stack' }, [el('h2', { text: 'Contacto' }), box, el('div', {}, [add])]);
+  }
+  function cuentaSection() {
+    const active = toggleRow('Departamento activo', isAdmin ? 'Si lo desactivas, deja de verse en la demo pública.' : 'Solo el administrador puede cambiarlo.', draft.isActive, (c) => { draft.isActive = c; touch(); });
+    if (!isAdmin) active.querySelector('input').disabled = true;
+    return el('div', { className: 'stack' }, [el('h2', { text: 'Cuenta' }), active, el('p', {}, [el('strong', { text: 'Correo de la cuenta: ' }), profileEmail()])]);
+  }
+  const profileEmail = () => (isAdmin ? profiles().find((p) => p.role === 'department' && p.linkedId === dept.id)?.email || 'Sin perfil vinculado' : profile.email);
 
-  wrap.append(
-    live,
-    profileForm({ name: dept.name, shortName: dept.shortName, description: dept.description || '', accentToken: dept.accentToken || 'mayaBlue', contact: dept.contact || [], isActive: dept.isActive !== false }),
-    el('section', { className: 'stack', attrs: { 'aria-labelledby': 'h-posts' } }, [
-      el('div', { className: 'toolbar' }, [el('h2', { id: 'h-posts', text: 'Avisos institucionales' }), newPost]),
-      posts.length ? el('ul', { className: 'stack' }, posts.map((p) => row(p.title, `${PRIORITY_LABEL[p.priority] || 'Normal'}${p.publishedAt ? ` · ${fullDate(p.publishedAt)}` : ''}`, [postState(p)], () => openPost(p), () => remove('institutionalPosts', p.id), `el aviso "${p.title}"`))) : el('p', { className: 'muted', text: 'Aún no hay avisos.' }),
-    ]),
-    el('section', { className: 'stack', attrs: { 'aria-labelledby': 'h-stories' } }, [
-      el('div', { className: 'toolbar' }, [el('h2', { id: 'h-stories', text: 'Historias' }), newStory]),
-      stories.length ? el('ul', { className: 'stack' }, stories.map((s) => row(s.title, s.expiresAt ? `Expira ${fullDate(s.expiresAt)}` : 'Sin fecha de expiración', [badge(s.isActive ? 'Activa' : 'Inactiva')], () => openStory(s), () => remove('stories', s.id), `la historia "${s.title}"`))) : el('p', { className: 'muted', text: 'Aún no hay historias.' }),
-    ]),
-  );
+  function save() {
+    const e = {}; const d = draft;
+    if (!d.name.trim()) e.name = 'El nombre es obligatorio.';
+    if (!d.shortName.trim()) e.shortName = 'El nombre corto es obligatorio.';
+    d.contact.forEach((c, i) => { if (!c.value.trim()) e[`contact-${i}`] = 'El valor es obligatorio.'; else if (c.type === 'email' && !EMAIL.test(c.value.trim())) e[`contact-${i}`] = 'Escribe un correo válido.'; });
+    state.errors = e;
+    if (Object.keys(e).length) {
+      state.menu = e.name || e.shortName ? 'perfil' : 'contacto';
+      paint(); announce('Revisa los campos marcados.'); wrap.querySelector('[aria-invalid]')?.focus(); return;
+    }
+    upsert('departments', { id: dept.id, name: d.name.trim(), shortName: d.shortName.trim(), description: d.description.trim(), accentToken: d.accentToken, avatar: d.avatar, cover: d.cover, isActive: isAdmin ? d.isActive : current().isActive, contact: d.contact.map((c) => ({ ...c, label: c.label.trim() || CONTACT_LABEL[c.type], value: c.value.trim() })) });
+    draft = fromDept(current()); state.dirty = false; state.errors = {};
+    announce('Cambios guardados'); paint();
+  }
+  function ajustesView() {
+    saveInfo = el('span', { className: `dp-saveinfo${state.dirty ? ' dirty' : ''}`, text: state.dirty ? 'Cambios sin guardar' : 'Todo guardado', attrs: { role: 'status' } });
+    const bar = el('div', { className: 'dp-savebar card' }, [saveInfo, el('button', { className: 'button', type: 'button', text: 'Guardar cambios', onclick: save })]);
+    const menu = [['perfil', 'Editar perfil', perfilSection], ['contacto', 'Contacto', contactoSection], ['cuenta', 'Cuenta', cuentaSection]];
+    return el('div', { className: 'stack' }, [bar, settingsLayout(menu, state.menu, (key) => { state.menu = key; state.errors = {}; paint(); })]);
+  }
+
+  // ---------- Armado ----------
+  function paint() {
+    const d = current(); const posts = list('institutionalPosts', (p) => p.departmentId === dept.id); const stories = list('stories', (s) => s.departmentId === dept.id);
+    const shell = profileShell({
+      id: d.id, name: d.name, subtitle: `@${(d.shortName || d.name).toLowerCase().replace(/\s+/g, '')}`, avatarMedia: d.avatar, coverMedia: d.cover, token: d.accentToken || 'mayaBlue',
+      badges: [badge(d.isActive !== false ? 'Activo' : 'Inactivo', d.isActive !== false ? '' : 'urgent')],
+      stats: [[posts.filter((p) => p.isPublished && !p.isHiddenByModerator).length, 'avisos publicados'], [stories.filter((s) => storyLive(s)).length, 'historias activas'], [posts.reduce((n, p) => n + (p.views || 0), 0), 'vistas totales']],
+      tabs: TABS, active: state.tab,
+      onTab: (key, focus) => { state.tab = key; setParam('tab', key); paint(); if (focus) focusTab(); },
+    });
+    const view = state.tab === 'historias' ? historiasView() : state.tab === 'ajustes' ? ajustesView() : avisosView();
+    wrap.replaceChildren(...[picker, shell, el('section', { attrs: { role: 'tabpanel', 'aria-label': TABS.find(([k]) => k === state.tab)[1] } }, [view])].filter(Boolean));
+  }
+  paint();
   return wrap;
 }

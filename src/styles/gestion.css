@@ -17,3 +17,63 @@
 .stack{display:grid;gap:1.5rem}.g-list{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}.g-list>.card{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;padding:.9rem}
 fieldset.field,.contacts-editor{border:1px solid var(--line);border-radius:.5rem;padding:.75rem}.contact-row{display:grid;gap:.4rem;grid-template-columns:8rem 1fr 1fr auto;align-items:start;margin-bottom:.5rem}.contact-row .field-error{grid-column:1/-1}
 @media(max-width:40rem){.contact-row{grid-template-columns:1fr}}
+
+/* Perfil estilo red social */
+.sp-head{padding:0;overflow:hidden}.sp-cover{height:clamp(110px,22vw,200px);background:linear-gradient(135deg,var(--c1),var(--c2));background-size:cover;background-position:center}
+.sp-meta{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;padding:0 1.25rem;margin-top:-2.75rem}
+.sp-meta .avatar,.sp-photo{border:4px solid var(--ivory,#fff);flex:none;object-fit:cover}.sp-photo{border-radius:50%}
+.sp-id{flex:1;min-width:12rem;padding-top:3rem}.sp-id h1{font-size:clamp(1.3rem,3vw,1.8rem)}.sp-id p{margin:0}
+.sp-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-left:auto}.sp-badges{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem}
+.sp-stats{display:flex;gap:1.25rem;flex-wrap:wrap;list-style:none;margin:.75rem 0 0;padding:0 1.25rem}
+.sp-tabs{display:flex;gap:.25rem;overflow-x:auto;margin-top:.75rem;padding:0 .75rem;border-top:1px solid var(--line)}
+.sp-tab{min-height:44px;padding:.5rem 1rem;border:0;border-bottom:3px solid transparent;background:none;color:var(--stone);font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+.sp-tab[aria-selected=true]{color:var(--jade);border-bottom-color:var(--jade)}
+.sp-settings{display:grid;gap:1rem;grid-template-columns:minmax(10rem,14rem) 1fr;align-items:start}.sp-menu{display:grid;gap:.15rem}
+.sp-menu-item{min-height:44px;padding:.5rem .8rem;border:0;border-radius:10px;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.sp-menu-item:hover{background:color-mix(in srgb,var(--jade) 8%,transparent)}.sp-menu-item[aria-current]{background:color-mix(in srgb,var(--jade) 14%,transparent);color:var(--jade);font-weight:700}
+.sp-panel{padding:1.25rem;display:grid;gap:1rem}
+@media(max-width:640px){.sp-settings{grid-template-columns:1fr}.sp-menu{grid-auto-flow:column;overflow-x:auto}.sp-menu-item{white-space:nowrap}}
+.sp-pick{display:flex;gap:1rem;align-items:center}.sp-pick-preview{display:block;width:72px;height:72px;flex:none;border-radius:12px;background:var(--line) center/cover}.sp-pick-preview.round{border-radius:50%}.sp-pick-preview.wide{width:128px;height:72px}
+.sp-toggle{display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:56px;padding:.4rem 0;border-bottom:1px solid var(--line)}.sp-toggle>span{display:grid}
+.sp-switch{width:44px;height:26px;accent-color:var(--jade)}
+.sp-post{display:grid;gap:.5rem}.sp-feed{display:grid;gap:1rem;max-width:42rem}
+
+/* Departamento: cuenta estilo red social (.dp-) */
+.dp-round{border-radius:50%;object-fit:cover}.dp-grow{flex:1;min-width:0}
+.dp-who{display:flex;gap:.75rem;align-items:center}
+.dp-composer{max-width:42rem}.dp-composer-row{display:grid;gap:1rem;grid-template-columns:minmax(10rem,14rem) 1fr;align-items:end}
+@media(max-width:640px){.dp-composer-row{grid-template-columns:1fr}}
+.dp-stories{display:flex;gap:1rem;overflow-x:auto;padding:.25rem 0 .75rem}
+.dp-story{display:grid;justify-items:center;gap:.35rem;width:6.5rem;flex:none;border:0;background:none;color:inherit;font:inherit;cursor:pointer;min-height:44px}
+.dp-story-label{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem}
+.dp-ring{display:grid;place-items:center;width:76px;height:76px;border-radius:50%;padding:3px;border:3px solid var(--line);overflow:hidden}
+.dp-ring>*{width:100%;height:100%;border-radius:50%}.dp-ring.live{border-color:var(--jade)}.dp-ring.off{border-color:var(--line);filter:grayscale(.6)}
+.dp-add{font-size:2rem;color:var(--jade);border-style:dashed}
+.dp-swatches{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.4rem}
+.dp-swatch{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:0 0 0 1px var(--line)}
+.dp-swatch[aria-pressed=true]{border-color:var(--ivory,#fff);box-shadow:0 0 0 3px var(--ink,#111)}
+.dp-count{display:block;text-align:right}
+.dp-savebar{display:flex;gap:1rem;align-items:center;justify-content:space-between;padding:.6rem 1rem;position:sticky;top:.5rem;z-index:2}
+.dp-saveinfo.dirty{color:var(--cochineal,#A93647);font-weight:700}
+.dp-preview{max-width:22rem;padding:0;overflow:hidden}.dp-prev-cover{height:80px;background-size:cover;background-position:center}
+.dp-prev-body{display:grid;gap:.25rem;padding:0 1rem 1rem;margin-top:-1.5rem}.dp-prev-body .avatar{border:3px solid var(--ivory,#fff)}.dp-prev-body p{margin:0}
+.sp-pick-preview.wide{width:128px;height:64px;border-radius:10px}
+
+/* Emprendimiento / tutor estilo red social (.ep-) */
+.ep-body{display:grid;gap:1rem}
+.ep-savebar{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;align-items:center;padding:.6rem 1rem;position:sticky;top:.5rem;z-index:2}
+.ep-dirty{font-weight:600;color:var(--stone)}.ep-dirty.is-dirty{color:var(--cochineal,#A93647)}
+.ep-count{text-align:right;font-size:.85rem}
+.ep-composer{display:grid;gap:.75rem;padding:1rem}.ep-composer.card{max-width:42rem}
+.ep-card-head{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:space-between;align-items:center}.ep-card-head h3{margin:0}
+.ep-post{padding:1rem}.ep-post-img{width:100%;max-height:22rem;object-fit:cover;border-radius:12px}
+.ep-grid{grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))}.g-list.ep-grid>.card{display:grid;align-content:start;gap:.5rem}
+.ep-product{padding:0;overflow:hidden}.ep-product>img,.ep-ph{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--line)}
+.ep-ph{display:grid;place-items:center;font-size:2.5rem;font-weight:700;color:var(--stone)}
+.ep-product-body{display:grid;gap:.3rem;padding:0 .9rem;justify-items:start}.ep-product>.row-actions{padding:0 .9rem .9rem}
+.ep-price{font-weight:700;color:var(--jade)}.is-off{opacity:.7}
+.ep-offer{padding:1rem}
+.ep-fair{padding:1.25rem;display:grid;gap:.75rem}
+.ep-gallery{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:.75rem}
+.ep-gallery li{display:grid;gap:.4rem}.ep-gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}
+.ep-preview h2{font-size:1rem}.ep-card-preview{display:flex;gap:1rem;align-items:center;padding:1rem;max-width:32rem}.ep-card-preview p{margin:.2rem 0 0}.ep-prev-photo{border-radius:50%;object-fit:cover}

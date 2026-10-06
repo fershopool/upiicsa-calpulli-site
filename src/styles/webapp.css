@@ -6,7 +6,7 @@
 .app-header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--cream) 94%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .app-bar{display:flex;align-items:center;gap:1rem;width:min(var(--max),calc(100% - 2rem));min-height:64px;margin-inline:auto}
 .app-bar .brand{min-width:0}.app-bar .brand img{width:44px;height:44px}
-.site-link{margin-left:auto;font-size:.82rem;font-weight:600;color:var(--jade)}
+.site-link{margin-left:auto;font-size:.82rem;font-weight:600;color:var(--jade)}.site-link+.site-link{margin-left:0}.media.cover{margin-bottom:.9rem}
 .theme-button{display:grid;width:44px;height:44px;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--ivory);color:var(--obsidian);cursor:pointer}
 .demo-banner{margin:0;padding:.35rem 1rem;background:var(--yellow);color:#12332D;font-size:.75rem;font-weight:600;text-align:center}
 .tabs{display:flex;gap:.25rem}

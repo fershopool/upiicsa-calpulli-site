@@ -19,15 +19,15 @@ function countdown(target, onLeave) {
 function standDialog(state, stand) {
   const owner = stand.status === 'assigned' ? state.byId.entrepreneurs[stand.assignedEntrepreneurId] : null;
   if (!owner) return openDialog(`Mesa ${stand.number}`, [el('h2', { text: `Mesa ${stand.number}` }), el('p', { text: stand.status === 'available' ? 'Esta mesa está disponible.' : 'Esta mesa está reservada para esta feria.' })]);
-  return openDialog(`Mesa ${stand.number}: ${owner.displayName}`, [el('div', { className: 'post-head' }, [avatar(owner.displayName, tokenFor(owner.id), 'lg'), el('div', {}, [el('h2', { text: owner.displayName }), el('p', { className: 'muted', text: `Mesa ${stand.number} · ${owner.category}` })])]), el('p', { text: owner.description }), linkButton('Ver perfil', `#/emprendimiento/${owner.id}`, false)]);
+  return openDialog(`Mesa ${stand.number}: ${owner.displayName}`, [el('div', { className: 'post-head' }, [avatar(owner.displayName, tokenFor(owner.id), 'lg', owner.avatar), el('div', {}, [el('h2', { text: owner.displayName }), el('p', { className: 'muted', text: `Mesa ${stand.number} · ${owner.category}` })])]), el('p', { text: owner.description }), linkButton('Ver perfil', `#/emprendimiento/${owner.id}`, false)]);
 }
 
 function fairMap(state) {
   const grid = el('div', { className: 'fair-map', attrs: { role: 'group', 'aria-label': 'Mapa de mesas de la feria' } });
-  state.stands.slice().sort((a, b) => a.coordinate.order - b.coordinate.order || a.number - b.number).forEach((stand) => {
+  state.stands.slice().sort((a, b) => (a.coordinate?.order ?? a.number) - (b.coordinate?.order ?? b.number) || a.number - b.number).forEach((stand) => {
     const owner = stand.status === 'assigned' ? state.byId.entrepreneurs[stand.assignedEntrepreneurId] : null;
     const label = owner ? `Mesa ${stand.number}, ${owner.displayName}` : `Mesa ${stand.number}, ${stand.status === 'available' ? 'disponible' : 'reservada'}`;
-    const button = el('button', { className: `stand ${owner ? 'assigned' : stand.status}`, type: 'button', style: `grid-column:${stand.coordinate.column + 1};grid-row:${stand.coordinate.row + 1}`, attrs: { 'aria-label': label } }, [owner ? avatar(owner.displayName, tokenFor(owner.id), 'xs') : null, el('span', { text: String(stand.number) })]);
+    const button = el('button', { className: `stand ${owner ? 'assigned' : stand.status}`, type: 'button', style: `grid-column:${(stand.coordinate?.column ?? (stand.number - 1) % 4) + 1};grid-row:${(stand.coordinate?.row ?? Math.floor((stand.number - 1) / 4)) + 1}`, attrs: { 'aria-label': label } }, [owner ? avatar(owner.displayName, tokenFor(owner.id), 'xs', owner.avatar) : null, el('span', { text: String(stand.number) })]);
     button.addEventListener('click', () => standDialog(state, stand));
     grid.append(button);
   });
@@ -36,7 +36,7 @@ function fairMap(state) {
 
 function standList(state) {
   const assigned = state.stands.filter((stand) => stand.status === 'assigned' && state.byId.entrepreneurs[stand.assignedEntrepreneurId]?.isActive).sort((a, b) => a.number - b.number);
-  return el('section', {}, [el('h2', { text: 'Emprendimientos en la feria' }), el('ul', { className: 'stand-list' }, assigned.map((stand) => { const owner = state.byId.entrepreneurs[stand.assignedEntrepreneurId]; return el('li', {}, [el('a', { href: `#/emprendimiento/${owner.id}` }, [avatar(owner.displayName, tokenFor(owner.id), 'sm'), el('span', {}, [el('strong', { text: owner.displayName }), el('span', { className: 'muted', text: ` · Mesa ${stand.number} · ${owner.category}` })])])]); }))]);
+  return el('section', {}, [el('h2', { text: 'Emprendimientos en la feria' }), el('ul', { className: 'stand-list' }, assigned.map((stand) => { const owner = state.byId.entrepreneurs[stand.assignedEntrepreneurId]; return el('li', {}, [el('a', { href: `#/emprendimiento/${owner.id}` }, [avatar(owner.displayName, tokenFor(owner.id), 'sm', owner.avatar), el('span', {}, [el('strong', { text: owner.displayName }), el('span', { className: 'muted', text: ` · Mesa ${stand.number} · ${owner.category}` })])])]); }))]);
 }
 
 export function feria({ state, params, setParam, rerender, onLeave }) {
