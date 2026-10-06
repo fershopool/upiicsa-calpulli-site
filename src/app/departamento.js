@@ -1,6 +1,6 @@
 import { el, announce } from '../utils/dom.js';
-import { activeStories, feed } from './store.js';
-import { avatar, badge, contactList, emptyState, plural, profileHref } from './ui.js';
+import { activeStories, feed } from '../services/public-store.js';
+import { avatar, badge, contactList, emptyState, plural, profileHref } from '../components/ui.js';
 import { openStories } from './historias.js';
 import { postCard } from './inicio.js';
 

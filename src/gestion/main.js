@@ -1,6 +1,6 @@
 import { el, $, announce } from '../utils/dom.js';
 import { getPreferences, savePreferences } from '../services/local-storage.service.js';
-import { ROLES, currentProfile, profiles, signInAs, signOut, resetDemo, subscribe } from './store.js';
+import { ROLES, currentProfile, profiles, signInAs, signOut, resetDemo } from './store.js';
 import { perfiles } from './perfiles.js';
 import { departamento } from './departamento.js';
 import { emprendimiento } from './emprendimiento.js';
@@ -53,7 +53,12 @@ function header(profile) {
   const theme = el('button', { className: 'theme-button', type: 'button', text: '◐', attrs: { 'aria-label': 'Cambiar tema' } });
   theme.addEventListener('click', () => { const next = root.dataset.theme === 'dark' ? 'light' : root.dataset.theme === 'light' ? 'system' : 'dark'; root.dataset.theme = next; savePreferences({ theme: next }); });
   return el('header', { className: 'app-header' }, [
-    el('div', { className: 'app-bar' }, [el('a', { className: 'brand', href: '#/', attrs: { 'aria-label': 'Gestión UPIICSA Calpulli' } }, [el('img', { src: '../src/assets/brand/logo.png', alt: 'UPIICSA Calpulli' })]), el('nav', { className: 'tabs', attrs: { 'aria-label': 'Módulos' } }, links), el('span', { className: 'who muted', text: `${ROLES[profile.role].label}: ${profile.name}` }), reset, out, theme]),
+    el('div', { className: 'app-bar' }, [
+      el('a', { className: 'brand', href: '#/', attrs: { 'aria-label': 'Gestión UPIICSA Calpulli' } }, [el('img', { src: '../src/assets/brand/logo.png', alt: 'UPIICSA Calpulli' })]),
+      el('nav', { className: 'tabs', attrs: { 'aria-label': 'Módulos' } }, links),
+      el('span', { className: 'who muted', text: `${ROLES[profile.role].label}: ${profile.name}` }),
+      el('div', { className: 'app-actions', attrs: { 'aria-label': 'Acciones de sesión' } }, [reset, out, theme]),
+    ]),
     el('p', { className: 'demo-banner', text: 'Gestión · demo con datos ficticios, guardados solo en este navegador' }),
   ]);
 }
@@ -79,6 +84,5 @@ function render({ focus = true } = {}) {
   if (focus) { window.scrollTo(0, 0); $('#contenido-principal').focus({ preventScroll: true }); announce(document.title); }
 }
 
-subscribe(() => {}); // las vistas llaman rerender() tras escribir; el store ya persiste.
 render({ focus: false });
 window.addEventListener('hashchange', () => render());

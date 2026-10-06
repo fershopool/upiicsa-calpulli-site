@@ -1,6 +1,6 @@
 import { el } from '../utils/dom.js';
-import { tutors } from './store.js';
-import { avatar, badge, chip, emptyState, normalize, profileHref, tokenFor } from './ui.js';
+import { tutors } from '../services/public-store.js';
+import { avatar, badge, chip, emptyState, normalize, profileHref, tokenFor } from '../components/ui.js';
 
 function personCard(item, kind) {
   const name = item.name || item.displayName;

@@ -1,6 +1,6 @@
 import { el, announce } from '../utils/dom.js';
-import { entrepreneurPosts, products, standFor } from './store.js';
-import { avatar, badge, contactList, emptyState, mediaFrom, profileHref, relativeTime, tokenFor } from './ui.js';
+import { entrepreneurPosts, products, standFor } from '../services/public-store.js';
+import { avatar, badge, contactList, emptyState, mediaFrom, profileHref, relativeTime, tokenFor } from '../components/ui.js';
 import { productCard } from './marketplace.js';
 
 const TOKEN_PAIRS = { mayaBlue: ['#2D78B8', '#149D98'], turquoise: ['#149D98', '#13745E'], jade: ['#13745E', '#2D78B8'], mexicanPink: ['#C83F83', '#A93647'], cempasuchil: ['#DA8A0B', '#C83F83'], cochineal: ['#A93647', '#DA8A0B'] };

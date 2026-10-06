@@ -1,6 +1,6 @@
 import { el } from '../utils/dom.js';
-import { favoriteIds, feed } from './store.js';
-import { emptyState, linkButton, plural } from './ui.js';
+import { favoriteIds, feed } from '../services/public-store.js';
+import { emptyState, linkButton, plural } from '../components/ui.js';
 import { postCard } from './inicio.js';
 
 export function favoritos({ state }) {

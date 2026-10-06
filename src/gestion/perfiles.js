@@ -1,5 +1,5 @@
 import { el } from '../utils/dom.js';
-import { avatar, badge, chip, emptyState, normalize, openDialog, plural, tokenFor } from '../app/ui.js';
+import { avatar, badge, chip, emptyState, normalize, openDialog, plural, tokenFor } from '../components/ui.js';
 import { ROLES, ROLE_KEYS, deleteProfile, get, list, profiles, saveProfile, setProfileActive, upsert, validateProfile } from './store.js';
 import { checkbox, confirmDelete, field, formData } from './forms.js';
 
@@ -60,7 +60,7 @@ export function perfiles({ profile: me, params, setParam, rerender }) {
       say(''); rerender();
     });
     return el('tr', {}, [
-      el('th', { attrs: { scope: 'row' } }, [el('span', { className: 'post-head' }, [avatar(p.name, tokenFor(p.id)), p.name])]),
+      el('th', { attrs: { scope: 'row' } }, [el('span', { className: 'post-head profile-person' }, [avatar(p.name, tokenFor(p.id)), el('span', { text: p.name })])]),
       el('td', { text: ROLES[p.role].label }),
       el('td', { text: p.email }),
       el('td', { text: recordName(p) }),
@@ -128,13 +128,13 @@ export function perfiles({ profile: me, params, setParam, rerender }) {
   add.addEventListener('click', () => openForm(null, add));
   paint();
   if (!all.length) return emptyState('Sin perfiles', 'Crea el primer perfil.', add);
-  return el('div', {}, [
-    el('div', { className: 'toolbar' }, [el('h1', { text: 'Perfiles' }), add]),
+  return el('div', { className: 'profiles-view' }, [
+    el('div', { className: 'toolbar profiles-toolbar' }, [el('h1', { text: 'Perfiles' }), add]),
     el('p', { className: 'lead', text: 'Gestiona los accesos de los cinco roles de la plataforma.' }),
-    summary,
-    el('label', { className: 'field', attrs: { for: 'perfil-search' } }, [el('span', { text: 'Buscar' }), search]),
+    el('div', { className: 'profiles-summary card' }, [summary]),
+    el('div', { className: 'profiles-search card' }, [el('label', { className: 'field', attrs: { for: 'perfil-search' } }, [el('span', { text: 'Buscar' }), search])]),
     chips, count, message,
-    el('div', { className: 'table-wrap' }, [el('table', { className: 'table' }, [
+    el('div', { className: 'table-wrap profiles-table-wrap' }, [el('table', { className: 'table' }, [
       el('caption', { className: 'sr-only', text: 'Perfiles de acceso' }),
       el('thead', {}, [el('tr', {}, ['Nombre', 'Rol', 'Correo', 'Vínculo', 'Estado', 'Acciones'].map((h) => el('th', { text: h, attrs: { scope: 'col' } })))]),
       body,

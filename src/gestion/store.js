@@ -49,7 +49,7 @@ function read() {
 
 let db = read();
 const listeners = new Set();
-function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch { /* sin persistencia: queda en memoria */ } listeners.forEach((fn) => fn()); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch { return false; } listeners.forEach((fn) => fn()); return true; }
 export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
 export function resetDemo() { db = initial(); save(); }
 
@@ -60,11 +60,11 @@ export function upsert(collection, item, prefix = collection.slice(0, 4)) {
   const rows = db.data[collection];
   const t = now();
   const index = rows.findIndex((row) => row.id === item.id);
-  if (index >= 0) { rows[index] = { ...rows[index], ...item, updatedAt: t }; save(); return rows[index]; }
+  if (index >= 0) { const previous = rows[index]; rows[index] = { ...previous, ...item, updatedAt: t }; if (!save()) { rows[index] = previous; return false; } return rows[index]; }
   const created = { isActive: true, createdAt: t, ...item, id: item.id || uid(prefix), updatedAt: t };
-  rows.push(created); save(); return created;
+  rows.push(created); if (!save()) { rows.pop(); return false; } return created;
 }
-export function remove(collection, id) { db.data[collection] = db.data[collection].filter((item) => item.id !== id); save(); }
+export function remove(collection, id) { const previous = db.data[collection]; db.data[collection] = previous.filter((item) => item.id !== id); if (!save()) { db.data[collection] = previous; return false; } return true; }
 
 // --- Perfiles (los gestiona el administrador) ---
 export const profiles = () => db.profiles;

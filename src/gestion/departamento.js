@@ -1,18 +1,20 @@
 import { el, announce } from '../utils/dom.js';
-import { avatar, badge, emptyState, openDialog, relativeTime, CONTACT_LABEL, PRIORITY_LABEL } from '../app/ui.js';
+import { avatar, badge, emptyState, openDialog, relativeTime, CONTACT_LABEL, PRIORITY_LABEL } from '../components/ui.js';
 import { get, list, upsert, remove, uid, profiles } from './store.js';
 import { field, formData, confirmDelete } from './forms.js';
-import { profileShell, imagePicker, toggleRow, settingsLayout, imageUrl } from './social.js';
+import { profileShell, imagePicker, toggleRow, settingsLayout, imageUrl, galleryPicker, storyMediaPicker, postGallery } from './social.js';
+import { deleteVideo } from '../services/media-db.js';
 
-// Colores de acento (mismos tokens que app/ui.js) para las muestras tocables.
+// Colores de acento (mismos tokens que components/ui.js) para las muestras tocables.
 const ACCENTS = [['mayaBlue', 'Azul maya', '#2D78B8'], ['turquoise', 'Turquesa', '#149D98'], ['jade', 'Jade', '#13745E'], ['mexicanPink', 'Rosa mexicano', '#C83F83'], ['cempasuchil', 'Cempasúchil', '#DA8A0B'], ['cochineal', 'Cochinilla', '#A93647']];
 const PRIORITIES = [['normal', 'Normal'], ['featured', 'Destacado'], ['important', 'Importante'], ['urgent', 'Urgente']];
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_DESC = 200;
-const pad = (n) => String(n).padStart(2, '0');
-// ISO <-> valor de <input type="datetime-local"> (hora local).
-const toLocal = (iso) => { if (!iso) return ''; const d = new Date(iso); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
-const toIso = (local) => (local ? new Date(local).toISOString() : undefined);
+const DURATIONS = [12, 24, 36, 48];
+const HOUR = 3600000;
+const nearestDuration = (story) => (story?.startsAt && story?.expiresAt ? DURATIONS.reduce((best, h) => (Math.abs(h * HOUR - (Date.parse(story.expiresAt) - Date.parse(story.startsAt))) < Math.abs(best * HOUR - (Date.parse(story.expiresAt) - Date.parse(story.startsAt))) ? h : best)) : 24);
+const timeLeft = (iso) => { const ms = Date.parse(iso) - Date.now(); return ms >= HOUR ? `${Math.round(ms / HOUR)} h` : `${Math.max(1, Math.round(ms / 60000))} min`; };
+const storyThumb = (media) => (media?.type === 'video' ? media.poster : imageUrl(media)) || '';
 const storyLive = (s, t = Date.now()) => s.isActive && (!s.startsAt || Date.parse(s.startsAt) <= t) && (!s.expiresAt || Date.parse(s.expiresAt) > t);
 
 export function departamento({ profile, params, setParam, rerender }) {
@@ -44,25 +46,29 @@ export function departamento({ profile, params, setParam, rerender }) {
     const draw = (value) => host.replaceChildren(imagePicker({ ...opts, value, onChange: (m) => { onChange(m); draw(m); } }));
     draw(opts.value); return host;
   };
+  const composerPhotos = (value, onChange) => galleryPicker({ label: 'Fotos (opcional)', value, onChange });
 
   // ---------- Avisos ----------
   function composerView() {
-    const v = state.composer || { title: '', body: '', priority: 'normal', now: true, errors: {} };
+    const v = state.composer || { title: '', body: '', priority: 'normal', now: true, media: [], errors: {} };
+    let media = v.media || [];
     const form = el('form', { className: 'card dp-composer stack', attrs: { novalidate: '', 'aria-label': 'Publicar aviso' } });
     let publishNow = v.now;
     form.append(
       el('div', { className: 'dp-who' }, [headAvatar(), el('strong', { text: `¿Qué quieres avisar, ${current().shortName || current().name}?` })]),
       field('Título', 'title', { value: v.title, required: true, error: v.errors?.title }),
       field('Texto', 'body', { control: 'textarea', value: v.body, required: true, error: v.errors?.body }),
+      composerPhotos(media, (next) => { media = next; }),
       el('div', { className: 'dp-composer-row' }, [field('Prioridad', 'priority', { control: 'select', value: v.priority, options: PRIORITIES }), toggleRow('Publicar ahora', 'Si lo apagas se guarda como borrador.', publishNow, (c) => { publishNow = c; })]),
       el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: 'Publicar' })]),
     );
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), priority: d.priority, now: publishNow };
+      const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), priority: d.priority, now: publishNow, media };
       const errors = { ...(!next.title && { title: 'El título es obligatorio.' }), ...(!next.body && { body: 'El texto es obligatorio.' }) };
       if (Object.keys(errors).length) { state.composer = { ...next, errors }; form.replaceWith(composerView()); announce('Revisa los campos marcados.'); wrap.querySelector('.dp-composer [aria-invalid]')?.focus(); return; }
-      upsert('institutionalPosts', { departmentId: dept.id, media: [], views: 0, visibility: { showDepartment: true, showLocation: false }, title: next.title, body: next.body, priority: next.priority, isPublished: next.now, publishedAt: next.now ? new Date().toISOString() : undefined }, 'inst');
+      const saved = upsert('institutionalPosts', { departmentId: dept.id, media, views: 0, visibility: { showDepartment: true, showLocation: false }, title: next.title, body: next.body, priority: next.priority, isPublished: next.now, publishedAt: next.now ? new Date().toISOString() : undefined }, 'inst');
+      if (!saved) { form.prepend(el('p', { className: 'notice', text: 'No hay espacio en el navegador: quita alguna foto', attrs: { role: 'alert' } })); return; }
       state.composer = null; announce(next.now ? 'Aviso publicado.' : 'Borrador guardado.'); paint(); wrap.querySelector('.dp-composer input')?.focus();
     });
     return form;
@@ -72,6 +78,7 @@ export function departamento({ profile, params, setParam, rerender }) {
     return url ? el('img', { className: `avatar avatar-${size} dp-round`, src: url, alt: '' }) : avatar(d.name, d.accentToken || 'mayaBlue', size);
   }
   function postDialog(post, opener) {
+    let media = (post?.media || []).filter((m) => m.type === 'data');
     const show = (v, errors = {}) => {
       const form = el('form', { className: 'stack', attrs: { novalidate: '' } });
       let published = !!v.published;
@@ -79,6 +86,7 @@ export function departamento({ profile, params, setParam, rerender }) {
         el('h2', { text: 'Editar aviso' }),
         field('Título', 'title', { value: v.title, required: true, error: errors.title }),
         field('Texto', 'body', { control: 'textarea', value: v.body, required: true, error: errors.body }),
+        composerPhotos(media, (next) => { media = next; }),
         field('Prioridad', 'priority', { control: 'select', value: v.priority, options: PRIORITIES }),
         toggleRow('Publicado', post.isHiddenByModerator ? 'Oculto por moderación: no se mostrará aunque esté publicado.' : '', published, (c) => { published = c; }),
         el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: 'Guardar' }), el('button', { className: 'button secondary', type: 'button', text: 'Cancelar', onclick: () => form.closest('dialog').close() })]),
@@ -88,7 +96,7 @@ export function departamento({ profile, params, setParam, rerender }) {
         const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), priority: d.priority, published };
         const errs = { ...(!next.title && { title: 'El título es obligatorio.' }), ...(!next.body && { body: 'El texto es obligatorio.' }) };
         if (Object.keys(errs).length) { form.replaceWith(show(next, errs)); announce('Revisa los campos marcados.'); dlg.querySelector('[aria-invalid]')?.focus(); return; }
-        upsert('institutionalPosts', { id: post.id, title: next.title, body: next.body, priority: next.priority, isPublished: next.published, publishedAt: next.published && !post.publishedAt ? new Date().toISOString() : post.publishedAt });
+        upsert('institutionalPosts', { id: post.id, title: next.title, body: next.body, priority: next.priority, media, isPublished: next.published, publishedAt: next.published && !post.publishedAt ? new Date().toISOString() : post.publishedAt });
         dlg.close(); announce('Aviso guardado.'); paint();
       });
       return form;
@@ -106,6 +114,7 @@ export function departamento({ profile, params, setParam, rerender }) {
     return el('li', { className: 'card sp-post' }, [
       el('div', { className: 'dp-who' }, [headAvatar(), el('div', { className: 'dp-grow' }, [el('strong', { text: d.name }), el('div', { className: 'muted', text: [when ? relativeTime(when) : 'Sin publicar', p.priority && p.priority !== 'normal' ? PRIORITY_LABEL[p.priority] : null].filter(Boolean).join(' · ') })]), state_]),
       el('h3', { text: p.title }), el('p', { text: p.body }),
+      postGallery(p.media, p.title),
       el('div', { className: 'toolbar' }, [el('span', { className: 'muted', text: `${p.views || 0} ${p.views === 1 ? 'vista' : 'vistas'}` }), el('div', { className: 'row-actions' }, [edit, del])]),
     ]);
   }
@@ -116,45 +125,52 @@ export function departamento({ profile, params, setParam, rerender }) {
 
   // ---------- Historias ----------
   function storyDialog(story, opener) {
-    let media = story?.media?.find((m) => m.type === 'data') || null;
+    const original = story?.media?.[0] || null;
+    let media = original;
+    const startDuration = nearestDuration(story);
     const show = (v, errors = {}) => {
       const form = el('form', { className: 'stack', attrs: { novalidate: '' } });
       let active = v.active;
+      const state_ = story ? (storyLive(story) ? `Se muestra ${timeLeft(story.expiresAt)} más.` : 'Ya no se muestra (expiró o está inactiva).') : '';
       form.append(
         el('h2', { text: story ? 'Editar historia' : 'Nueva historia' }),
         field('Título', 'title', { value: v.title, required: true, error: errors.title }),
         field('Texto', 'body', { control: 'textarea', value: v.body }),
-        el('div', { className: 'form-grid' }, [field('Inicia', 'startsAt', { type: 'datetime-local', value: v.startsAt, error: errors.startsAt }), field('Expira', 'expiresAt', { type: 'datetime-local', value: v.expiresAt, error: errors.expiresAt })]),
-        pickerHost({ label: 'Imagen (opcional)', value: media, max: 1080 }, (m) => { media = m; }),
-        toggleRow('Activa', 'Solo se ve entre inicio y expiración.', active, (c) => { active = c; }),
+        field('Duración', 'duration', { control: 'select', value: String(v.duration), options: DURATIONS.map((h) => [String(h), `${h} horas`]), hint: story ? `Cuenta desde que se publicó. ${state_}` : 'Cuenta desde que la guardes; después desaparece sola.' }),
+        storyMediaPicker({ value: media, onChange: (m) => { media = m; } }),
+        toggleRow('Activa', 'Si la apagas, se oculta aunque no haya expirado.', active, (c) => { active = c; }),
         el('div', { className: 'form-actions' }, [
           el('button', { className: 'button', type: 'submit', text: 'Guardar' }),
           el('button', { className: 'button secondary', type: 'button', text: 'Cancelar', onclick: () => dlg.close() }),
-          story ? el('button', { className: 'button danger', type: 'button', text: 'Eliminar', onclick: () => { if (confirmDelete(`la historia "${story.title}"`)) { remove('stories', story.id); dlg.close(); announce('Historia eliminada.'); paint(); } } }) : null,
+          story ? el('button', { className: 'button danger', type: 'button', text: 'Eliminar', onclick: () => { if (confirmDelete(`la historia "${story.title}"`)) { if (original?.type === 'video') deleteVideo(original.id); remove('stories', story.id); dlg.close(); announce('Historia eliminada.'); paint(); } } }) : null,
         ]),
       );
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), startsAt: d.startsAt, expiresAt: d.expiresAt, active };
-        const errs = { ...(!next.title && { title: 'El título es obligatorio.' }), ...(next.startsAt && next.expiresAt && next.expiresAt <= next.startsAt && { expiresAt: 'Debe ser posterior al inicio.' }) };
-        if (Object.keys(errs).length) { form.replaceWith(show(next, errs)); announce('Revisa los campos marcados.'); dlg.querySelector('[aria-invalid]')?.focus(); return; }
-        const base = { title: next.title, body: next.body, startsAt: toIso(next.startsAt), expiresAt: toIso(next.expiresAt), isActive: next.active, media: media ? [{ type: 'data', url: media.url }] : [] };
-        if (story) upsert('stories', { id: story.id, ...base }); else upsert('stories', { departmentId: dept.id, views: 0, ...base }, 'story');
+        const d = formData(form); const next = { title: d.title.trim(), body: d.body.trim(), duration: Number(d.duration), active };
+        if (!next.title) { form.replaceWith(show(next, { title: 'El título es obligatorio.' })); announce('Revisa los campos marcados.'); dlg.querySelector('[aria-invalid]')?.focus(); return; }
+        const startsAt = story?.startsAt || new Date().toISOString();
+        const keepWindow = story && next.duration === startDuration && story.expiresAt;
+        const base = { title: next.title, body: next.body, isActive: next.active, media: media ? [media] : [], startsAt, expiresAt: keepWindow ? story.expiresAt : new Date(Date.parse(startsAt) + next.duration * HOUR).toISOString() };
+        const saved = story ? upsert('stories', { id: story.id, ...base }) : upsert('stories', { departmentId: dept.id, views: 0, ...base }, 'story');
+        if (!saved) { form.prepend(el('p', { className: 'notice', text: 'No hay espacio en el navegador: usa una foto más pequeña.', attrs: { role: 'alert' } })); return; }
+        if (original?.type === 'video' && original.id !== media?.id) deleteVideo(original.id);
         dlg.close(); announce('Historia guardada.'); paint();
       });
       return form;
     };
-    const dlg = dialog(story ? 'Editar historia' : 'Nueva historia', [show({ title: story?.title || '', body: story?.body || '', startsAt: toLocal(story?.startsAt), expiresAt: toLocal(story?.expiresAt), active: story ? story.isActive : true })], opener);
+    // ponytail: si se cancela el diálogo tras subir un video nuevo, queda huérfano en IndexedDB; barrerlo al abrir si molesta.
+    const dlg = dialog(story ? 'Editar historia' : 'Nueva historia', [show({ title: story?.title || '', body: story?.body || '', duration: startDuration, active: story ? story.isActive : true })], opener);
   }
   function historiasView() {
     const stories = list('stories', (s) => s.departmentId === dept.id);
     const add = el('button', { className: 'dp-story', type: 'button', attrs: { 'aria-label': 'Nueva historia' } }, [el('span', { className: 'dp-ring dp-add', text: '+' }), el('span', { className: 'dp-story-label', text: 'Nueva' })]);
     add.addEventListener('click', () => storyDialog(null, add));
     const circles = stories.map((s) => {
-      const live = storyLive(s); const url = imageUrl(s.media?.find((m) => m.type === 'data'));
+      const live = storyLive(s); const url = storyThumb(s.media?.[0]);
       const b = el('button', { className: 'dp-story', type: 'button', attrs: { 'aria-label': `Editar historia ${s.title} (${live ? 'activa' : 'expirada o inactiva'})` } }, [
         el('span', { className: `dp-ring ${live ? 'live' : 'off'}` }, [url ? el('img', { className: 'dp-round', src: url, alt: '' }) : avatar(s.title, current().accentToken || 'mayaBlue', 'lg')]),
-        el('span', { className: 'dp-story-label', text: s.title }), badge(live ? 'Activa' : 'Expirada', live ? '' : 'urgent'),
+        el('span', { className: 'dp-story-label', text: s.title }), badge(live ? `Activa · ${timeLeft(s.expiresAt)}` : 'Expirada', live ? '' : 'urgent'),
       ]);
       b.addEventListener('click', () => storyDialog(s, b)); return b;
     });
@@ -168,7 +184,7 @@ export function departamento({ profile, params, setParam, rerender }) {
     const url = imageUrl(draft.cover); const hex = accentHex(draft.accentToken);
     const ph = imageUrl(draft.avatar);
     return el('div', { className: 'card dp-preview', attrs: { 'aria-label': 'Vista previa en la demo pública', role: 'group' } }, [
-      el('div', { className: 'dp-prev-cover', style: url ? `background-image:url(${url})` : `background:${hex}` }),
+      el('div', { className: 'dp-prev-cover', style: url ? `background-image:url("${url}")` : `background:${hex}` }),
       el('div', { className: 'dp-prev-body' }, [ph ? el('img', { className: 'avatar avatar-lg dp-round', src: ph, alt: '' }) : avatar(draft.name || '?', draft.accentToken, 'lg'), el('strong', { text: draft.name || 'Nombre del departamento' }), el('p', { className: 'muted', text: draft.description || 'Sin descripción.' })]),
     ]);
   }

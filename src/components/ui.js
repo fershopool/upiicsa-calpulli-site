@@ -1,4 +1,5 @@
 import { el } from '../utils/dom.js';
+import { videoUrl } from '../services/media-db.js';
 import mediaMap from '../data/media-map.json' with { type: 'json' };
 
 const PROFILE_ROUTES = { department: 'departamento', entrepreneur: 'emprendimiento', tutor: 'tutor' };
@@ -49,6 +50,12 @@ export function mediaTile(key, label, className = '') {
 
 // Imagen subida en Gestión ({type:'data'}) o clave del seed (mosaico / archivo mapeado).
 export function mediaFrom(media, label, className = '') {
+  if (media?.type === 'video') {
+    const video = el('video', { poster: media.poster || '', muted: true, loop: true, playsInline: true, preload: 'metadata', attrs: { 'aria-label': label, muted: '', playsinline: '' } });
+    if (!prefersReducedMotion()) video.autoplay = true; else video.controls = true;
+    videoUrl(media.id).then((url) => { if (url) { video.src = url; if (video.autoplay) video.play().catch(() => {}); } });
+    return el('div', { className: `media has-image ${className}`.trim() }, [video]);
+  }
   if (media?.type !== 'data') return mediaTile(media?.key || label, label, className);
   const [width, height] = IMAGE_SIZE[className.split(' ').find((name) => IMAGE_SIZE[name])] || [800, 600];
   return el('div', { className: `media has-image ${className}`.trim() }, [el('img', { src: media.url, alt: label, loading: 'lazy', width, height })]);

@@ -1,6 +1,6 @@
 import { el } from '../utils/dom.js';
-import { activeStories, isSeen, markSeen } from './store.js';
-import { avatar, mediaFrom, plural, prefersReducedMotion, relativeTime } from './ui.js';
+import { activeStories, isSeen, markSeen } from '../services/public-store.js';
+import { avatar, mediaFrom, plural, prefersReducedMotion, relativeTime } from '../components/ui.js';
 
 const STORY_MS = 5000;
 
@@ -26,7 +26,10 @@ function storyMedia(story, department) {
   );
 }
 
+const storyMs = (story) => { const m = story.media?.[0]; return m?.type === 'video' && m.duration ? Math.min(30000, Math.max(STORY_MS, m.duration * 1000)) : STORY_MS; };
+
 function preloadStory(story, department) {
+  if (story.media?.[0]?.type === 'video') return;
   const media = storyMedia(story, department);
   const image = media.querySelector('img');
   if (image) {
@@ -114,6 +117,7 @@ export function openStories(state, departmentId, onClose = () => {}) {
     paused = prefersReducedMotion() || value;
     if (paused) clearTimer();
     dialog.classList.toggle('hx-is-paused', paused);
+    const clip = stage.querySelector('video'); if (clip && !clip.controls) { if (paused) clip.pause(); else clip.play().catch(() => {}); }
     pause.textContent = paused ? 'Reanudar' : 'Pausar';
     pause.setAttribute('aria-label', paused ? 'Reanudar historia' : 'Pausar historia');
   }
@@ -144,7 +148,7 @@ export function openStories(state, departmentId, onClose = () => {}) {
 
   function schedule() {
     if (paused) return;
-    timer = window.setTimeout(() => move(1), STORY_MS);
+    timer = window.setTimeout(() => move(1), storyMs(currentStory()));
   }
 
   function render() {
@@ -164,7 +168,7 @@ export function openStories(state, departmentId, onClose = () => {}) {
       if (index < storyIndex) segment.classList.add('hx-is-done');
       if (index === storyIndex) {
         segment.classList.add('hx-is-current');
-        fill.style.setProperty('--hx-duration', `${STORY_MS}ms`);
+        fill.style.setProperty('--hx-duration', `${storyMs(item)}ms`);
       }
       segment.append(fill);
       return segment;

@@ -1,7 +1,7 @@
 import { el, $, announce } from '../utils/dom.js';
 import { getPreferences, savePreferences } from '../services/local-storage.service.js';
-import { GESTION_STORAGE_KEY, loadState } from './store.js';
-import { icon } from './ui.js';
+import { GESTION_STORAGE_KEY, loadState } from '../services/public-store.js';
+import { icon } from '../components/ui.js';
 import { inicio } from './inicio.js';
 import { feria } from './feria.js';
 import { marketplace } from './marketplace.js';

@@ -1,5 +1,5 @@
 import { el } from '../utils/dom.js';
-import { avatar, badge, fullDate, linkButton, openDialog, plural, tokenFor } from './ui.js';
+import { avatar, badge, fullDate, linkButton, openDialog, plural, tokenFor } from '../components/ui.js';
 
 const UNITS = [['días', 86400000], ['horas', 3600000], ['min', 60000], ['seg', 1000]];
 

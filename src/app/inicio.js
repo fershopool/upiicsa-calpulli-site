@@ -1,6 +1,7 @@
 import { el } from '../utils/dom.js';
-import { activeDepartments, activeStories, feed, isFavorite, toggleFavorite } from './store.js';
-import { PRIORITY_LABEL, avatar, badge, chip, emptyState, mediaFrom, plural, profileHref, relativeTime } from './ui.js';
+import { activeDepartments, activeStories, feed, isFavorite, toggleFavorite } from '../services/public-store.js';
+import { postGallery } from '../components/gallery.js';
+import { PRIORITY_LABEL, avatar, badge, chip, emptyState, mediaFrom, plural, profileHref, relativeTime } from '../components/ui.js';
 import { createStoriesRail, openStories } from './historias.js';
 
 export function postCard(state, post, { onToggle } = {}) {
@@ -12,7 +13,7 @@ export function postCard(state, post, { onToggle } = {}) {
   paint();
   const departmentLink = department && el('a', { className: 'post-profile-link', href: profileHref('department', department.id), attrs: { 'aria-label': `Ver perfil de ${department.name}` } }, [avatar(department.name, department.accentToken, 'md', department.avatar), el('strong', { text: department.name })]);
   const meta = el('div', { className: 'post-meta' }, [visibility.showDepartment && department ? departmentLink : el('strong', { text: 'Aviso institucional' }), visibility.showDate ? el('span', { className: 'muted', text: relativeTime(post.publishedAt) }) : null]);
-  return el('article', { className: `post post-${post.priority}` }, [el('header', { className: 'post-head' }, [meta, PRIORITY_LABEL[post.priority] ? badge(PRIORITY_LABEL[post.priority], post.priority) : null]), el('h3', { text: post.title }), el('p', { text: post.body }), visibility.showMedia && post.media?.length ? mediaFrom(post.media[0], post.title, 'media-wide') : null, visibility.showLocation && post.location ? el('p', { className: 'post-location', text: `Ubicación: ${post.location}` }) : null, post.document ? el('p', { className: 'muted', text: 'Incluye un documento de ejemplo.' }) : null, el('footer', { className: 'post-foot' }, [visibility.showViews ? el('span', { className: 'muted', text: plural(post.views || 0, 'visualización', 'visualizaciones') }) : el('span'), save])]);
+  return el('article', { className: `post post-${post.priority}` }, [el('header', { className: 'post-head' }, [meta, PRIORITY_LABEL[post.priority] ? badge(PRIORITY_LABEL[post.priority], post.priority) : null]), el('h3', { text: post.title }), el('p', { text: post.body }), visibility.showMedia && post.media?.length ? postGallery(post.media, post.title) || mediaFrom(post.media[0], post.title, 'media-wide') : null, visibility.showLocation && post.location ? el('p', { className: 'post-location', text: `Ubicación: ${post.location}` }) : null, post.document ? el('p', { className: 'muted', text: 'Incluye un documento de ejemplo.' }) : null, el('footer', { className: 'post-foot' }, [visibility.showViews ? el('span', { className: 'muted', text: plural(post.views || 0, 'visualización', 'visualizaciones') }) : el('span'), save])]);
 }
 
 function greeting() { const hour = new Date().getHours(); return hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches'; }

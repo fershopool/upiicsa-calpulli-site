@@ -1,16 +1,1 @@
-{
-  "name": "UPIICSA Calpulli",
-  "short_name": "Calpulli",
-  "lang": "es-MX",
-  "start_url": "../",
-  "scope": "../",
-  "display": "standalone",
-  "background_color": "#F7F0DF",
-  "theme_color": "#006B4F",
-  "icons": [{
-    "src": "./calpulli-icon.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "any"
-  }]
-}
+{"name":"UPIICSA Calpulli","short_name":"Calpulli","lang":"es-MX","start_url":"/","display":"standalone","background_color":"#F7F0DF","theme_color":"#006B4F","icons":[{"src":"/favicon.svg","sizes":"any","type":"image/svg+xml"}]}

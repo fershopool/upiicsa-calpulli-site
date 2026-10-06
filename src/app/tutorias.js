@@ -1,6 +1,6 @@
 import { el, announce } from '../utils/dom.js';
-import { tutors } from './store.js';
-import { MODE_LABEL, avatar, badge, chip, contactList, emptyState, normalize, plural, profileHref, tokenFor } from './ui.js';
+import { tutors } from '../services/public-store.js';
+import { MODE_LABEL, avatar, badge, chip, contactList, emptyState, normalize, plural, profileHref, tokenFor } from '../components/ui.js';
 
 const NOTICE = 'El contacto y acuerdo de tutoría se realiza fuera de UPIICSA Calpulli.';
 const TOKEN_PAIRS = { mayaBlue: ['#2D78B8', '#149D98'], turquoise: ['#149D98', '#13745E'], jade: ['#13745E', '#2D78B8'], mexicanPink: ['#C83F83', '#A93647'], cempasuchil: ['#DA8A0B', '#C83F83'], cochineal: ['#A93647', '#DA8A0B'] };

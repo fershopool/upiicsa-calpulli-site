@@ -1,6 +1,6 @@
 import { el } from '../utils/dom.js';
-import { products } from './store.js';
-import { avatar, chip, contactList, emptyState, linkButton, mediaFrom, normalize, openDialog, plural, tokenFor } from './ui.js';
+import { products } from '../services/public-store.js';
+import { avatar, chip, contactList, emptyState, linkButton, mediaFrom, normalize, openDialog, plural, tokenFor } from '../components/ui.js';
 
 function productDialog(state, product) {
   const owner = state.byId.entrepreneurs[product.entrepreneurId];

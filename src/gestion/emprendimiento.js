@@ -1,6 +1,6 @@
 import { el, announce } from '../utils/dom.js';
-import { badge, emptyState, openDialog, avatar, tokenFor, CONTACT_LABEL, MODE_LABEL, fullDate } from '../app/ui.js';
-import { imagePicker, toggleRow, settingsLayout, imageUrl, profileShell } from './social.js';
+import { badge, emptyState, openDialog, avatar, tokenFor, CONTACT_LABEL, MODE_LABEL, fullDate } from '../components/ui.js';
+import { imagePicker, toggleRow, settingsLayout, imageUrl, profileShell, postImage, openLightbox, readImage } from './social.js';
 import { field, formData, checkbox, confirmDelete } from './forms.js';
 import { list, get, upsert, remove } from './store.js';
 
@@ -174,15 +174,40 @@ export const activeToggle = (api, d, noun, admin) => admin ? api.toggle(`${noun}
 
 const statusBadge = (p) => (p.isHiddenByModerator ? badge('Oculto por moderación', 'status-off') : p.isPublished ? badge('Publicado', 'status-ok') : badge('Borrador', 'status-off'));
 
+const imageButton = (url, alt, style = '') => {
+  const button = el('button', { className: 'ep-image-button', type: 'button', style: 'display:block;width:100%;padding:0;border:0;background:none;color:inherit;cursor:zoom-in;', attrs: { 'aria-label': `Ampliar ${alt}` } });
+  button.append(el('img', { src: url, alt, loading: 'lazy', decoding: 'async', style }));
+  button.addEventListener('click', () => openLightbox({ url, alt }));
+  return button;
+};
+
+const composerPhoto = (value, onChange) => {
+  const host = el('div', { className: 'composer-photo' });
+  const input = el('input', { type: 'file', accept: 'image/*', className: 'sr-only', id: `post-photo-${Math.random().toString(36).slice(2, 7)}` });
+  const status = el('span', { className: 'muted', attrs: { 'aria-live': 'polite' } });
+  const draw = (media) => {
+    const preview = media ? el('img', { src: media.url, alt: 'Vista previa de la publicación', loading: 'lazy', decoding: 'async' }) : null;
+    const choose = el('label', { className: 'button secondary', attrs: { for: input.id }, text: media ? 'Cambiar foto' : 'Foto (opcional)' });
+    const removePhoto = media ? btn('Quitar', () => { input.value = ''; onChange(null); draw(null); }, 'secondary') : null;
+    host.replaceChildren(...[preview, el('div', { className: 'row-actions' }, [choose, removePhoto]), status, input].filter(Boolean));
+  };
+  input.addEventListener('change', async () => {
+    try { const url = await readImage(input.files[0], 2048); onChange({ type: 'data', url }); draw({ type: 'data', url }); }
+    catch (error) { status.textContent = error.message; }
+  });
+  draw(value);
+  return host;
+};
+
 // Compositor (nuevo o edición). onDone se llama tras guardar; onCancel opcional.
 function composer(ctx, id, item, { onDone, onCancel } = {}) {
-  let media = media1(item) ? [media1(item)] : (item?.media ?? []);
+  let media = media1(item);
   const draw = (v, errs = {}) => {
     let pub = !!v.isPublished;
     const form = el('form', { className: `ep-composer${item ? '' : ' card'}`, attrs: { novalidate: '', 'aria-label': item ? 'Editar publicación' : 'Nueva publicación' } }, [
-      field('Título', 'title', { required: true, value: v.title, error: errs.title }),
-      field('Texto', 'body', { control: 'textarea', required: true, value: v.body, error: errs.body }),
-      mediaField('Imagen (opcional)', () => media1({ media }), (m) => { media = m ? [m] : []; }, 900),
+      field('Título (opcional)', 'title', { value: v.title || '', error: errs.title }),
+      field('Texto (opcional)', 'body', { control: 'textarea', value: v.body || '', error: errs.body }),
+      composerPhoto(media, (m) => { media = m; }),
       toggleRow('Publicar', 'Si está apagado se guarda como borrador.', pub, (c) => { pub = c; }),
       item?.isHiddenByModerator ? el('p', { className: 'notice', text: 'Un moderador ocultó esta publicación; no puedes revertirlo.' }) : null,
       el('div', { className: 'form-actions' }, [el('button', { className: 'button', type: 'submit', text: item ? 'Guardar publicación' : 'Publicar' }), onCancel && btn('Cancelar', onCancel)]),
@@ -190,10 +215,10 @@ function composer(ctx, id, item, { onDone, onCancel } = {}) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const fd = formData(form); const errs2 = {};
-      if (!fd.title?.trim()) errs2.title = 'El título es obligatorio.';
-      if (!fd.body?.trim()) errs2.body = 'El texto es obligatorio.';
+      if (!fd.title?.trim() && !fd.body?.trim() && !media?.url) errs2.body = 'Escribe un texto o agrega una foto.';
       if (Object.keys(errs2).length) { const fresh = draw({ ...fd, isPublished: pub }, errs2); form.replaceWith(fresh); fresh.querySelector('[aria-invalid]')?.focus(); announce('Revisa los campos marcados'); return; }
-      upsert('entrepreneurPosts', { ...(item && { id: item.id }), entrepreneurId: id, title: fd.title.trim(), body: fd.body.trim(), isPublished: pub, publishedAt: pub ? item?.publishedAt || new Date().toISOString() : item?.publishedAt || null, isHiddenByModerator: item?.isHiddenByModerator ?? false, media }, 'entrepreneur-post');
+      const saved = upsert('entrepreneurPosts', { ...(item && { id: item.id }), entrepreneurId: id, title: fd.title?.trim() || '', body: fd.body?.trim() || '', isPublished: pub, publishedAt: pub ? item?.publishedAt || new Date().toISOString() : item?.publishedAt || null, isHiddenByModerator: item?.isHiddenByModerator ?? false, media: media ? [{ type: 'data', url: media.url }] : [] }, 'entrepreneur-post');
+      if (!saved) { form.prepend(el('p', { className: 'notice', text: 'No hay espacio en el navegador: usa una foto más pequeña', attrs: { role: 'alert' } })); return; }
       announce('Publicación guardada'); onDone();
     });
     return form;
@@ -205,13 +230,13 @@ function postsTab(ctx, id) {
   const posts = list('entrepreneurPosts', (p) => p.entrepreneurId === id).sort((a, b) => String(b.publishedAt || b.updatedAt).localeCompare(String(a.publishedAt || a.updatedAt)));
   const edit = (p) => { let dialog; dialog = openDialog('Editar publicación', [el('h2', { text: 'Editar publicación' }), composer(ctx, id, p, { onCancel: () => dialog.close(), onDone: () => { dialog.close(); ctx.rerender(); } })], { onClose: restoreFocus }); };
   const cards = posts.map((p) => el('article', { className: 'card sp-post ep-post' }, [
-    imageUrl(media1(p)) ? el('img', { className: 'ep-post-img', src: imageUrl(media1(p)), alt: `Imagen de la publicación «${p.title}»` }) : null,
-    el('div', { className: 'ep-card-head' }, [el('h3', { text: p.title }), statusBadge(p)]),
+    imageUrl(media1(p)) ? postImage({ url: imageUrl(media1(p)), alt: `Imagen de la publicación «${p.title || 'sin título'}»` }) : null,
+    el('div', { className: 'ep-card-head' }, [p.title ? el('h3', { text: p.title }) : null, statusBadge(p)]),
     p.publishedAt && p.isPublished ? el('p', { className: 'muted', text: fullDate(p.publishedAt) }) : null,
-    el('p', { text: p.body }),
+    p.body ? el('p', { text: p.body }) : null,
     el('div', { className: 'row-actions' }, [btn('Editar', () => edit(p)), btn('Eliminar', () => { if (confirmDelete(`la publicación «${p.title}»`)) { remove('entrepreneurPosts', p.id); announce('Publicación eliminada'); ctx.rerender(); } }, 'danger small')]),
   ]));
-  return el('div', { className: 'sp-feed' }, [el('h2', { text: 'Nueva publicación' }), composer(ctx, id, null, { onDone: ctx.rerender }), el('h2', { text: 'Tus publicaciones' }), cards.length ? cards : el('p', { className: 'muted', text: 'Aún no hay publicaciones. Escribe la primera arriba.' })]);
+  return el('div', { className: 'sp-feed', style: 'width:100%;margin-inline:auto;' }, [el('h2', { text: 'Nueva publicación' }), composer(ctx, id, null, { onDone: ctx.rerender }), el('h2', { text: 'Tus publicaciones' }), cards.length ? cards : el('p', { className: 'muted', text: 'Aún no hay publicaciones. Escribe la primera arriba.' })]);
 }
 
 function productsTab(ctx, id) {
@@ -225,7 +250,7 @@ function productsTab(ctx, id) {
   }; };
   const rows = list('products', (p) => p.entrepreneurId === id);
   const cards = rows.map((p) => el('li', { className: `card ep-product${p.isActive ? '' : ' is-off'}` }, [
-    imageUrl(media1(p)) ? el('img', { src: imageUrl(media1(p)), alt: p.name }) : el('div', { className: 'ep-ph', attrs: { 'aria-hidden': 'true' }, text: p.name[0] }),
+    imageUrl(media1(p)) ? imageButton(imageUrl(media1(p)), p.name, 'width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--line);') : el('div', { className: 'ep-ph', attrs: { 'aria-hidden': 'true' }, text: p.name[0] }),
     el('div', { className: 'ep-product-body' }, [el('strong', { text: p.name }), p.priceLabel ? el('span', { className: 'ep-price', text: p.priceLabel }) : null, badge(p.isActive ? 'Activo' : 'Inactivo', p.isActive ? 'status-ok' : 'status-off')]),
     el('div', { className: 'row-actions' }, [btn('Editar', () => editDialog(ctx, 'producto', p, editor(p))), btn('Eliminar', () => { if (confirmDelete(`el producto «${p.name}»`)) { remove('products', p.id); announce('Producto eliminado'); ctx.rerender(); } }, 'danger small')]),
   ]));
@@ -256,11 +281,11 @@ function settingsTab(ctx, emp, admin) {
       return errs;
     },
     where: { displayName: 'perfil', category: 'perfil', description: 'perfil', contacts: 'contacto' },
-    toRecord: (d) => ({ id: emp.id, displayName: d.displayName.trim(), category: d.category, description: d.description.trim(), avatar: d.avatar || emp.avatar, cover: d.cover, gallery: d.gallery, externalContacts: validateContacts(d.contacts).rows, ...(admin && { isActive: d.isActive }) }),
+      toRecord: (d) => ({ id: emp.id, displayName: d.displayName.trim(), category: d.category, description: d.description.trim(), avatar: d.avatar, cover: d.cover, gallery: d.gallery, externalContacts: validateContacts(d.contacts).rows, ...(admin && { isActive: d.isActive }) }),
     preview: (d) => previewCard(d, emp.id, d.category),
     sections: (d, api) => [
       ['perfil', 'Editar perfil', () => [el('h2', { text: 'Editar perfil' }), api.pick('Foto de perfil', 'avatar', 'round', 256), api.pick('Portada', 'cover', 'wide', 1200), api.field('Nombre', 'displayName', { required: true }), api.field('Categoría', 'category', { control: 'select', required: true, options: catOptions('Elige…') }), api.field('Descripción', 'description', { control: 'textarea', maxlength: 300, rows: 4 })]],
-      ['galeria', 'Galería', () => [el('h2', { text: `Galería (${d.gallery.length} de 6)` }), d.gallery.length ? el('ul', { className: 'ep-gallery' }, d.gallery.map((g, i) => el('li', {}, [el('img', { src: g.url, alt: `Foto ${i + 1} de la galería` }), btn('Quitar', () => { d.gallery.splice(i, 1); announce('Foto quitada'); api.reload(); })]))) : el('p', { className: 'muted', text: 'Aún no hay fotos.' }), d.gallery.length < 6 ? imagePicker({ label: 'Agregar foto', value: null, max: 800, onChange: (m) => { if (m) { d.gallery.push(m); api.reload(); } } }) : el('p', { className: 'muted', text: 'Llegaste al máximo de 6 fotos.' })]],
+      ['galeria', 'Galería', () => [el('h2', { text: `Galería (${d.gallery.length} de 6)` }), d.gallery.length ? el('ul', { className: 'ep-gallery' }, d.gallery.map((g, i) => el('li', {}, [imageButton(g.url, `Foto ${i + 1} de la galería`), btn('Quitar', () => { d.gallery.splice(i, 1); announce('Foto quitada'); api.reload(); }, 'secondary')]))) : el('p', { className: 'muted', text: 'Aún no hay fotos.' }), d.gallery.length < 6 ? imagePicker({ label: 'Agregar foto', value: null, max: 800, onChange: (m) => { if (m) { d.gallery.push(m); api.reload(); } } }) : el('p', { className: 'muted', text: 'Llegaste al máximo de 6 fotos.' })]],
       ['contacto', 'Contacto', () => [el('h2', { text: 'Contacto' }), api.contacts()]],
       ['cuenta', 'Cuenta', () => [el('h2', { text: 'Cuenta' }), activeToggle(api, d, 'Emprendimiento', admin)]],
     ],
