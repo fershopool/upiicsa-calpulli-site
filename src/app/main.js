@@ -8,12 +8,15 @@ import { marketplace } from './marketplace.js';
 import { tutorias, perfilTutor } from './tutorias.js';
 import { favoritos } from './favoritos.js';
 import { perfilEmprendimiento } from './emprendimiento.js';
+import { perfilDepartamento } from './departamento.js';
+import { comunidad } from './comunidad.js';
 
 const TABS = [
   ['/', 'Inicio', 'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z'],
   ['/feria', 'Feria', 'M4 5h16v16H4z M4 10h16 M8 3v4 M16 3v4'],
   ['/marketplace', 'Marketplace', 'M5 8h14l-1 13H6z M9 8V6a3 3 0 0 1 6 0v2'],
   ['/tutorias', 'Tutorías', 'M2 9l10-5 10 5-10 5z M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5'],
+  ['/comunidad', 'Comunidad', 'M16 11a3 3 0 1 0-6 0 3 3 0 0 0 6 0z M4 20c0-3 3-5 8-5s8 2 8 5 M5 9a2.5 2.5 0 1 0 0-5 M19 9a2.5 2.5 0 1 0 0-5'],
   ['/favoritos', 'Favoritos', 'M6 3h12v18l-6-4-6 4z'],
 ];
 const ROUTES = {
@@ -21,6 +24,8 @@ const ROUTES = {
   feria: { view: feria, tab: '/feria', title: 'Feria' },
   marketplace: { view: marketplace, tab: '/marketplace', title: 'Marketplace' },
   tutorias: { view: tutorias, tab: '/tutorias', title: 'Tutorías' },
+  comunidad: { view: comunidad, tab: '/comunidad', title: 'Comunidad' },
+  departamento: { view: perfilDepartamento, tab: '/comunidad', title: 'Departamento' },
   favoritos: { view: favoritos, tab: '/favoritos', title: 'Favoritos' },
   emprendimiento: { view: perfilEmprendimiento, tab: '/marketplace', title: 'Emprendimiento' },
   tutor: { view: perfilTutor, tab: '/tutorias', title: 'Tutor' },
@@ -73,6 +78,9 @@ function render({ focus = true } = {}) {
   const route = ROUTES[name];
   const main = $('#contenido-principal');
   document.querySelectorAll('.tabs a').forEach((a) => (a.dataset.tab === route?.tab ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
+  const tabs = document.querySelector('.tabs');
+  const activeTab = TABS.findIndex(([path]) => path === route?.tab);
+  tabs?.style.setProperty('--active-index', String(Math.max(0, activeTab)));
   if (!route) {
     main.replaceChildren(el('div', { className: 'empty-state' }, [el('h1', { text: 'Esta sección no existe' }), el('a', { className: 'button', href: '#/', text: 'Volver a Avisos' })]));
     document.title = 'No encontrado · UPIICSA Calpulli';
@@ -80,6 +88,12 @@ function render({ focus = true } = {}) {
     main.replaceChildren(route.view({ state, id, params, setParam, rerender: () => render({ focus: false }), onLeave: (hook) => leaveHooks.push(hook) }));
     document.title = `${route.title} · UPIICSA Calpulli Demo`;
   }
+  main.classList.remove('page-enter');
+  void main.offsetWidth;
+  main.classList.add('page-enter');
+  main.querySelectorAll('.feed, .grid-cards').forEach((group) => {
+    [...group.children].slice(0, 12).forEach((child, index) => child.style.setProperty('--i', String(index)));
+  });
   if (focus) { window.scrollTo(0, 0); main.focus({ preventScroll: true }); announce(document.title); }
 }
 

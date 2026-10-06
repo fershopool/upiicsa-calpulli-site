@@ -1,6 +1,17 @@
 import { el } from '../utils/dom.js';
 import mediaMap from '../data/media-map.json' with { type: 'json' };
 
+const PROFILE_ROUTES = { department: 'departamento', entrepreneur: 'emprendimiento', tutor: 'tutor' };
+export function profileHref(kind, id) {
+  const route = PROFILE_ROUTES[kind];
+  return route && id != null ? `#/${route}/${encodeURIComponent(id)}` : '#/';
+}
+
+export function reveal(node) {
+  node?.classList.add('reveal');
+  return node;
+}
+
 // Tokens de la paleta cultural del MVP móvil: [fondo, texto] con contraste AA.
 const TOKENS = { mayaBlue: ['#2D78B8', '#FFFFFF'], turquoise: ['#149D98', '#06201C'], jade: ['#13745E', '#FFFFFF'], mexicanPink: ['#C83F83', '#FFFFFF'], cempasuchil: ['#DA8A0B', '#1F1400'], cochineal: ['#A93647', '#FFFFFF'] };
 const TOKEN_KEYS = Object.keys(TOKENS);
@@ -76,12 +87,13 @@ export function icon(path) {
 
 // <dialog> nativo: foco atrapado, Esc y ::backdrop sin código extra.
 export function openDialog(title, content, { onClose, className = '' } = {}) {
+  const opener = document.activeElement;
   const close = el('button', { className: 'dialog-close', type: 'button', text: '×', attrs: { 'aria-label': 'Cerrar' } });
-  const dialog = el('dialog', { className: `dialog ${className}`.trim(), attrs: { 'aria-label': title } }, [close, ...[content].flat()]);
+  const dialog = el('dialog', { className: `dialog ${className}`.trim(), attrs: { 'aria-label': title, 'aria-modal': 'true' } }, [close, ...[content].flat()]);
   close.addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
-  dialog.addEventListener('close', () => { dialog.remove(); onClose?.(); });
-  document.body.append(dialog); dialog.showModal();
+  dialog.addEventListener('close', () => { dialog.remove(); onClose?.(); if (opener?.isConnected) opener.focus(); });
+  document.body.append(dialog); dialog.showModal(); close.focus();
   return dialog;
 }
 export const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
