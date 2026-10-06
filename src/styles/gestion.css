@@ -1,0 +1,19 @@
+/* Gestión: complementa webapp.css */
+.login-wrap{display:grid;place-items:center;min-height:50vh}.login-card{display:grid;gap:1rem;width:min(28rem,100%);padding:1.5rem}
+.who{margin-left:auto;font-size:.8rem}.app-bar .who~*{flex:none}
+.field-error{color:var(--cochineal,#A93647);font-size:.85rem;font-weight:600}
+.field input[aria-invalid],.field select[aria-invalid],.field textarea[aria-invalid]{border-color:var(--cochineal,#A93647)}
+.check{display:flex;align-items:center;gap:.5rem;min-height:44px}
+.form-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}.form-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.table-wrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;font-size:.9rem}.table th,.table td{padding:.6rem .5rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.row-actions{display:flex;flex-wrap:wrap;gap:.35rem}.button.small{min-height:36px;padding:.25rem .7rem;font-size:.85rem}.button.danger{background:#A93647;color:#fff;border-color:#A93647}
+.toolbar{display:flex;flex-wrap:wrap;gap:.75rem;align-items:end;justify-content:space-between}
+.status-ok{color:var(--jade)}.status-off{color:var(--stone)}
+
+/* feria */
+.stand-admin-grid{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:.75rem;grid-template-columns:repeat(auto-fill,minmax(12rem,1fr))}
+.stack{display:grid;gap:1rem}
+/* Emprendimiento / tutor */
+.stack{display:grid;gap:1.5rem}.g-list{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}.g-list>.card{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;padding:.9rem}
+fieldset.field,.contacts-editor{border:1px solid var(--line);border-radius:.5rem;padding:.75rem}.contact-row{display:grid;gap:.4rem;grid-template-columns:8rem 1fr 1fr auto;align-items:start;margin-bottom:.5rem}.contact-row .field-error{grid-column:1/-1}
+@media(max-width:40rem){.contact-row{grid-template-columns:1fr}}
