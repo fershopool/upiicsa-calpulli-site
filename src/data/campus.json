@@ -1,0 +1,5658 @@
+{
+  "buildings": [
+    {
+      "id": "basicas",
+      "name": "Edificio de Formación Básica",
+      "shortName": "Formación Básica",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Academia de Humanidades y Ciencias Sociales",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-pb-academia-de-humanidades-y-ciencias-sociales"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-pb-022"
+            },
+            {
+              "name": "Sala de Juntas",
+              "kind": "salon",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-pb-sala-de-juntas"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-pb-jefatura"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-pb-intendencia"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": null,
+              "band": null,
+              "note": "El rótulo aparece en los núcleos visibles.",
+              "id": "basicas-pb-sanitarios-mujeres"
+            },
+            {
+              "name": "Jefatura de Formación Básica",
+              "kind": "oficina",
+              "wing": "centro",
+              "band": null,
+              "note": "Hay dos espacios con este mismo rótulo en la planta.",
+              "id": "basicas-pb-jefatura-de-formacion-basica"
+            },
+            {
+              "name": "Coordinación de Electivas",
+              "kind": "oficina",
+              "wing": "centro",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-pb-coordinacion-de-electivas"
+            },
+            {
+              "name": "Prefectura",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-pb-prefectura"
+            },
+            {
+              "name": "01",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Se conservan los ceros iniciales del rótulo 01.",
+              "id": "basicas-pb-01"
+            },
+            {
+              "name": "05",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Se conservan los ceros iniciales del rótulo 01.",
+              "id": "basicas-pb-05"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Academia de Matemáticas",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p1-academia-de-matematicas"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p1-022"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p1-jefatura"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p1-intendencia"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": null,
+              "band": null,
+              "note": "El rótulo aparece en los núcleos visibles.",
+              "id": "basicas-p1-sanitarios-hombres"
+            },
+            {
+              "name": "101",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-101"
+            },
+            {
+              "name": "102",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-102"
+            },
+            {
+              "name": "103",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-103"
+            },
+            {
+              "name": "107",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-107"
+            },
+            {
+              "name": "108",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-108"
+            },
+            {
+              "name": "109",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-109"
+            },
+            {
+              "name": "110",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-110"
+            },
+            {
+              "name": "111",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-111"
+            },
+            {
+              "name": "112",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p1-112"
+            }
+          ]
+        },
+        {
+          "id": "p2",
+          "label": "Segundo piso",
+          "order": 2,
+          "spaces": [
+            {
+              "name": "Academia de Química",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p2-academia-de-quimica"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-022"
+            },
+            {
+              "name": "23",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p2-023"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p2-jefatura"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p2-intendencia"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p2-sanitarios-mujeres"
+            },
+            {
+              "name": "201",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-201"
+            },
+            {
+              "name": "202",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-202"
+            },
+            {
+              "name": "203",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-203"
+            },
+            {
+              "name": "208",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-208"
+            },
+            {
+              "name": "209",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-209"
+            },
+            {
+              "name": "210",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-210"
+            },
+            {
+              "name": "211",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-211"
+            },
+            {
+              "name": "212",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-212"
+            },
+            {
+              "name": "213",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p2-213"
+            }
+          ]
+        },
+        {
+          "id": "p3",
+          "label": "Tercer piso",
+          "order": 3,
+          "spaces": [
+            {
+              "name": "Academia de Física",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p3-academia-de-fisica"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna nombre o uso individual.",
+              "id": "basicas-p3-020"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p3-jefatura"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p3-intendencia"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo exacto del PDF.",
+              "id": "basicas-p3-sanitarios-hombres"
+            },
+            {
+              "name": "301",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-301"
+            },
+            {
+              "name": "302",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-302"
+            },
+            {
+              "name": "303",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-303"
+            },
+            {
+              "name": "304",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-304"
+            },
+            {
+              "name": "308",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-308"
+            },
+            {
+              "name": "309",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-309"
+            },
+            {
+              "name": "310",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-310"
+            },
+            {
+              "name": "311",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-311"
+            },
+            {
+              "name": "312",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Solo se registran números legibles en la lámina.",
+              "id": "basicas-p3-312"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Escaleras junto a los sanitarios, en los laterales.",
+        "Rampas rotuladas en la planta baja, en corredores inferiores.",
+        "Salidas de emergencia junto a esos corredores.",
+        "Las puertas abren a corredores interiores."
+      ],
+      "doubts": [
+        "La mayoría de los espacios numerados no tiene nombre ni uso en el plano.",
+        "Solo se anotaron los números legibles de los bloques derechos."
+      ]
+    },
+    {
+      "id": "culturales",
+      "name": "Edificio de Actividades Culturales",
+      "shortName": "Actividades Culturales",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Biblioteca",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Tiene accesos en su borde inferior y señalización de salida de emergencia en el borde superior.",
+              "id": "culturales-pb-biblioteca"
+            },
+            {
+              "name": "Laboratorio de Cómputo",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "culturales-pb-laboratorio-de-computo"
+            },
+            {
+              "name": "Centro de Copiado",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al borde derecho del plano.",
+              "id": "culturales-pb-centro-de-copiado"
+            },
+            {
+              "name": "Centro de Apoyo para Estudiantes",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto a la Rampa y a accesos del borde inferior.",
+              "id": "culturales-pb-centro-de-apoyo-para-estudiantes"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Comparte el conjunto sanitario con Sanitarios Hombres.",
+              "id": "culturales-pb-sanitarios-mujeres"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Comparte el conjunto sanitario con Sanitarios Mujeres.",
+              "id": "culturales-pb-sanitarios-hombres"
+            },
+            {
+              "name": "Auditorio B Generalísimo Morelos",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Tiene sanitarios en su parte superior y accesos en sus bordes.",
+              "id": "culturales-pb-auditorio-b-generalisimo-morelos"
+            },
+            {
+              "name": "Auditorio A Víctor Bravo Ahuja",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Ubicado entre Auditorio B Generalísimo Morelos y Cafetería.",
+              "id": "culturales-pb-auditorio-a-victor-bravo-ahuja"
+            },
+            {
+              "name": "Cafetería",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Tiene Sanitarios Hombres y Sanitarios Mujeres en su extremo derecho.",
+              "id": "culturales-pb-cafeteria"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Conjunto sanitario de Cafetería.",
+              "id": "culturales-pb-sanitarios-hombres-2"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Conjunto sanitario de Cafetería.",
+              "id": "culturales-pb-sanitarios-mujeres-2"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Sitio Web",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Junto a Sala 1.",
+              "id": "culturales-p1-sitio-web"
+            },
+            {
+              "name": "Sala 1",
+              "kind": "salon",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Junto a Sitio Web y Telecomunicaciones Zacatenco.",
+              "id": "culturales-p1-sala-1"
+            },
+            {
+              "name": "Telecomunicaciones Zacatenco",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Rótulo vertical.",
+              "id": "culturales-p1-telecomunicaciones-zacatenco"
+            },
+            {
+              "name": "CELEX 1",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "En la fila superior de espacios CELEX.",
+              "id": "culturales-p1-celex-1"
+            },
+            {
+              "name": "CELEX 2",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "Junto a CELEX 1 y CELEX 3.",
+              "id": "culturales-p1-celex-2"
+            },
+            {
+              "name": "CELEX 3",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "Junto a CELEX 2 y Sala Política Lucio Cabañas.",
+              "id": "culturales-p1-celex-3"
+            },
+            {
+              "name": "Sala Política Lucio Cabañas",
+              "kind": "salon",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a CELEX 3 y Salón Ricardo Flores Magón.",
+              "id": "culturales-p1-sala-politica-lucio-cabanas"
+            },
+            {
+              "name": "Salón Ricardo Flores Magón",
+              "kind": "salon",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Entre Sala Política Lucio Cabañas y Sala de Proyecciones José Revueltas.",
+              "id": "culturales-p1-salon-ricardo-flores-magon"
+            },
+            {
+              "name": "Sala de Proyecciones José Revueltas",
+              "kind": "salon",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Salón Ricardo Flores Magón y Club de Robótica.",
+              "id": "culturales-p1-sala-de-proyecciones-jose-revueltas"
+            },
+            {
+              "name": "Sala 2",
+              "kind": "salon",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Parte del conjunto vertical de Salas 1 a 4.",
+              "id": "culturales-p1-sala-2"
+            },
+            {
+              "name": "Sala 3",
+              "kind": "salon",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Parte del conjunto vertical de Salas 1 a 4.",
+              "id": "culturales-p1-sala-3"
+            },
+            {
+              "name": "Sala 4",
+              "kind": "salon",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto a Biblioteca y Redes y Comunicaciones UDI.",
+              "id": "culturales-p1-sala-4"
+            },
+            {
+              "name": "CELEX 12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Sobre Biblioteca y junto al pasillo central.",
+              "id": "culturales-p1-celex-12"
+            },
+            {
+              "name": "Club de Robótica",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al pasillo central.",
+              "id": "culturales-p1-club-de-robotica"
+            },
+            {
+              "name": "Biblioteca",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto a Sala 4, CELEX 12 y las escaleras centrales.",
+              "id": "culturales-p1-biblioteca"
+            },
+            {
+              "name": "CELEX 4",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a CELEX 5.",
+              "id": "culturales-p1-celex-4"
+            },
+            {
+              "name": "CELEX 5",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a CELEX 4 y CELEX 6.",
+              "id": "culturales-p1-celex-5"
+            },
+            {
+              "name": "CELEX 6",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a CELEX 5 y CELEX 7.",
+              "id": "culturales-p1-celex-6"
+            },
+            {
+              "name": "CELEX 7",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a CELEX 6 y CELEX 8.",
+              "id": "culturales-p1-celex-7"
+            },
+            {
+              "name": "CELEX 8",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a CELEX 7 y CELEX 9.",
+              "id": "culturales-p1-celex-8"
+            },
+            {
+              "name": "CELEX 9",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a CELEX 8 y CELEX 10.",
+              "id": "culturales-p1-celex-9"
+            },
+            {
+              "name": "CELEX 10",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto a CELEX 9 y CELEX 11.",
+              "id": "culturales-p1-celex-10"
+            },
+            {
+              "name": "CELEX 11",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al ala de Ingeniería Cultural.",
+              "id": "culturales-p1-celex-11"
+            },
+            {
+              "name": "Servicios Integrales",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "Junto a Sala 5.",
+              "id": "culturales-p1-servicios-integrales"
+            },
+            {
+              "name": "Redes y Comunicaciones UDI",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto a Capacitación UDI.",
+              "id": "culturales-p1-redes-y-comunicaciones-udi"
+            },
+            {
+              "name": "Sala 5",
+              "kind": "salon",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Debajo de Servicios Integrales.",
+              "id": "culturales-p1-sala-5"
+            },
+            {
+              "name": "Capacitación UDI",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto a Redes y Comunicaciones UDI.",
+              "id": "culturales-p1-capacitacion-udi"
+            },
+            {
+              "name": "Control Escolar CELEX",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto a circulaciones del ala izquierda.",
+              "id": "culturales-p1-control-escolar-celex"
+            },
+            {
+              "name": "Unidad Interna de Protección Civil",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto a la escalera y a los sanitarios.",
+              "id": "culturales-p1-unidad-interna-de-proteccion-civil"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Debajo de Unidad Interna de Protección Civil.",
+              "id": "culturales-p1-sanitarios-hombres"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Debajo de Sanitarios Hombres.",
+              "id": "culturales-p1-sanitarios-mujeres"
+            },
+            {
+              "name": "Laboratorio de Redes",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Junto a Jefatura y Sala de Video.",
+              "id": "culturales-p1-laboratorio-de-redes"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Junto a Sala de Video.",
+              "id": "culturales-p1-jefatura"
+            },
+            {
+              "name": "Sala de Video",
+              "kind": "salon",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Junto a Laboratorio de Redes, Jefatura y Unidad de Tecnología Educativa y Campus Virtual.",
+              "id": "culturales-p1-sala-de-video"
+            },
+            {
+              "name": "Centro Teleducativo",
+              "kind": "servicio",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Junto a Jefatura y Unidad de Tecnología Educativa y Campus Virtual.",
+              "id": "culturales-p1-centro-teleducativo"
+            },
+            {
+              "name": "Unidad de Tecnología Educativa y Campus Virtual",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Junto a Centro Teleducativo y Sala de Video.",
+              "id": "culturales-p1-unidad-de-tecnologia-educativa-y-campus-virtual"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": null,
+              "band": "inferior",
+              "note": "El rótulo aparece en un segundo espacio distinto del otro rótulo Jefatura.",
+              "id": "culturales-p1-jefatura-2"
+            },
+            {
+              "name": "Ingeniería Cultural 1 C1",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Sobre Ingeniería Cultural 2 C2.",
+              "id": "culturales-p1-ingenieria-cultural-1-c1"
+            },
+            {
+              "name": "Ingeniería Cultural 2 C2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "media",
+              "note": "Entre Ingeniería Cultural 1 C1 y Laboratorio de Programación.",
+              "id": "culturales-p1-ingenieria-cultural-2-c2"
+            },
+            {
+              "name": "Laboratorio de Programación",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto a una escalera en el extremo inferior derecho.",
+              "id": "culturales-p1-laboratorio-de-programacion"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Rampa en el extremo izquierdo de la planta baja.",
+        "Escaleras junto a Biblioteca y en el extremo inferior derecho.",
+        "Accesos por el borde inferior y junto al Centro de Apoyo para Estudiantes.",
+        "El plano no rotula pasillos hacia otros edificios."
+      ],
+      "doubts": [
+        "El plano no incluye orientación; izquierda y derecha siguen el dibujo.",
+        "Hay recintos sin rótulo; no se les asigna nombre."
+      ]
+    },
+    {
+      "id": "gimnasio",
+      "name": "Edificio de Gimnasio",
+      "shortName": "Gimnasio",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Oficina Administrativa",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Rótulo visible en dos líneas.",
+              "id": "gimnasio-pb-oficina-administrativa"
+            },
+            {
+              "name": "Trofeos",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Rótulo visible.",
+              "id": "gimnasio-pb-trofeos"
+            },
+            {
+              "name": "Vestidor Hombres",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Rótulo visible en dos líneas; queda por encima de Jefatura.",
+              "id": "gimnasio-pb-vestidor-hombres"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Rótulo visible.",
+              "id": "gimnasio-pb-jefatura"
+            },
+            {
+              "name": "Pesas",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Primer rótulo Pesas; está sobre el segundo.",
+              "id": "gimnasio-pb-pesas"
+            },
+            {
+              "name": "Pesas",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Segundo rótulo Pesas.",
+              "id": "gimnasio-pb-pesas-2"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Cardio",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Rótulo visible.",
+              "id": "gimnasio-p1-cardio"
+            },
+            {
+              "name": "Gradas",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Rótulo dispuesto verticalmente.",
+              "id": "gimnasio-p1-gradas"
+            },
+            {
+              "name": "Gradas",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Rótulo dispuesto verticalmente.",
+              "id": "gimnasio-p1-gradas-2"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Escaleras en los extremos inferiores de ambos niveles.",
+        "Puertas en el perímetro; sin entrada principal rotulada.",
+        "No se rotulan pasillos hacia otros edificios."
+      ],
+      "doubts": [
+        "El espacio central y varios cuartos no tienen nombre en el plano.",
+        "Los símbolos verdes no tienen leyenda."
+      ]
+    },
+    {
+      "id": "gobierno",
+      "name": "Edificio de Gobierno",
+      "shortName": "Gobierno",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Atención a la Salud",
+              "kind": "oficina",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Cerca de la escalera dibujada en la parte superior central.",
+              "id": "gobierno-pb-atencion-a-la-salud"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo acompañado por pictograma.",
+              "id": "gobierno-pb-sanitarios-hombres"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo acompañado por pictograma.",
+              "id": "gobierno-pb-sanitarios-mujeres"
+            },
+            {
+              "name": "Gestión Escolar",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo dispuesto verticalmente.",
+              "id": "gobierno-pb-gestion-escolar"
+            },
+            {
+              "name": "Área Secretarial",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Rótulo dispuesto verticalmente.",
+              "id": "gobierno-pb-area-secretarial"
+            },
+            {
+              "name": "Subdirección Administrativa",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Cerca de una rampa marcada RAMPA.",
+              "id": "gobierno-pb-subdireccion-administrativa"
+            },
+            {
+              "name": "Subdirección de Servicios Educativos e Integración Social",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Cerca de una rampa marcada RAMPA.",
+              "id": "gobierno-pb-subdireccion-de-servicios-educativos-e-integracion-social"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Extensión y Apoyos Educativos",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Espacio de mayor tamaño en esa ala.",
+              "id": "gobierno-p1-extension-y-apoyos-educativos"
+            },
+            {
+              "name": "Farmacia",
+              "kind": "oficina",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Cerca del núcleo central.",
+              "id": "gobierno-p1-farmacia"
+            },
+            {
+              "name": "Servicio Dental",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Cerca de Orientación Educativa.",
+              "id": "gobierno-p1-servicio-dental"
+            },
+            {
+              "name": "Orientación Educativa",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Cerca de Servicio Dental y los consultorios.",
+              "id": "gobierno-p1-orientacion-educativa"
+            },
+            {
+              "name": "Consultorio Nutrición",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Debajo de Farmacia.",
+              "id": "gobierno-p1-consultorio-nutricion"
+            },
+            {
+              "name": "Consultorio Psicología 2",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Consultorio Psicología 1.",
+              "id": "gobierno-p1-consultorio-psicologia-2"
+            },
+            {
+              "name": "Consultorio Psicología 1",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Consultorio Psicología 2.",
+              "id": "gobierno-p1-consultorio-psicologia-1"
+            },
+            {
+              "name": "Asesoría Jurídica",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "media",
+              "note": "Encima de los sanitarios del ala derecha.",
+              "id": "gobierno-p1-asesoria-juridica"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "media",
+              "note": "Rótulo acompañado por pictograma.",
+              "id": "gobierno-p1-sanitarios-mujeres"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "media",
+              "note": "Debajo de Sanitarios Mujeres; rótulo acompañado por pictograma.",
+              "id": "gobierno-p1-sanitarios-hombres"
+            },
+            {
+              "name": "Ingeniería en Transporte",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "Cerca de Ingeniería en Sistemas Automotrices.",
+              "id": "gobierno-p1-ingenieria-en-transporte"
+            },
+            {
+              "name": "Ingeniería en Sistemas Automotrices",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "Cerca de Ingeniería en Transporte.",
+              "id": "gobierno-p1-ingenieria-en-sistemas-automotrices"
+            },
+            {
+              "name": "Administración Industrial",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Debajo de Ingeniería en Transporte.",
+              "id": "gobierno-p1-administracion-industrial"
+            },
+            {
+              "name": "Ciencias de la Informática",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto a Administración Industrial.",
+              "id": "gobierno-p1-ciencias-de-la-informatica"
+            },
+            {
+              "name": "Ingeniería Industrial",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Debajo de Administración Industrial.",
+              "id": "gobierno-p1-ingenieria-industrial"
+            },
+            {
+              "name": "Ingeniería en Informática",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto a Ingeniería Industrial.",
+              "id": "gobierno-p1-ingenieria-en-informatica"
+            },
+            {
+              "name": "Departamento de Evaluación y Seguimiento Académico",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto a Subdirección Académica.",
+              "id": "gobierno-p1-departamento-de-evaluacion-y-seguimiento-academico"
+            },
+            {
+              "name": "Subdirección Académica",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Cerca de la escalera de la zona inferior central.",
+              "id": "gobierno-p1-subdireccion-academica"
+            },
+            {
+              "name": "Área Secretarial Dirección",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Cerca de Dirección.",
+              "id": "gobierno-p1-area-secretarial-direccion"
+            },
+            {
+              "name": "Dirección",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Debajo de Área Secretarial Dirección.",
+              "id": "gobierno-p1-direccion"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Escalera en la zona superior central de la planta baja y otra en la inferior central.",
+        "Dos rampas en el borde inferior de la planta baja.",
+        "Señales verdes de salida en el perímetro.",
+        "El plano no rotula pasillos hacia otros edificios."
+      ],
+      "doubts": [
+        "El plano no incluye orientación ni leyenda.",
+        "Hay recintos sin nombre; se omiten."
+      ]
+    },
+    {
+      "id": "ingenieria",
+      "name": "Edificio de Desarrollo Profesional Específico",
+      "shortName": "Ingeniería",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Jefatura Desarrollo Profesional Específico",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Rótulo visible en varias líneas.",
+              "id": "ingenieria-pb-jefatura-desarrollo-profesional-especifico"
+            },
+            {
+              "name": "Celdas de Producción",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "Rótulo visible en varias líneas.",
+              "id": "ingenieria-pb-celdas-de-produccion"
+            },
+            {
+              "name": "Centro de Copiado",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-pb-centro-de-copiado"
+            },
+            {
+              "name": "Prefectura",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Cerca de las señales de salida de emergencia.",
+              "id": "ingenieria-pb-prefectura"
+            },
+            {
+              "name": "Oficina de Posgrado e Investigación",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto al pasillo longitudinal.",
+              "id": "ingenieria-pb-oficina-de-posgrado-e-investigacion"
+            },
+            {
+              "name": "Oficina de Control Escolar",
+              "kind": "oficina",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a Oficina de Posgrado e Investigación.",
+              "id": "ingenieria-pb-oficina-de-control-escolar"
+            },
+            {
+              "name": "SEPI UPIICSA Departamento de Investigación/ Departamento de posgrado",
+              "kind": "oficina",
+              "wing": "centro",
+              "band": null,
+              "note": "Rótulo visible en varias líneas.",
+              "id": "ingenieria-pb-sepi-upiicsa-departamento-de-investigacion-departamento-de-posgrado"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-pb-002"
+            },
+            {
+              "name": "Coordinación de Tutorías/ Coordinación de Prácticas y Visitas Escolares",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Rótulo visible en varias líneas.",
+              "id": "ingenieria-pb-coordinacion-de-tutorias-coordinacion-de-practicas-y-visitas-escolares"
+            },
+            {
+              "name": "Oficina de Titulación",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Junto al pasillo longitudinal.",
+              "id": "ingenieria-pb-oficina-de-titulacion"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-pb-007"
+            },
+            {
+              "name": "Laboratorio de Diseño de Ingeniería 1",
+              "kind": "laboratorio",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Junto a Laboratorio de Diseño de Ingeniería 2.",
+              "id": "ingenieria-pb-laboratorio-de-diseno-de-ingenieria-1"
+            },
+            {
+              "name": "Laboratorio de Diseño de Ingeniería 2",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Junto a las señales de salida de emergencia.",
+              "id": "ingenieria-pb-laboratorio-de-diseno-de-ingenieria-2"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-pb-sanitarios-mujeres"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-pb-sanitarios-hombres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-pb-intendencia"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-pb-intendencia-2"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-pb-001"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-pb-001-2"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-pb-002-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-pb-003"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Academia de Informática",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Rótulo grande sobre el conjunto de espacios numerados.",
+              "id": "ingenieria-p1-academia-de-informatica"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Junto a Academia de Informática.",
+              "id": "ingenieria-p1-jefatura"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-022"
+            },
+            {
+              "name": "23",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-023"
+            },
+            {
+              "name": "24",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-024"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-018"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-013"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-012"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-007"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-006"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-001"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-017"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-014"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-011"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-008"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-005"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-002"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-016"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-015"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-010"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-009"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-004"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-003"
+            },
+            {
+              "name": "106",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-106"
+            },
+            {
+              "name": "105",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-105"
+            },
+            {
+              "name": "104",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-104"
+            },
+            {
+              "name": "103",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-103"
+            },
+            {
+              "name": "102",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-102"
+            },
+            {
+              "name": "101",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-101"
+            },
+            {
+              "name": "113",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-113"
+            },
+            {
+              "name": "114",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-114"
+            },
+            {
+              "name": "114 A",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-114-a"
+            },
+            {
+              "name": "115",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-115"
+            },
+            {
+              "name": "115 A",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-115-a"
+            },
+            {
+              "name": "116",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-116"
+            },
+            {
+              "name": "117",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-117"
+            },
+            {
+              "name": "118",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p1-118"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-p1-sanitarios-hombres"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-p1-sanitarios-mujeres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-p1-intendencia"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-p1-intendencia-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p1-003-2"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p1-004-2"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p1-005-2"
+            }
+          ]
+        },
+        {
+          "id": "p2",
+          "label": "Segundo piso",
+          "order": 2,
+          "spaces": [
+            {
+              "name": "Academia de Sistemas en Transporte",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Rótulo grande sobre el conjunto de espacios numerados.",
+              "id": "ingenieria-p2-academia-de-sistemas-en-transporte"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Junto al conjunto de la academia.",
+              "id": "ingenieria-p2-jefatura"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-001"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-010"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-012"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-008"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-011"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-013"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-002"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-007"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-019"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-014"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-003"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-006"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-018"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-015"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-005"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-017"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-016"
+            },
+            {
+              "name": "Laboratorio de Cómputo",
+              "kind": "laboratorio",
+              "wing": null,
+              "band": "inferior",
+              "note": "Junto al pasillo longitudinal.",
+              "id": "ingenieria-p2-laboratorio-de-computo"
+            },
+            {
+              "name": "206",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-206"
+            },
+            {
+              "name": "205",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-205"
+            },
+            {
+              "name": "204",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-204"
+            },
+            {
+              "name": "203",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-203"
+            },
+            {
+              "name": "202",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-202"
+            },
+            {
+              "name": "201",
+              "kind": "otro",
+              "wing": null,
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-201"
+            },
+            {
+              "name": "211",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-211"
+            },
+            {
+              "name": "212",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-212"
+            },
+            {
+              "name": "213",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-213"
+            },
+            {
+              "name": "214",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-214"
+            },
+            {
+              "name": "215",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-215"
+            },
+            {
+              "name": "216",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-216"
+            },
+            {
+              "name": "217",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-217"
+            },
+            {
+              "name": "218",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p2-218"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-p2-sanitarios-mujeres"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-p2-sanitarios-hombres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-p2-intendencia"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-p2-intendencia-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p2-003-2"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p2-004-2"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p2-005-2"
+            }
+          ]
+        },
+        {
+          "id": "p3",
+          "label": "Tercer piso",
+          "order": 3,
+          "spaces": [
+            {
+              "name": "Academia de Investigación de Operaciones",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Rótulo grande sobre el conjunto de espacios numerados.",
+              "id": "ingenieria-p3-academia-de-investigacion-de-operaciones"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Junto al conjunto de la academia.",
+              "id": "ingenieria-p3-jefatura"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-022"
+            },
+            {
+              "name": "23",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-023"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-018"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-013"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-012"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-007"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-006"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "media",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-001"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-017"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-014"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-011"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-008"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-005"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-002"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-016"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-015"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-010"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-009"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-004"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-003"
+            },
+            {
+              "name": "302",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-302"
+            },
+            {
+              "name": "301",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-301"
+            },
+            {
+              "name": "Laboratorio de Cómputo Poniente",
+              "kind": "laboratorio",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Rótulo visible en varias líneas.",
+              "id": "ingenieria-p3-laboratorio-de-computo-poniente"
+            },
+            {
+              "name": "Laboratorio de Cómputo Oriente",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Jefatura del extremo derecho.",
+              "id": "ingenieria-p3-laboratorio-de-computo-oriente"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Rótulo visible.",
+              "id": "ingenieria-p3-jefatura-2"
+            },
+            {
+              "name": "303",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-303"
+            },
+            {
+              "name": "304",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-304"
+            },
+            {
+              "name": "305",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-305"
+            },
+            {
+              "name": "306",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-306"
+            },
+            {
+              "name": "307",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-307"
+            },
+            {
+              "name": "308",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-308"
+            },
+            {
+              "name": "309",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-309"
+            },
+            {
+              "name": "310",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "El PDF no indica función individual.",
+              "id": "ingenieria-p3-310"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-p3-sanitarios-hombres"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Escalera dibujada debajo del módulo.",
+              "id": "ingenieria-p3-sanitarios-mujeres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-p3-intendencia"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": null,
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "ingenieria-p3-intendencia-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p3-003-2"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p3-004-2"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "El PDF no indica función.",
+              "id": "ingenieria-p3-005-2"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Dos núcleos de escaleras bajo los sanitarios, a izquierda y derecha.",
+        "Un pasillo longitudinal distribuye las franjas superior e inferior.",
+        "Salidas de emergencia rotuladas en la planta baja.",
+        "No se rotula una entrada principal."
+      ],
+      "doubts": [
+        "El título del plano aparece cortado; no se completa.",
+        "Muchos espacios solo tienen número, sin uso indicado."
+      ]
+    },
+    {
+      "id": "ligeros",
+      "name": "Edificio de Laboratorios Ligeros",
+      "shortName": "Laboratorios Ligeros",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Laboratorio 3",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-pb-laboratorio-3"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-pb-sanitarios-hombres"
+            },
+            {
+              "name": "Laboratorio 1",
+              "kind": "laboratorio",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Entre la escalera izquierda y Cubículo 1/Cubículo 2.",
+              "id": "ligeros-pb-laboratorio-1"
+            },
+            {
+              "name": "Cubículo 1",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a Cubículo 2.",
+              "id": "ligeros-pb-cubiculo-1"
+            },
+            {
+              "name": "Cubículo 2",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a Cubículo 1.",
+              "id": "ligeros-pb-cubiculo-2"
+            },
+            {
+              "name": "Laboratorio 2",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Cerca de la escalera derecha y Sanitarios Mujeres.",
+              "id": "ligeros-pb-laboratorio-2"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-pb-sanitarios-mujeres"
+            },
+            {
+              "name": "Cubículo 3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Cerca del acceso lateral izquierdo.",
+              "id": "ligeros-pb-cubiculo-3"
+            },
+            {
+              "name": "Cubículo 5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Cerca del acceso lateral izquierdo.",
+              "id": "ligeros-pb-cubiculo-5"
+            },
+            {
+              "name": "Laboratorio 5",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Cerca de la salida señalizada y la rampa izquierda.",
+              "id": "ligeros-pb-laboratorio-5"
+            },
+            {
+              "name": "Almacén de Física",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Cerca de la rampa inferior izquierda.",
+              "id": "ligeros-pb-almacen-de-fisica"
+            },
+            {
+              "name": "Almacén de Química",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Cerca de la salida señalizada y la rampa derecha.",
+              "id": "ligeros-pb-almacen-de-quimica"
+            },
+            {
+              "name": "RAMPA",
+              "kind": "servicio",
+              "wing": null,
+              "band": "inferior",
+              "note": "Etiqueta visible en el plano.",
+              "id": "ligeros-pb-rampa"
+            },
+            {
+              "name": "RAMPA",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Etiqueta visible en el plano.",
+              "id": "ligeros-pb-rampa-2"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Laboratorio 9",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-p1-laboratorio-9"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-p1-sanitarios-mujeres"
+            },
+            {
+              "name": "Laboratorio 7",
+              "kind": "laboratorio",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Entre la escalera izquierda y Cubículo 7/Cubículo 8.",
+              "id": "ligeros-p1-laboratorio-7"
+            },
+            {
+              "name": "Cubículo 7",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a Cubículo 8.",
+              "id": "ligeros-p1-cubiculo-7"
+            },
+            {
+              "name": "Cubículo 8",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "Junto a Cubículo 7.",
+              "id": "ligeros-p1-cubiculo-8"
+            },
+            {
+              "name": "Laboratorio 8",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Cerca de la escalera derecha y Sanitarios Hombres.",
+              "id": "ligeros-p1-laboratorio-8"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-p1-sanitarios-hombres"
+            },
+            {
+              "name": "Cubículo 9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Cerca del acceso lateral izquierdo.",
+              "id": "ligeros-p1-cubiculo-9"
+            },
+            {
+              "name": "Cubículo 11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Cerca del acceso lateral izquierdo.",
+              "id": "ligeros-p1-cubiculo-11"
+            },
+            {
+              "name": "Laboratorio 11",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Cerca del acceso lateral izquierdo.",
+              "id": "ligeros-p1-laboratorio-11"
+            },
+            {
+              "name": "Jefatura Laboratorios de Física",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Rotulada verticalmente.",
+              "id": "ligeros-p1-jefatura-laboratorios-de-fisica"
+            },
+            {
+              "name": "Sala de Cómputo Laboratorios Ligeros",
+              "kind": "laboratorio",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-p1-sala-de-computo-laboratorios-ligeros"
+            },
+            {
+              "name": "Sala Modelo Laboratorios Ligeros",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Nombre visible en el plano.",
+              "id": "ligeros-p1-sala-modelo-laboratorios-ligeros"
+            },
+            {
+              "name": "Jefatura Laboratorios de Química",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Rotulada verticalmente.",
+              "id": "ligeros-p1-jefatura-laboratorios-de-quimica"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Escaleras entre el bloque izquierdo y la zona central, y en el extremo derecho.",
+        "Dos accesos con salida y dos rampas en el borde inferior de la planta baja.",
+        "Circulación longitudinal entre las franjas superior e inferior.",
+        "No se rotulan conexiones hacia otros edificios."
+      ],
+      "doubts": [
+        "El título del plano aparece cortado.",
+        "Los rótulos de algunos cubículos están muy juntos."
+      ]
+    },
+    {
+      "id": "pesados",
+      "name": "Edificio de Competencias Integrales e Institucionales",
+      "shortName": "Competencias Integrales",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Tecnología de Vehículos",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "inferior",
+              "note": "Tiene una salida de emergencia señalada en el extremo inferior derecho del recinto.",
+              "id": "pesados-pb-tecnologia-de-vehiculos"
+            },
+            {
+              "name": "Laboratorio de Metrología",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Acceso desde el pasillo inferior del bloque.",
+              "id": "pesados-pb-laboratorio-de-metrologia"
+            },
+            {
+              "name": "Laboratorio de Metalografía",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Acceso desde el pasillo inferior del bloque.",
+              "id": "pesados-pb-laboratorio-de-metalografia"
+            },
+            {
+              "name": "Laboratorio de Cómputo LR02",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Laboratorio de Cómputo LR01; sobre Laboratorio de Automatización y Robótica.",
+              "id": "pesados-pb-laboratorio-de-computo-lr02"
+            },
+            {
+              "name": "Laboratorio de Cómputo LR01",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Laboratorio de Cómputo LR02; sobre Laboratorio de Automatización y Robótica.",
+              "id": "pesados-pb-laboratorio-de-computo-lr01"
+            },
+            {
+              "name": "Laboratorio de Automatización y Robótica",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Acceso desde el pasillo inferior.",
+              "id": "pesados-pb-laboratorio-de-automatizacion-y-robotica"
+            },
+            {
+              "name": "Área de Máquinados Industriales",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Es el espacio grande inferior del bloque central.",
+              "id": "pesados-pb-area-de-maquinados-industriales"
+            },
+            {
+              "name": "Área de Soldadura Eléctrica",
+              "kind": "otro",
+              "wing": null,
+              "band": "inferior",
+              "note": "Rótulo ubicado en la franja inferior del área.",
+              "id": "pesados-pb-area-de-soldadura-electrica"
+            },
+            {
+              "name": "LM 01",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Cerca de una escalera y de los sanitarios representados con pictogramas.",
+              "id": "pesados-pb-lm-01"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Laboratorio de Aplicaciones en Cómputo de Alto Rendimiento / SC01 / Sala SUN",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Los tres rótulos aparecen dentro del mismo recinto.",
+              "id": "pesados-p1-laboratorio-de-aplicaciones-en-computo-de-alto-rendimiento-sc01-sala-sun"
+            },
+            {
+              "name": "Salón de Cátedra UPIICSA CISCO",
+              "kind": "salon",
+              "wing": null,
+              "band": null,
+              "note": "Cerca del núcleo de servicios del extremo izquierdo.",
+              "id": "pesados-p1-salon-de-catedra-upiicsa-cisco"
+            },
+            {
+              "name": "ISISA 8",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "En el bloque de espacios codificados.",
+              "id": "pesados-p1-isisa-8"
+            },
+            {
+              "name": "ISISA 9",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Debajo de ISISA 8.",
+              "id": "pesados-p1-isisa-9"
+            },
+            {
+              "name": "LE 06",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "En el bloque de espacios codificados.",
+              "id": "pesados-p1-le-06"
+            },
+            {
+              "name": "LP 04",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "A la derecha de LE 06.",
+              "id": "pesados-p1-lp-04"
+            },
+            {
+              "name": "LP 07",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Debajo de LP 04.",
+              "id": "pesados-p1-lp-07"
+            },
+            {
+              "name": "LP 05",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "A la derecha de LP 07.",
+              "id": "pesados-p1-lp-05"
+            },
+            {
+              "name": "LP 03",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Debajo de LP 04 y a la izquierda de Calidad 01.",
+              "id": "pesados-p1-lp-03"
+            },
+            {
+              "name": "Calidad 02",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "Sobre Calidad 01.",
+              "id": "pesados-p1-calidad-02"
+            },
+            {
+              "name": "Calidad 01",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "Debajo de Calidad 02.",
+              "id": "pesados-p1-calidad-01"
+            },
+            {
+              "name": "ISISA 1",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Sobre ISISA 2.",
+              "id": "pesados-p1-isisa-1"
+            },
+            {
+              "name": "ISISA 2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "inferior",
+              "note": "Debajo de ISISA 1.",
+              "id": "pesados-p1-isisa-2"
+            },
+            {
+              "name": "Unidad Politécnica de Integración Social",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Junto a Jefatura y sobre el núcleo de escalera y servicios.",
+              "id": "pesados-p1-unidad-politecnica-de-integracion-social"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Cerca de Competencias Integrales e Institucionales.",
+              "id": "pesados-p1-jefatura"
+            },
+            {
+              "name": "Competencias Integrales e Institucionales",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto a Intendencia, Vestidores Mujeres y una escalera.",
+              "id": "pesados-p1-competencias-integrales-e-institucionales"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical.",
+              "id": "pesados-p1-intendencia"
+            },
+            {
+              "name": "Vestidores Mujeres",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical; junto al núcleo de escalera.",
+              "id": "pesados-p1-vestidores-mujeres"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Escaleras en los núcleos laterales de ambos niveles.",
+        "Salidas de emergencia en varios accesos de la planta baja.",
+        "Pasillo longitudinal en el primer piso.",
+        "No se rotulan pasillos hacia otros edificios."
+      ],
+      "doubts": [
+        "El rótulo del extremo derecho de la planta baja aparece cortado.",
+        "Hay cuartos sin texto que no se nombran."
+      ]
+    },
+    {
+      "id": "sociales",
+      "name": "Edificio de Estudios Profesionales Genéricos",
+      "shortName": "Ciencias Sociales",
+      "levels": [
+        {
+          "id": "pb",
+          "label": "Planta baja",
+          "order": 0,
+          "spaces": [
+            {
+              "name": "Jefatura Estudios Profesionales Genéricos",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto al conjunto de servicios del extremo izquierdo.",
+              "id": "sociales-pb-jefatura-estudios-profesionales-genericos"
+            },
+            {
+              "name": "Red de género",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto a Jefatura Estudios Profesionales Genéricos.",
+              "id": "sociales-pb-red-de-genero"
+            },
+            {
+              "name": "Promoción institucional y apoyo didáctico",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Entre Red de género y Centro de Copiado.",
+              "id": "sociales-pb-promocion-institucional-y-apoyo-didactico"
+            },
+            {
+              "name": "Centro de Copiado",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Junto a Promoción institucional y apoyo didáctico.",
+              "id": "sociales-pb-centro-de-copiado"
+            },
+            {
+              "name": "Prefectura",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "A la derecha de Centro de Copiado.",
+              "id": "sociales-pb-prefectura"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Sobre la escalera; junto al Elevador.",
+              "id": "sociales-pb-sanitarios-hombres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Hombres.",
+              "id": "sociales-pb-intendencia"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": null,
+              "note": "Sobre la escalera derecha.",
+              "id": "sociales-pb-sanitarios-hombres-2"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Hombres.",
+              "id": "sociales-pb-intendencia-2"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-012"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al conjunto numerado del extremo derecho.",
+              "id": "sociales-pb-jefatura"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-001-2"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-002-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-003-2"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-004-2"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-005-2"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-006-2"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-007-2"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-008-2"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-009-2"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-010-2"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-011-2"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-012-2"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-pb-020"
+            }
+          ]
+        },
+        {
+          "id": "p1",
+          "label": "Primer piso",
+          "order": 1,
+          "spaces": [
+            {
+              "name": "Academia de Mercadotecnia y Recursos Humanos",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto al núcleo de escaleras y elevador.",
+              "id": "sociales-p1-academia-de-mercadotecnia-y-recursos-humanos"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Sobre la escalera; junto al Elevador.",
+              "id": "sociales-p1-sanitarios-hombres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Hombres.",
+              "id": "sociales-p1-intendencia"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Dentro del conjunto de Academia de Mercadotecnia y Recursos Humanos.",
+              "id": "sociales-p1-jefatura"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-022"
+            },
+            {
+              "name": "101",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-101"
+            },
+            {
+              "name": "102",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-102"
+            },
+            {
+              "name": "103",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-103"
+            },
+            {
+              "name": "104",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-104"
+            },
+            {
+              "name": "105",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-105"
+            },
+            {
+              "name": "106",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-106"
+            },
+            {
+              "name": "107",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-107"
+            },
+            {
+              "name": "108",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-108"
+            },
+            {
+              "name": "110",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-110"
+            },
+            {
+              "name": "111",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-111"
+            },
+            {
+              "name": "112",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-112"
+            },
+            {
+              "name": "113",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-113"
+            },
+            {
+              "name": "114",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-114"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": null,
+              "note": "Sobre la escalera derecha.",
+              "id": "sociales-p1-sanitarios-mujeres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Mujeres.",
+              "id": "sociales-p1-intendencia-2"
+            },
+            {
+              "name": "Academia de Derecho",
+              "kind": "academia",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al núcleo derecho y al conjunto numerado.",
+              "id": "sociales-p1-academia-de-derecho"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": null,
+              "note": "Dentro del conjunto de Academia de Derecho.",
+              "id": "sociales-p1-jefatura-2"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-001-2"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-002-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-003-2"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-004-2"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-005-2"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-006-2"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-007-2"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-008-2"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-009-2"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-010-2"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-011-2"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-012-2"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-013-2"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-014-2"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-015-2"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-016-2"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-017-2"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-018-2"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-019-2"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-020-2"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-021-2"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p1-022-2"
+            }
+          ]
+        },
+        {
+          "id": "p2",
+          "label": "Segundo piso",
+          "order": 2,
+          "spaces": [
+            {
+              "name": "Academia de Tecnología Informática",
+              "kind": "academia",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Junto al núcleo de escaleras y elevador.",
+              "id": "sociales-p2-academia-de-tecnologia-informatica"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Sobre la escalera; junto al Elevador.",
+              "id": "sociales-p2-sanitarios-hombres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Hombres.",
+              "id": "sociales-p2-intendencia"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Dentro del conjunto de Academia de Tecnología Informática.",
+              "id": "sociales-p2-jefatura"
+            },
+            {
+              "name": "1",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-001"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-002"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "izquierda",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-020"
+            },
+            {
+              "name": "LABORATORIO DE COMPUTO 2",
+              "kind": "laboratorio",
+              "wing": "izquierda",
+              "band": "superior",
+              "note": "Entre el núcleo izquierdo y LABORATORIO DE COMPUTO 1.",
+              "id": "sociales-p2-laboratorio-de-computo-2"
+            },
+            {
+              "name": "LABORATORIO DE COMPUTO 1",
+              "kind": "laboratorio",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "Entre LABORATORIO DE COMPUTO 2 y los espacios 209 y 210.",
+              "id": "sociales-p2-laboratorio-de-computo-1"
+            },
+            {
+              "name": "201",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-201"
+            },
+            {
+              "name": "202",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-202"
+            },
+            {
+              "name": "203",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-203"
+            },
+            {
+              "name": "204",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-204"
+            },
+            {
+              "name": "205",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-205"
+            },
+            {
+              "name": "206",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-206"
+            },
+            {
+              "name": "207",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-207"
+            },
+            {
+              "name": "208",
+              "kind": "otro",
+              "wing": "centro",
+              "band": "inferior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-208"
+            },
+            {
+              "name": "209",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-209"
+            },
+            {
+              "name": "210",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": "superior",
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-210"
+            },
+            {
+              "name": "Sanitarios Hombres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": null,
+              "note": "Sobre la escalera derecha.",
+              "id": "sociales-p2-sanitarios-hombres-2"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Hombres.",
+              "id": "sociales-p2-intendencia-2"
+            },
+            {
+              "name": "Academia de Administración",
+              "kind": "academia",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al núcleo derecho y al conjunto numerado.",
+              "id": "sociales-p2-academia-de-administracion"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": null,
+              "note": "Dentro del conjunto de Academia de Administración.",
+              "id": "sociales-p2-jefatura-2"
+            },
+            {
+              "name": "2",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-002-2"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-003-2"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-004-2"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-005-2"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-006-2"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-007-2"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-008-2"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-009-2"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-010-2"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-011-2"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-012-2"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-013-2"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-014-2"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-015-2"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-016-2"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-017-2"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-018-2"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-019-2"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-020-2"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-022"
+            },
+            {
+              "name": "23",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-023"
+            },
+            {
+              "name": "24",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-024"
+            },
+            {
+              "name": "25",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-025"
+            },
+            {
+              "name": "26",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-026"
+            },
+            {
+              "name": "27",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-027"
+            },
+            {
+              "name": "28",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-028"
+            },
+            {
+              "name": "29",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p2-029"
+            }
+          ]
+        },
+        {
+          "id": "p3",
+          "label": "Tercer piso",
+          "order": 3,
+          "spaces": [
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Sobre la escalera; junto al Elevador.",
+              "id": "sociales-p3-sanitarios-mujeres"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "izquierda",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Mujeres.",
+              "id": "sociales-p3-intendencia"
+            },
+            {
+              "name": "301",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-301"
+            },
+            {
+              "name": "302",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-302"
+            },
+            {
+              "name": "303",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-303"
+            },
+            {
+              "name": "304",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-304"
+            },
+            {
+              "name": "305",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-305"
+            },
+            {
+              "name": "306",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-306"
+            },
+            {
+              "name": "307",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-307"
+            },
+            {
+              "name": "308",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-308"
+            },
+            {
+              "name": "309",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-309"
+            },
+            {
+              "name": "310",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-310"
+            },
+            {
+              "name": "311",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-311"
+            },
+            {
+              "name": "312",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-312"
+            },
+            {
+              "name": "313",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-313"
+            },
+            {
+              "name": "314",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-314"
+            },
+            {
+              "name": "315",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-315"
+            },
+            {
+              "name": "316",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-316"
+            },
+            {
+              "name": "317",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-317"
+            },
+            {
+              "name": "318",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-318"
+            },
+            {
+              "name": "320",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-320"
+            },
+            {
+              "name": "321",
+              "kind": "otro",
+              "wing": "centro",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-321"
+            },
+            {
+              "name": "Sanitarios Mujeres",
+              "kind": "sanitarios",
+              "wing": "derecha",
+              "band": null,
+              "note": "Sobre la escalera derecha.",
+              "id": "sociales-p3-sanitarios-mujeres-2"
+            },
+            {
+              "name": "Intendencia",
+              "kind": "servicio",
+              "wing": "derecha",
+              "band": null,
+              "note": "Rótulo vertical junto a Sanitarios Mujeres.",
+              "id": "sociales-p3-intendencia-2"
+            },
+            {
+              "name": "Academia de Finanzas",
+              "kind": "academia",
+              "wing": "derecha",
+              "band": null,
+              "note": "Junto al núcleo derecho y al conjunto numerado.",
+              "id": "sociales-p3-academia-de-finanzas"
+            },
+            {
+              "name": "Jefatura",
+              "kind": "oficina",
+              "wing": "derecha",
+              "band": null,
+              "note": "Dentro del conjunto de Academia de Finanzas.",
+              "id": "sociales-p3-jefatura"
+            },
+            {
+              "name": "3",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-003"
+            },
+            {
+              "name": "4",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-004"
+            },
+            {
+              "name": "5",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-005"
+            },
+            {
+              "name": "6",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-006"
+            },
+            {
+              "name": "7",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-007"
+            },
+            {
+              "name": "8",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-008"
+            },
+            {
+              "name": "9",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-009"
+            },
+            {
+              "name": "10",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-010"
+            },
+            {
+              "name": "11",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-011"
+            },
+            {
+              "name": "12",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-012"
+            },
+            {
+              "name": "13",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-013"
+            },
+            {
+              "name": "14",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-014"
+            },
+            {
+              "name": "15",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-015"
+            },
+            {
+              "name": "16",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-016"
+            },
+            {
+              "name": "17",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-017"
+            },
+            {
+              "name": "18",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-018"
+            },
+            {
+              "name": "19",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-019"
+            },
+            {
+              "name": "20",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-020"
+            },
+            {
+              "name": "21",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-021"
+            },
+            {
+              "name": "22",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-022"
+            },
+            {
+              "name": "23",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-023"
+            },
+            {
+              "name": "24",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-024"
+            },
+            {
+              "name": "25",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-025"
+            },
+            {
+              "name": "26",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-026"
+            },
+            {
+              "name": "27",
+              "kind": "otro",
+              "wing": "derecha",
+              "band": null,
+              "note": "El PDF no asigna otro nombre ni tipo.",
+              "id": "sociales-p3-027"
+            }
+          ]
+        }
+      ],
+      "connections": [
+        "Dos núcleos de escaleras, uno a cada lado del tramo central.",
+        "Elevador junto al núcleo izquierdo en los cuatro niveles.",
+        "Rampa rotulada en los accesos inferiores de la planta baja.",
+        "Salidas de emergencia rotuladas en la planta baja."
+      ],
+      "doubts": [
+        "Los espacios numerados no tienen nombre ni tipo.",
+        "Faltan los rótulos 109 (primer piso) y 319 (tercer piso)."
+      ]
+    }
+  ],
+  "layout": {
+    "plan": {"w": 1369, "h": 897, "source": "Vista aérea de referencia, norte arriba; coordenadas en px de esa imagen"},
+    "assumptions": [
+      "gobierno: se asume que es el edificio con patio cuadrado (555,290). Editable.",
+      "pesados: se asume que es el edificio largo vertical de techo naranja (1140,505). Editable.",
+      "gimnasio: se asume que es el edificio gris del este-norte (1175,205). Editable.",
+      "graduados: edificio con dos patios sin plano disponible; no es buscable.",
+      "calibración Maps→plano: px_x = 1018 + (lng+99.0907307)·187500; px_y = 563 − (lat−19.3950633)·198125 (ancla: Ingeniería; 0.56 m/px). Las estaciones se ajustaron a ojo sobre la vía elevada.",
+      "accesos: Google Maps solo rotula la dirección (Av. Té 950) y no marca puertas; las posiciones, calles y modos entrada/salida de los accesos son SUPUESTOS deducidos de la vista satelital (cortes de barda, andadores y rampas). Editables en layout.pois.",
+      "metrobús: la línea elevada de Av. Té se rotula como Metrobús según Google Maps (estación 'Upiicsa', Av. Té); la estación 'Iztacalco' queda al borde izquierdo del plano."
+    ],
+    "ground": [[0, 0], [1369, 0], [1369, 897], [1120, 897], [960, 810], [770, 690], [470, 490], [220, 345], [0, 290]],
+    "plate": [[0, 45], [330, 50], [740, 115], [1000, 155], [1250, 200], [1369, 222], [1369, 897], [1160, 897], [1000, 775], [800, 640], [520, 445], [260, 290], [0, 240]],
+    "buildings": [
+      {"id": "ligeros", "x": 340, "y": 85, "w": 180, "h": 70, "rot": 3, "patio": []},
+      {"id": "sociales", "x": 615, "y": 150, "w": 225, "h": 75, "rot": 6, "patio": []},
+      {"id": "basicas", "x": 322, "y": 200, "w": 185, "h": 85, "rot": 4, "patio": []},
+      {"id": "gobierno", "x": 555, "y": 290, "w": 120, "h": 110, "rot": 0, "patio": [{"x": 0.33, "y": 0.3, "w": 0.34, "h": 0.4, "suelo": "cesped"}], "supuesto": true},
+      {"id": "culturales", "x": 790, "y": 295, "w": 185, "h": 180, "rot": 0, "patio": [{"x": 0.3, "y": 0.55, "w": 0.26, "h": 0.34, "suelo": "arena"}]},
+      {"id": "ingenieria", "x": 890, "y": 520, "w": 225, "h": 90, "rot": 3, "patio": []},
+      {"id": "pesados", "x": 1140, "y": 505, "w": 115, "h": 300, "rot": 0, "patio": [], "roof": "naranja", "supuesto": true},
+      {"id": "gimnasio", "x": 1175, "y": 205, "w": 100, "h": 105, "rot": 0, "patio": [], "roof": "gris", "supuesto": true},
+      {"id": "graduados", "label": "Edificio sin plano", "x": 80, "y": 130, "w": 170, "h": 105, "rot": 0, "levels": 2, "patio": [{"x": 0.15, "y": 0.2, "w": 0.17, "h": 0.3, "suelo": "cesped"}, {"x": 0.62, "y": 0.3, "w": 0.18, "h": 0.34, "suelo": "cesped"}], "buscable": false}
+    ],
+    "greens": [
+      {"kind": "lawn", "x": 760, "y": 492, "w": 120, "h": 48},
+      {"kind": "lawn", "x": 690, "y": 560, "w": 170, "h": 80},
+      {"kind": "dense", "x": 240, "y": 90, "w": 100, "h": 150},
+      {"kind": "dense", "x": 500, "y": 150, "w": 110, "h": 140},
+      {"kind": "dense", "x": 330, "y": 295, "w": 220, "h": 130},
+      {"kind": "dense", "x": 100, "y": 240, "w": 200, "h": 90},
+      {"kind": "dense", "x": 545, "y": 405, "w": 140, "h": 130},
+      {"kind": "plaza", "name": "Explanada", "x": 675, "y": 232, "w": 115, "h": 250},
+      {"kind": "field", "name": "Ola Verde", "x": 1065, "y": 322, "w": 190, "h": 90},
+      {"kind": "stadium", "name": "Estadio Salvador Rojas García", "x": 1150, "y": 418, "w": 110, "h": 75}
+    ],
+    "trees": [
+      {"x": 240, "y": 90, "w": 100, "h": 150, "n": 14},
+      {"x": 500, "y": 150, "w": 110, "h": 140, "n": 12},
+      {"x": 330, "y": 295, "w": 220, "h": 130, "n": 18},
+      {"x": 100, "y": 240, "w": 200, "h": 90, "n": 9},
+      {"x": 545, "y": 405, "w": 140, "h": 130, "n": 10},
+      {"x": 680, "y": 440, "w": 110, "h": 110, "n": 8},
+      {"x": 985, "y": 270, "w": 75, "h": 230, "n": 10},
+      {"x": 760, "y": 545, "w": 120, "h": 90, "n": 8},
+      {"x": 1085, "y": 520, "w": 50, "h": 280, "n": 9},
+      {"x": 860, "y": 765, "w": 240, "h": 100, "n": 9},
+      {"x": 30, "y": 55, "w": 90, "h": 80, "n": 5},
+      {"x": 1275, "y": 120, "w": 90, "h": 90, "n": 4},
+      {"x": 900, "y": 235, "w": 150, "h": 40, "n": 4},
+      {"x": 950, "y": 620, "w": 120, "h": 120, "n": 4},
+      {"x": 420, "y": 160, "w": 110, "h": 35, "n": 3},
+      {"x": 300, "y": 430, "w": 80, "h": 80, "kind": "conifer", "n": 5},
+      {"x": 1085, "y": 420, "w": 50, "h": 90, "kind": "conifer", "n": 4}
+    ],
+    "lots": [
+      {"name": "Estacionamiento", "x": 860, "y": 150, "w": 190, "h": 90},
+      {"name": "Estacionamiento Ingeniería", "x": 880, "y": 618, "w": 205, "h": 140},
+      {"name": "Estacionamiento Graduados", "x": 90, "y": 52, "w": 170, "h": 60}
+    ],
+    "pois": [
+      {"id": "mb-iztacalco", "short": "Metrobús Iztacalco", "kind": "metrobus", "name": "Metrobús Iztacalco", "x": 40, "y": 247, "mode": "ambos", "note": "Estación sobre la vía elevada de Av. Té, al oeste del plantel. Ubicación tomada de Google Maps (19.39655, -99.09595)."},
+      {"id": "mb-upiicsa", "short": "Metrobús UPIICSA", "kind": "metrobus", "name": "Metrobús UPIICSA", "x": 1105, "y": 857, "mode": "ambos", "note": "Estación 'Upiicsa' sobre Av. Té, al sureste del plantel. Ubicación de Google Maps (19.39390, -99.09033) ajustada a la vía en el plano."},
+      {"id": "ac-te-peatonal", "short": "Acceso Av. Té", "kind": "acceso", "name": "Acceso peatonal sobre Av. Té", "x": 700, "y": 566, "mode": "ambos", "supuesto": true, "note": "Supuesto: remate de la explanada hacia Av. Té (Google Maps ubica el plantel en Av. Té 950)."},
+      {"id": "ac-te-vehicular", "short": "Acceso auto Ingeniería", "kind": "acceso", "name": "Acceso vehicular a estacionamiento de Ingeniería", "x": 888, "y": 698, "mode": "ambos", "supuesto": true, "note": "Supuesto: entrada y salida de autos del estacionamiento de Ingeniería hacia Av. Té."},
+      {"id": "ac-canela-peatonal", "short": "Acceso Canela", "kind": "acceso", "name": "Acceso peatonal sobre Canela", "x": 540, "y": 92, "mode": "ambos", "supuesto": true, "note": "Supuesto: inicio del andador junto a Laboratorios Ligeros, sobre Calle Canela."},
+      {"id": "ac-canela-vehicular", "short": "Acceso auto Canela", "kind": "acceso", "name": "Acceso vehicular a estacionamiento sobre Canela", "x": 905, "y": 146, "mode": "ambos", "supuesto": true, "note": "Supuesto: entrada y salida del estacionamiento norte, sobre Calle Canela."},
+      {"id": "ac-graduados", "short": "Acceso auto Graduados", "kind": "acceso", "name": "Acceso vehicular a estacionamiento de Graduados", "x": 175, "y": 54, "mode": "ambos", "supuesto": true, "note": "Supuesto: estacionamiento de Graduados sobre Calle Canela."},
+      {"id": "ac-vainilla", "short": "Acceso Vainilla", "kind": "acceso", "name": "Acceso peatonal sobre Calle Vainilla", "x": 1338, "y": 330, "mode": "ambos", "supuesto": true, "note": "Supuesto: lado oriente del plantel, junto al estadio y el gimnasio."}
+    ],
+    "roads": [
+      {"kind": "street", "name": "Calle Canela", "w": 22, "pts": [[-20, 35], [330, 45], [740, 108], [1000, 150], [1250, 196], [1389, 222]]},
+      {"kind": "street", "name": "Calle Vainilla", "w": 18, "pts": [[1355, 225], [1345, 500], [1300, 897]]},
+      {"kind": "rail", "name": "Av. Té · vía elevada del Metrobús", "w": 26, "pts": [[-20, 235], [250, 285], [500, 430], [800, 632], [1000, 772], [1180, 917]]},
+      {"kind": "path", "name": "Andador entre Laboratorios Ligeros y Formación Básica", "w": 14, "pts": [[250, 180], [600, 180], [600, 240], [690, 240]]},
+      {"kind": "path", "name": "Andador oriente de Laboratorios Ligeros", "w": 12, "pts": [[540, 100], [540, 180]]},
+      {"kind": "path", "name": "Andador junto a Gobierno", "w": 12, "pts": [[530, 290], [530, 420], [690, 420]]},
+      {"kind": "path", "name": "Andador de la explanada", "w": 14, "pts": [[690, 225], [690, 560], [900, 560]]},
+      {"kind": "path", "name": "Andador al sur de Ciencias Sociales", "w": 14, "pts": [[600, 236], [1060, 236]]},
+      {"kind": "path", "name": "Andador entre Culturales e Ingeniería", "w": 14, "pts": [[690, 497], [1125, 497]]},
+      {"kind": "path", "name": "Andador del oriente", "w": 14, "pts": [[1125, 185], [1125, 820]]},
+      {"kind": "path", "name": "Andador del estacionamiento sur", "w": 10, "pts": [[880, 615], [1115, 615]]},
+      {"kind": "path", "name": "Andador de Graduados", "w": 12, "pts": [[260, 120], [260, 300]]}
+    ]
+  }
+}
