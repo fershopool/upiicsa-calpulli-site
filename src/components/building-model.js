@@ -11,6 +11,11 @@ const HEX = {
   cap: '#8a8273', cornice: '#b9b2a3', stairs: '#e9e3d6', roof: '#c9c9c4'
 };
 const TONES = ['#d9d2c3', '#ddd6c8', '#d6cfc0', '#dbd4c5', '#d8d1c2'];
+const KIND = {
+  salon: '#e9dfc9', laboratorio: '#bfdcd6', oficina: '#ecd3a6', academia: '#d6c6ea', sanitarios: '#a9d4f2',
+  servicio: '#ccc5ba', circulacion: '#f3eee0', auditorio: '#e3bfae', deportivo: '#b9d9b0', otro: '#e0d7c4'
+};
+const CUT_H = 1.25; // altura de corte arquitectónico
 const PAL = {
   light: { tint: '#ffffff', glass: '#2f6b66', glassOp: 0.55, emi: '#000000', emiI: 0 },
   dark: { tint: '#7f88a8', glass: '#2a5a60', glassOp: 0.72, emi: '#ffc27a', emiI: 0.6 }
@@ -53,7 +58,7 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
   } catch (e) { atlas = null; gradTex = null; }
 
   const col = (h) => new T.Color(h);
-  const C = { ext: col(HEX.ext), int: col(HEX.int), zoc: col(HEX.zocalo), rod: col(HEX.rodapie), frame: col(HEX.frame), cap: col(HEX.cap), cor: col(HEX.cornice) };
+  const C = { ext: col(HEX.ext), int: col(HEX.int), zoc: col(HEX.zocalo), rod: col(HEX.rodapie), frame: col(HEX.frame), cap: col(HEX.cap), capD: col('#5a554b'), cor: col(HEX.cornice) };
   const GREY = col('#8a8a8a');
   const YAX = new T.Vector3(0, 1, 0);
   const _p = new T.Vector3(), _s = new T.Vector3(), _q = new T.Quaternion();
@@ -88,7 +93,7 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
   // ---- construcción por nivel ---------------------------------------------
   const totalWalls = levels.reduce((n, l) => n + (l.walls || []).length, 0);
   const withTrim = totalWalls <= 3500; // ponytail: rodapié omitido si el presupuesto de triángulos peligra
-  const levelObjs = [];
+  const levelObjs = [], roomMap = new Map(), roomsByLevel = [];
   const root = new T.Group();
 
   levels.forEach((lv, li) => {
@@ -96,7 +101,7 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
     const h = num(lv.h, 3.4);
     const g = new T.Group();
     g.name = 'nivel-' + lv.id;
-    const walls = newList(), glass = newList(), trim = newList(), stairs = newList();
+    const walls = newList(), glass = newList(), trim = newList(), stairs = newList(), cwalls = newList(), cstairs = newList(), shP = [], stairArrows = [];
     const walls_ = lv.walls || [], ops = lv.openings || [];
 
     // asignar cada vano al muro más cercano
@@ -128,6 +133,19 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
         const sm = (s0 + s1) / 2;
         add(list, w.a[0] + ux * sm - ox, base + (y0 + y1) / 2, w.a[1] + uy * sm - oy, s1 - s0, y1 - y0, depth, ry, c);
       };
+      if (w.rail) {
+        // barandal: muro delgado de 0.94 m + pasamanos oscuro; igual en vista completa y en corte
+        const rt = Math.min(t, 0.12);
+        [walls, cwalls].forEach((L2) => {
+          place(L2, -rt / 2, len + rt / 2, 0, 0.94, rt, color);
+          place(L2, -rt / 2, len + rt / 2, 0.94, 1.0, rt + 0.06, C.capD);
+        });
+        const hx = len / 2 + 0.05, nw = rt / 2 + 0.2, cx = w.a[0] + ux * len / 2 - ox, cy = w.a[1] + uy * len / 2 - oy;
+        const A = [cx - ux * hx - uy * nw, cy - uy * hx + ux * nw], B = [cx - ux * hx + uy * nw, cy - uy * hx - ux * nw];
+        const D = [cx + ux * hx - uy * nw, cy + uy * hx + ux * nw], E = [cx + ux * hx + uy * nw, cy + uy * hx - ux * nw];
+        pushTri(shP, A, B, E, base + 0.05); pushTri(shP, A, E, D, base + 0.05);
+        return;
+      }
       if (w.ext && li > 0) place(trim, -t / 2, len + t / 2, -0.1, 0.12, t + 0.08, C.cor); // losa de entrepiso en fachada
       // intervalos de vanos
       const iv = (byWall.get(wi) || []).map((o) => {
@@ -191,15 +209,35 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
         cur = Math.max(cur, s1);
       });
       if (cur < len) solid(cur, len);
+      // corte: muros bajos sin dinteles (puertas = huecos) ni ventanas, coronación oscura y sombra falsa en el piso
+      {
+        const cb = (s0, s1) => {
+          if (s1 - s0 < 0.02) return;
+          const e0 = s0 <= 0.001 ? -t / 2 : 0, e1 = s1 >= len - 0.001 ? t / 2 : 0;
+          place(cwalls, s0 + e0, s1 + e1, 0, CUT_H, t, color);
+          place(cwalls, s0 + e0, s1 + e1, CUT_H, CUT_H + 0.04, t, C.capD);
+          const sm = (s0 + s1) / 2, hl2 = (s1 - s0) / 2 + 0.05, nw = t / 2 + 0.22;
+          const cx = w.a[0] + ux * sm - ox, cy = w.a[1] + uy * sm - oy;
+          const A = [cx - ux * hl2 - uy * nw, cy - uy * hl2 + ux * nw], B = [cx - ux * hl2 + uy * nw, cy - uy * hl2 - ux * nw];
+          const D = [cx + ux * hl2 - uy * nw, cy + uy * hl2 + ux * nw], E = [cx + ux * hl2 + uy * nw, cy + uy * hl2 - ux * nw];
+          pushTri(shP, A, B, E, base + 0.05); pushTri(shP, A, E, D, base + 0.05);
+        };
+        let c0 = 0;
+        iv.filter((o) => o.type !== 'window').forEach((o) => { if (o.s0 > c0) cb(c0, o.s0); c0 = Math.max(c0, o.s1); });
+        if (c0 < len) cb(c0, len);
+      }
     });
 
     // escaleras
     (lv.stairs || []).forEach((s) => {
       if (!s.c) return;
       const a = (num(s.ang, 0) * Math.PI) / 180, d = num(s.d, 4), wd = num(s.w, 2.4);
+      stairArrows.push({ x: s.c[0], y: s.c[1], tile: 5, size: Math.min(wd * 0.7, d * 0.6, 1.8), rot: a, yy: base + CUT_H - 0.05 });
       const n = Math.max(3, Math.min(40, Math.round(d / 0.29))), rise = Math.min(0.17, (h * 0.95) / n);
       for (let i = 0; i < n; i++) {
         const sm = -d / 2 + ((i + 0.5) * d) / n, sh = (i + 1) * rise;
+        const sh2 = ((i + 1) / n) * (CUT_H - 0.1);
+        add(cstairs, s.c[0] + Math.cos(a) * sm - ox, base + sh2 / 2, s.c[1] + Math.sin(a) * sm - oy, d / n, sh2, wd, -a, null);
         add(stairs, s.c[0] + Math.cos(a) * sm - ox, base + sh / 2, s.c[1] + Math.sin(a) * sm - oy, d / n, sh, wd, -a, null);
       }
     });
@@ -226,8 +264,15 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
       slab: mkMat('slab:' + li, TONES[Math.min(li, TONES.length - 1)], { roughness: 0.85, metalness: 0, side: T.DoubleSide }, 1, 0.45),
       glass: mkMat('glass', '#2f6b66', { roughness: 0.08, metalness: 0.25, side: T.DoubleSide }, 0.55, 0.08, true),
       trim: mkMat('trim', '#ffffff', { roughness: 0.7, metalness: 0.05 }, 1, 0.25),
-      stairs: mkMat('stairs', HEX.stairs, { roughness: 0.8, metalness: 0 }, 1, 0.3)
+      stairs: mkMat('stairs', HEX.stairs, { roughness: 0.8, metalness: 0 }, 1, 0.3),
+      shade: mkMat('shade', '#000000', { roughness: 1, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }, 0.22, 0.22, true)
     };
+    const lvRooms = (lv.rooms || []).filter((r) => r && Array.isArray(r.poly) && r.poly.length >= 3);
+    if (lvRooms.length) {
+      mats.patch = mkMat('patch', '#ffffff', {
+        roughness: 0.95, metalness: 0, vertexColors: true, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1
+      }, 1, 0.3);
+    }
     const meshes = {};
     meshes.slab = new T.Mesh(slabGeo, mats.slab);
     meshes.slab.castShadow = true; meshes.slab.receiveShadow = true; meshes.slab.userData.cast = true;
@@ -235,16 +280,70 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
     meshes.glass = inst(boxGeo, mats.glass, glass, false, false);
     meshes.trim = inst(boxNB, mats.trim, trim, false, true);
     meshes.stairs = inst(boxNB, mats.stairs, stairs, true, true);
+    meshes.cutWall = inst(boxNB, mats.wall, cwalls, true, true);
+    meshes.cutStairs = inst(boxNB, mats.stairs, cstairs, true, true);
+    if (shP.length) {
+      const hg = track(new T.BufferGeometry());
+      hg.setAttribute('position', new T.BufferAttribute(new Float32Array(shP), 3));
+      const nr = new Float32Array(shP.length); for (let q = 1; q < nr.length; q += 3) nr[q] = 1;
+      hg.setAttribute('normal', new T.BufferAttribute(nr, 3));
+      meshes.shade = new T.Mesh(hg, mats.shade);
+      meshes.shade.userData.cast = false;
+    }
 
-    // pictogramas de baños y salidas (un solo plano fusionado)
+    // espacios: parche de piso por kind + contorno, una sola malla con color por vértice
     const signs = [];
-    (lv.baths || []).forEach((b) => b.c && signs.push({ x: b.c[0], y: b.c[1], tile: b.g === 'h' ? 0 : b.g === 'm' ? 1 : 2, size: 1.2 }));
-    (lv.exits || []).forEach((e) => e.c && signs.push({ x: e.c[0], y: e.c[1], tile: 3, size: 1.4 }));
+    const hasBathRooms = lvRooms.some((r) => r.kind === 'sanitarios');
+    if (lvRooms.length) {
+      const P = [], Cc = [], doors = ops.filter((o) => o.type === 'door' && o.c);
+      const outline = col('#33322f');
+      // los espacios grandes van abajo y los pequeños encima (+1 mm por posición), así un baño nunca queda tapado por una sala amplia
+      const order = lvRooms.map((r, k) => ({ r, k, a: num(r.a, polyArea(r.poly)) })).sort((p, q) => q.a - p.a);
+      order.forEach(({ r, k }, rank) => {
+        const lift = Math.min(0.012, rank * 0.0001);
+        if (r.kind === 'vacio') return; // vacío/patio: sin parche ni contorno
+        const poly = r.poly.filter((q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]));
+        if (poly.length < 3) return;
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        poly.forEach((q) => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
+        const c = Array.isArray(r.c) && Number.isFinite(r.c[0]) ? r.c : [(x0 + x1) / 2, (y0 + y1) / 2];
+        const kind = KIND[r.kind] ? r.kind : 'otro', id = r.id || lv.id + '-' + k;
+        const pub = { id, text: r.t || '', kind, g: r.g || '', area: num(r.a, polyArea(poly)), numeric: !!r.n, x: c[0] - ox, y: base + 0.05, z: c[1] - oy, w: x1 - x0, d: y1 - y0 };
+        roomMap.set(id, { pub, poly, li, c, base });
+        (roomsByLevel[li] = roomsByLevel[li] || []).push(pub);
+        const kc = col(KIND[kind]), n0 = P.length;
+        polyTris(T, poly, ox, oy).forEach((t) => pushTri(P, t[0], t[1], t[2], base + 0.03 + lift));
+        for (let q = n0; q < P.length; q += 3) Cc.push(kc.r, kc.g, kc.b);
+        const r0 = P.length;
+        ribbon(P, poly, base + 0.045 + lift, 0.15, ox, oy);
+        for (let q = r0; q < P.length; q += 3) Cc.push(outline.r, outline.g, outline.b);
+        if (kind === 'sanitarios') {
+          const sz = Math.max(0.6, Math.min(1.6, 0.85 * Math.min(pub.w, pub.d)));
+          signs.push({ x: c[0], y: c[1], tile: r.g === 'h' ? 0 : r.g === 'm' ? 1 : 2, size: sz });
+          let bd = 0.9, bo = null; // «WC» sobre la puerta más cercana al espacio
+          doors.forEach((o) => { const dd = distToPoly(o.c, poly); if (dd < bd) { bd = dd; bo = o; } });
+          if (bo) signs.push({ x: bo.c[0], y: bo.c[1], tile: 4, size: 1, sw: 1.1, sh: 0.55 });
+        }
+      });
+      if (P.length) {
+        const pg = track(new T.BufferGeometry());
+        pg.setAttribute('position', new T.BufferAttribute(new Float32Array(P), 3));
+        const nr = new Float32Array(P.length); for (let q = 1; q < nr.length; q += 3) nr[q] = 1;
+        pg.setAttribute('normal', new T.BufferAttribute(nr, 3));
+        pg.setAttribute('color', new T.BufferAttribute(new Float32Array(Cc), 3));
+        meshes.patch = new T.Mesh(pg, mats.patch);
+        meshes.patch.receiveShadow = true; meshes.patch.userData.cast = false;
+      }
+    }
+    // pictogramas de baños (si no hay rooms) y salidas: un solo plano fusionado
+    if (!hasBathRooms) (lv.baths || []).forEach((b) => b.c && signs.push({ x: b.c[0], y: b.c[1], tile: b.g === 'h' ? 0 : b.g === 'm' ? 1 : 2, size: 1.2 }));
+    (lv.exits || []).forEach((e) => e.c && signs.push({ x: e.c[0], y: e.c[1], tile: 3, size: 1.6 }));
+    stairArrows.forEach((a) => signs.push(a));
     if (signs.length) {
-      const sg = track(buildSigns(T, signs, base + 0.03, ox, oy));
+      const sg = track(buildSigns(T, signs, base + 0.06, ox, oy));
       const sm = track(new T.MeshBasicMaterial({
         map: atlas, color: atlas ? 0xffffff : 0x1f9d63, transparent: true, alphaTest: 0.05,
-        polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2
+        polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3
       }));
       meshes.signs = new T.Mesh(sg, sm);
       meshes.signs.userData.cast = false;
@@ -316,22 +415,33 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
   }
   root.add(roof);
 
-  // ---- resaltado ----------------------------------------------------------
+  // ---- resaltado (relleno + borde dinámicos, haz y etiqueta) ----------------
   const hl = new T.Group();
   hl.visible = false;
-  const hlMat = track(new T.MeshBasicMaterial({ color: 0xf5cc54, transparent: true, opacity: 0.6, depthWrite: false }));
+  const dyn = (color, opacity, order) => {
+    const g0 = new T.BufferGeometry();
+    g0.setAttribute('position', new T.BufferAttribute(new Float32Array(0), 3));
+    const m = new T.Mesh(g0, track(new T.MeshBasicMaterial({
+      color, transparent: true, opacity, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6
+    })));
+    m.renderOrder = order; m.visible = false;
+    track({ dispose: () => m.geometry.dispose() });
+    return m;
+  };
+  const setP = (m, P) => {
+    m.geometry.dispose();
+    m.geometry = new T.BufferGeometry();
+    m.geometry.setAttribute('position', new T.BufferAttribute(new Float32Array(P), 3));
+    m.visible = P.length > 0;
+  };
+  const hlFill = dyn(0xf5cc54, 0.5, 3), hlEdge = dyn(0xffe28a, 0.95, 4), hover = dyn(0x6ed7b2, 0.45, 2);
   const beamMat = track(new T.MeshBasicMaterial({
     color: 0xf5cc54, transparent: true, opacity: 0.45, depthWrite: false, alphaMap: gradTex || null, side: T.DoubleSide
   }));
   const none = track(new T.MeshBasicMaterial({ visible: false }));
-  const hlPlane = new T.Mesh(boxGeo, hlMat);
   const hlBeam = new T.Mesh(boxGeo, [beamMat, beamMat, none, none, beamMat, beamMat]);
-  hlPlane.renderOrder = 3; hlBeam.renderOrder = 3;
-  hlPlane.scale.set(0, 0, 0); hlBeam.scale.set(0, 0, 0); // sin volumen hasta highlight()
-  hl.add(hlPlane, hlBeam);
-  // borde luminoso (4 listones) y etiqueta plana discreta
-  const edgeMat = track(new T.MeshBasicMaterial({ color: 0xffe28a, transparent: true, opacity: 0.95, depthWrite: false }));
-  const edges = [0, 1, 2, 3].map(() => { const e = new T.Mesh(boxGeo, edgeMat); e.scale.set(0, 0, 0); e.renderOrder = 4; hl.add(e); return e; });
+  hlBeam.renderOrder = 3; hlBeam.scale.set(0, 0, 0); // sin volumen hasta highlight()
+  hl.add(hlFill, hlEdge, hlBeam);
   let lblCanvas = null, lblTex = null, lblMesh = null;
   if (typeof document !== 'undefined') {
     try {
@@ -339,7 +449,7 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
       lblTex = track(new T.CanvasTexture(lblCanvas));
       if (T.SRGBColorSpace) lblTex.colorSpace = T.SRGBColorSpace;
       const lg = track(new T.PlaneGeometry(1, 1)); lg.rotateX(-Math.PI / 2);
-      lblMesh = new T.Mesh(lg, track(new T.MeshBasicMaterial({ map: lblTex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 })));
+      lblMesh = new T.Mesh(lg, track(new T.MeshBasicMaterial({ map: lblTex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -8, polygonOffsetUnits: -8 })));
       lblMesh.renderOrder = 5; lblMesh.scale.set(0, 0, 0);
       hl.add(lblMesh);
     } catch (e) { lblMesh = null; }
@@ -358,8 +468,8 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
     lblTex.needsUpdate = true;
     return true;
   }
-  root.add(hl);
-  let hlIdx = -1;
+  root.add(hl, hover);
+  let hlIdx = -1, hovIdx = -1;
 
   // ---- estado / tema -------------------------------------------------------
   let cut = -1, curTheme = theme === 'dark' ? 'dark' : 'light';
@@ -384,12 +494,16 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
       const dim = cut >= 0 && i < cut;
       L.group.visible = cut < 0 || i <= cut;
       Object.values(L.mats).forEach((m) => paint(m, dim, pal, i));
-      Object.values(L.meshes).forEach((me) => { me.castShadow = !!me.userData.cast && !dim; });
+      Object.values(L.meshes).filter(Boolean).forEach((me) => { me.castShadow = !!me.userData.cast && !dim; });
       if (L.meshes.signs) L.meshes.signs.visible = !dim;
+      const act = cut >= 0 && i === cut; // corte arquitectónico en el nivel activo
+      ['wall', 'trim', 'glass', 'stairs'].forEach((k) => { if (L.meshes[k]) L.meshes[k].visible = !act; });
+      ['cutWall', 'cutStairs', 'shade'].forEach((k) => { if (L.meshes[k]) L.meshes[k].visible = act; });
     });
     Object.values(roofMats).forEach((m) => paint(m, false, pal, 0));
     roof.visible = cut < 0;
     hl.visible = hlIdx >= 0 && (cut < 0 || hlIdx <= cut);
+    hover.visible = hovIdx >= 0 && (cut < 0 || hovIdx <= cut);
   }
   const idxOf = (id) => levelObjs.findIndex((L) => L.id === id);
 
@@ -399,20 +513,27 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
     size: { w: bx1 - bx0, d: by1 - by0, h: H + SLAB_T + topExtra },
     levelBase(id) { const i = idxOf(id); return i < 0 ? 0 : bases[i]; },
     setLevel(id) { cut = id == null ? -1 : idxOf(id); refresh(); },
-    highlight(levelId, rect, label) {
-      const i = idxOf(levelId);
-      if (i < 0 || !rect || ![rect.x, rect.y, rect.w, rect.h].every(Number.isFinite)) { hlIdx = -1; refresh(); return null; }
+    highlight(levelId, rect, label, roomId) {
+      let i = idxOf(levelId), poly = null, lc = null;
+      const rr = roomId ? roomMap.get(roomId) : null;
+      if (rr) { i = rr.li; poly = rr.poly; lc = rr.c; }
+      else if (i >= 0 && rect && [rect.x, rect.y, rect.w, rect.h].every(Number.isFinite)) {
+        const w2 = Math.max(rect.w, 0.3) / 2, h2 = Math.max(rect.h, 0.3) / 2;
+        poly = [[rect.x - w2, rect.y - h2], [rect.x + w2, rect.y - h2], [rect.x + w2, rect.y + h2], [rect.x - w2, rect.y + h2]];
+        lc = [rect.x, rect.y];
+      }
+      if (i < 0 || !poly) { hlIdx = -1; refresh(); return null; }
       hlIdx = i;
-      const x = rect.x - ox, z = rect.y - oy, y = bases[i];
-      hlPlane.scale.set(Math.max(rect.w, 0.3), 0.08, Math.max(rect.h, 0.3));
-      hlPlane.position.set(x, y + 0.06, z);
-      hlBeam.scale.set(Math.max(rect.w, 0.3), BEAM_H, Math.max(rect.h, 0.3));
-      hlBeam.position.set(x, y + BEAM_H / 2, z);
+      const y = bases[i], P = [], E = [];
+      polyTris(T, poly, ox, oy).forEach((t) => pushTri(P, t[0], t[1], t[2], y + 0.065));
+      ribbon(E, poly, y + 0.07, 0.22, ox, oy);
+      setP(hlFill, P); setP(hlEdge, E);
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      poly.forEach((q) => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
+      hlBeam.scale.set(Math.max(x1 - x0, 0.3), BEAM_H, Math.max(y1 - y0, 0.3));
+      hlBeam.position.set((x0 + x1) / 2 - ox, y + BEAM_H / 2, (y0 + y1) / 2 - oy);
+      const x = lc[0] - ox, z = lc[1] - oy;
       hl.userData.label = label || '';
-      const ew = Math.max(rect.w, 0.3), eh = Math.max(rect.h, 0.3), et = 0.14;
-      [[0, -eh / 2, ew + et, et], [0, eh / 2, ew + et, et], [-ew / 2, 0, et, eh], [ew / 2, 0, et, eh]].forEach((q, k) => {
-        edges[k].scale.set(q[2], 0.1, q[3]); edges[k].position.set(x + q[0], y + 0.1, z + q[1]);
-      });
       if (lblMesh) {
         const txt = String(label || '');
         if (txt && drawLabel(txt)) {
@@ -422,6 +543,17 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
       }
       refresh();
       return { x, y: y + 1, z };
+    },
+    roomsOf(levelId) { const i = idxOf(levelId); return i < 0 ? [] : (roomsByLevel[i] || []).map((r) => ({ ...r })); },
+    getRoom(id) { const r = roomMap.get(id); return r ? { ...r.pub } : null; },
+    setRoomHover(id) {
+      const r = id ? roomMap.get(id) : null;
+      if (!r) { hovIdx = -1; hover.visible = false; return; }
+      hovIdx = r.li;
+      const P = [];
+      polyTris(T, r.poly, ox, oy).forEach((t) => pushTri(P, t[0], t[1], t[2], r.base + 0.055));
+      setP(hover, P);
+      refresh();
     },
     setTheme(t) { curTheme = t === 'dark' ? 'dark' : 'light'; refresh(); },
     dispose() {
@@ -435,11 +567,50 @@ export function buildBuilding({ THREE, model, theme = 'light' }) {
 }
 
 // ---- helpers (sin THREE global) ---------------------------------------------
+function polyArea(poly) {
+  let A = 0;
+  for (let i = 0; i < poly.length; i++) { const p = poly[i], q = poly[(i + 1) % poly.length]; A += p[0] * q[1] - q[0] * p[1]; }
+  return Math.abs(A) / 2;
+}
+function distToPoly(c, poly) {
+  let best = Infinity;
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i], q = poly[(i + 1) % poly.length], dx = q[0] - p[0], dy = q[1] - p[1], l2 = dx * dx + dy * dy;
+    const t = l2 ? Math.max(0, Math.min(1, ((c[0] - p[0]) * dx + (c[1] - p[1]) * dy) / l2)) : 0;
+    best = Math.min(best, Math.hypot(c[0] - p[0] - t * dx, c[1] - p[1] - t * dy));
+  }
+  return best;
+}
+// triángulo (a,b,c = [X,Z]) orientado hacia +Y, a P plano
+function pushTri(P, a, b, c, y) {
+  if ((b[1] - a[1]) * (c[0] - a[0]) - (b[0] - a[0]) * (c[1] - a[1]) < 0) { const t = b; b = c; c = t; }
+  P.push(a[0], y, a[1], b[0], y, b[1], c[0], y, c[1]);
+}
+function polyTris(T, poly, ox, oy) {
+  const pts = poly.map((p) => new T.Vector2(p[0] - ox, p[1] - oy));
+  try {
+    return T.ShapeUtils.triangulateShape(pts, []).map((t) => t.map((i) => [pts[i].x, pts[i].y]));
+  } catch (e) { return []; }
+}
+// cinta plana de ancho wd sobre el contorno
+function ribbon(P, poly, y, wd, ox, oy) {
+  const e = wd / 2;
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i], q = poly[(i + 1) % poly.length], dx = q[0] - p[0], dy = q[1] - p[1], len = Math.hypot(dx, dy);
+    if (len < 0.02) continue;
+    const ux = dx / len, uy = dy / len, nx = -uy * e, ny = ux * e;
+    const a0 = [p[0] - ux * e + nx - ox, p[1] - uy * e + ny - oy], a1 = [p[0] - ux * e - nx - ox, p[1] - uy * e - ny - oy];
+    const b0 = [q[0] + ux * e + nx - ox, q[1] + uy * e + ny - oy], b1 = [q[0] + ux * e - nx - ox, q[1] + uy * e - ny - oy];
+    pushTri(P, a0, a1, b1, y); pushTri(P, a0, b1, b0, y);
+  }
+}
 function buildSigns(T, signs, y, ox, oy) {
   const n = signs.length, pos = new Float32Array(n * 12), uv = new Float32Array(n * 8), nor = new Float32Array(n * 12), idx = new Uint32Array(n * 6);
   signs.forEach((s, i) => {
-    const r = s.size / 2, x = s.x - ox, z = s.y - oy, u0 = s.tile / 4 + 0.004, u1 = (s.tile + 1) / 4 - 0.004;
-    pos.set([x - r, y, z - r, x + r, y, z - r, x + r, y, z + r, x - r, y, z + r], i * 12);
+    const rx = (s.sw || s.size) / 2, rz = (s.sh || s.size) / 2, x = s.x - ox, z = s.y - oy, u0 = s.tile / 6 + 0.003, u1 = (s.tile + 1) / 6 - 0.003;
+    const ph = s.rot == null ? 0 : s.rot + Math.PI / 2, cs = Math.cos(ph), sn = Math.sin(ph), yy = s.yy == null ? y : s.yy;
+    const cr = [[-rx, -rz], [rx, -rz], [rx, rz], [-rx, rz]];
+    cr.forEach((q, k) => pos.set([x + q[0] * cs - q[1] * sn, yy, z + q[0] * sn + q[1] * cs], i * 12 + k * 3));
     uv.set([u0, 1, u1, 1, u1, 0, u0, 0], i * 8);
     for (let k = 0; k < 4; k++) nor[i * 12 + k * 3 + 1] = 1;
     idx.set([0, 3, 2, 0, 2, 1].map((v) => v + i * 4), i * 6);
@@ -454,7 +625,7 @@ function buildSigns(T, signs, y, ox, oy) {
 
 function makeAtlas(T) {
   const c = document.createElement('canvas');
-  c.width = 1024; c.height = 256;
+  c.width = 1536; c.height = 256;
   const x = c.getContext('2d');
   if (!x) return null;
   x.scale(2, 2);
@@ -483,14 +654,21 @@ function makeAtlas(T) {
     x.fillRect(54, 94, 8, 22); x.fillRect(66, 94, 8, 22);
     x.restore();
   };
-  const teal = '#24403f';
-  tile(0, teal, () => man(64, 1));
-  tile(1, teal, () => woman(64, 1));
-  tile(2, teal, () => { man(40, 0.62); woman(88, 0.62); x.fillRect(62, 24, 4, 80); });
+  tile(0, '#2f6fb0', () => man(64, 1));
+  tile(1, '#b03a82', () => woman(64, 1));
+  tile(2, '#5d6670', () => { man(40, 0.62); woman(88, 0.62); x.fillRect(62, 24, 4, 80); });
   tile(3, '#1f9d63', () => {
     circle(76, 36, 10); x.lineCap = 'round'; x.lineWidth = 10;
     const ln = (a, b, c, d) => { x.beginPath(); x.moveTo(a, b); x.lineTo(c, d); x.stroke(); };
     ln(70, 50, 56, 78); ln(70, 52, 90, 62); ln(60, 60, 42, 56); ln(56, 78, 72, 98); ln(56, 78, 40, 100);
+  });
+  x.save(); x.translate(5 * 128, 0); // flecha de subida (sin fondo)
+  x.fillStyle = '#2f3a3a'; x.strokeStyle = '#ffffff'; x.lineWidth = 7; x.lineJoin = 'round';
+  x.beginPath(); x.moveTo(64, 10); x.lineTo(100, 62); x.lineTo(76, 62); x.lineTo(76, 118); x.lineTo(52, 118); x.lineTo(52, 62); x.lineTo(28, 62); x.closePath();
+  x.stroke(); x.fill(); x.restore();
+  tile(4, '#1d2b33', () => {
+    x.font = '700 62px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('WC', 64, 68);
   });
   const t = new T.CanvasTexture(c);
   if (T.SRGBColorSpace) t.colorSpace = T.SRGBColorSpace;

@@ -405,11 +405,14 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
     let shape;
     const ol = idx && Array.isArray(idx.outline) && idx.outline.length >= 3 && idx.outline.every((p) => Array.isArray(p) && isFinite(p[0]) && isFinite(p[1])) ? idx.outline : null;
     if (ol) {
-      const bb = Array.isArray(idx.bbox) && idx.bbox.length === 4 ? idx.bbox : [Math.min(...ol.map((p) => p[0])), Math.min(...ol.map((p) => p[1])), Math.max(...ol.map((p) => p[0])), Math.max(...ol.map((p) => p[1]))];
+      // el contorno se gira para que el norte del plano coincida con el norte del campus (mismo giro que el modelo detallado)
+      const na = (num(idx.north) * Math.PI) / 180, cs = Math.cos(na), sn = Math.sin(na);
+      const rot2 = ol.map(([x, y]) => [x * cs + y * sn, -x * sn + y * cs]);
+      const bb = [Math.min(...rot2.map((p) => p[0])), Math.min(...rot2.map((p) => p[1])), Math.max(...rot2.map((p) => p[0])), Math.max(...rot2.map((p) => p[1]))];
       const bw = bb[2] - bb[0], bh = bb[3] - bb[1];
       const sc = Math.max(w, d) / (Math.max(bw, bh) || 1);
       const mx = (bb[0] + bb[2]) / 2, my = (bb[1] + bb[3]) / 2;
-      shape = new THREE.Shape(ol.map(([x, y]) => new THREE.Vector2((x - mx) * sc, -(y - my) * sc)));
+      shape = new THREE.Shape(rot2.map(([x, y]) => new THREE.Vector2((x - mx) * sc, -(y - my) * sc)));
     } else {
       shape = new THREE.Shape([new THREE.Vector2(-w / 2, -d / 2), new THREE.Vector2(w / 2, -d / 2), new THREE.Vector2(w / 2, d / 2), new THREE.Vector2(-w / 2, d / 2)]);
       for (const p of b.patio || []) {

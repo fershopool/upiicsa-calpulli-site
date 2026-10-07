@@ -38,3 +38,40 @@ button.t3-label{pointer-events:auto;cursor:pointer;font-family:inherit}
   .t3-spinner__ring{animation-duration:2.4s}
   .t3-label{transition:none}
 }
+
+/* Espacios del nivel en corte: tarjetas con icono, color por kind. */
+.t3-room{--k:#8a8470;display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .5rem .18rem .35rem;max-width:11rem;
+  background:light-dark(rgb(250 247 239 / 88%),rgb(24 55 47 / 86%));color:var(--t3-ink);
+  border:1px solid var(--k);border-radius:.55rem;font:600 .72rem/1.2 system-ui,sans-serif;
+  backdrop-filter:blur(3px);box-shadow:0 1px 6px rgb(0 0 0 / 14%);overflow:hidden}
+.t3-room__icon{flex:none;width:.95rem;height:.95rem;fill:none;stroke:var(--k);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.t3-room__text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t3-room:hover{border-width:2px;box-shadow:0 0 0 2px rgb(245 204 84 / 55%),0 2px 8px rgb(0 0 0 / 20%)}
+.t3-room:focus-visible{outline:2px solid var(--focus,#007D73);outline-offset:2px}
+.t3-room--salon{--k:light-dark(#9c9378,#c9bf9f)}
+.t3-room--laboratorio{--k:light-dark(#2f7f78,#5DE2D1)}
+.t3-room--oficina{--k:light-dark(#b58a3c,#e0b868)}
+.t3-room--academia{--k:light-dark(#7a5fc0,#c2b8ff)}
+.t3-room--servicio{--k:light-dark(#7d7568,#b3ab9c)}
+.t3-room--circulacion{--k:light-dark(#aaa38f,#8fa59b)}
+.t3-room--auditorio{--k:light-dark(#b0476b,#ff8b9d)}
+.t3-room--deportivo{--k:light-dark(#3f8f4f,#8ede9a)}
+.t3-room--sanitarios{--k:#2f7fc0;font-weight:700}
+.t3-room--sanitarios.t3-room--g-m{--k:#c0368f}
+.t3-room--sanitarios.t3-room--g-h{--k:#2f7fc0}
+.t3-room--sanitarios.t3-room--g-x{--k:#5d6fb8}
+.t3-room--num{padding:0;width:1.35rem;height:1.35rem;justify-content:center;border-radius:50%;font-size:.62rem;font-weight:600;
+  background:light-dark(rgb(250 247 239 / 70%),rgb(24 55 47 / 70%));box-shadow:none;opacity:.88}
+.t3-label--room{padding:.4rem .9rem;font-size:.9rem;max-width:18rem}
+
+.t3-tip{position:absolute;left:0;top:0;display:flex;flex-direction:column;gap:.05rem;padding:.3rem .6rem;border-radius:.5rem;
+  background:light-dark(rgb(255 252 245 / 94%),rgb(16 44 37 / 94%));color:var(--t3-ink);border:1px solid var(--t3-line);
+  font:500 .72rem/1.25 system-ui,sans-serif;box-shadow:0 4px 14px rgb(0 0 0 / 20%);pointer-events:none;max-width:14rem;z-index:1}
+.t3-tip strong{font-size:.78rem}
+.t3-tip.is-off{opacity:0;visibility:hidden}
+
+/* Nombre de piso: solo el activo, compacto. */
+.t3-label--level.is-active{font-size:.68rem;padding:.12rem .55rem}
+/* Cerca: nombres largos hasta 28 ch y 2 líneas. */
+.t3-room--wide{max-width:28ch}
+.t3-room--wide .t3-room__text{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.2}

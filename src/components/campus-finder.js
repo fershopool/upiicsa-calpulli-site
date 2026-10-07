@@ -1,6 +1,6 @@
 import { el } from '../utils/dom.js';
 import { normalize } from './ui.js';
-import { createStage } from './three-stage.js';
+import { createStage, iconPath, KIND_NAME } from './three-stage.js';
 
 const KIND_LABELS = { salon: 'Salón', laboratorio: 'Laboratorio', oficina: 'Oficina', sanitarios: 'Sanitarios', servicio: 'Servicio', academia: 'Academia', otro: 'Otro' };
 const WING_TEXT = { izquierda: 'el ala izquierda', derecha: 'el ala derecha', centro: 'el ala central' };
@@ -225,7 +225,8 @@ export function mount(container, campusData, options = {}) {
   const chips = el('div', { className: 'campus-chips', attrs: { role: 'group', 'aria-label': 'Filtrar por edificio, Metrobús o accesos' } });
   const caption = el('div', { className: 'cs-caption', attrs: { hidden: '', role: 'status' } });
   const stage = el('div', { className: 'cs-stage', attrs: { tabindex: '0', role: 'application', 'aria-label': 'Mapa 3D del campus. Flechas para rotar, más y menos para acercar, cero para ver todo.' } });
-  stage.append(caption);
+  const spaces = el('section', { className: 'cs-spaces', attrs: { hidden: '', 'aria-label': 'Espacios del piso' } });
+  stage.append(caption, spaces);
   const legend = el('ul', { className: 'campus-legend', attrs: { 'aria-label': 'Leyenda' } });
   const detail = el('aside', { className: 'campus-detail', attrs: { 'aria-label': 'Detalles del espacio' } });
 
@@ -240,23 +241,133 @@ export function mount(container, campusData, options = {}) {
     legend.replaceChildren(...LEGEND[kind].map(([icon, text]) => el('li', {}, [legendIcon(icon), el('span', { text })])));
   }
 
-  /** Rótulo del espacio en el modelo (metros, centro x,y); si no hay, la zona (ala + franja). */
+  /** Espacio en el modelo (metros): prefiere el room delimitado; si no, el rótulo; si no, la zona (ala + franja). */
   function locateModel(modelLevel, bbox, space) {
     const n = normalize(space.name);
-    const labels = modelLevel?.labels || [];
-    const hits = labels.filter((l) => { const t = normalize(l.t); return t && (t === n || (t.length > 2 && n.length > 6 && n.includes(t))); });
     const [x0, y0, x1, y1] = bbox;
     const [fx, fw] = THIRDS[space.wing] || [0, 1];
     const [fy, fh] = THIRDS[space.band] || [0, 1];
     const zone = { x: x0 + (fx + fw / 2) * (x1 - x0), y: y0 + (fy + fh / 2) * (y1 - y0), w: fw * (x1 - x0), h: fh * (y1 - y0), exact: false };
+    const near = (c) => Math.hypot(c[0] - zone.x, c[1] - zone.y);
+    const rooms = (modelLevel?.rooms || []).filter((r) => r.t && normalize(r.t) === n);
+    if (rooms.length) {
+      const room = rooms.slice().sort((a, b) => near(a.c) - near(b.c))[0];
+      const xs = room.poly.map((q) => q[0]); const ys = room.poly.map((q) => q[1]);
+      return { x: room.c[0], y: room.c[1], w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys), exact: true, roomId: room.id };
+    }
+    const labels = modelLevel?.labels || [];
+    const hits = labels.filter((l) => { const t = normalize(l.t); return t && (t === n || (t.length > 2 && n.length > 6 && n.includes(t))); });
     if (!hits.length) return zone;
-    const cx = zone.x; const cy = zone.y;
-    const near = (l) => Math.hypot(l.x - cx, l.y - cy);
-    const first = hits.slice().sort((a, b) => near(a) - near(b))[0];
+    const first = hits.slice().sort((a, b) => near([a.x, a.y]) - near([b.x, b.y]))[0];
     const group = hits.filter((l) => Math.hypot(l.x - first.x, l.y - first.y) < 12);
     const ax = Math.min(...group.map((l) => l.x - l.w / 2)); const ay = Math.min(...group.map((l) => l.y - l.h / 2));
     const bx = Math.max(...group.map((l) => l.x + l.w / 2)); const by = Math.max(...group.map((l) => l.y + l.h / 2));
     return { x: (ax + bx) / 2, y: (ay + by) / 2, w: Math.max(2.5, bx - ax + 1.5), h: Math.max(2.5, by - ay + 1.5), exact: true };
+  }
+
+  /** Ruta de navegación clicable: Campus › Edificio › Piso › Salón. */
+  function paintCrumbs(building, level, all, space) {
+    const crumbs = [{ text: 'Campus', go: reset }];
+    crumbs.push({ text: building.shortName || building.name, go: all && !space ? null : () => pickBuilding(building.id) });
+    if (!all) crumbs.push({ text: level.label, go: space ? () => { activeEntry = null; viewLevelId = level.id; paintDetail(); renderStage(); } : null });
+    if (space) crumbs.push({ text: space.name, go: null });
+    const items = crumbs.map((c, i) => {
+      const last = i === crumbs.length - 1;
+      const node = c.go && !last ? el('button', { className: 'cs-crumb', type: 'button', text: c.text }) : el('span', { className: 'cs-crumb is-current', text: c.text, attrs: { 'aria-current': 'location' } });
+      if (c.go && !last) node.addEventListener('click', c.go);
+      return el('li', {}, [node]);
+    });
+    caption.replaceChildren(el('nav', { className: 'cs-crumbs', attrs: { 'aria-label': 'Ruta del mapa' } }, [el('ol', {}, items)]));
+  }
+
+
+  /* --- menú fijo de espacios (abajo a la derecha) --- */
+  const KIND_ORDER = ['sanitarios', 'laboratorio', 'oficina', 'academia', 'auditorio', 'deportivo', 'servicio', 'otro', 'salon'];
+  const KIND_DOT = { salon: '#e9dfc9', laboratorio: '#8fcfc4', oficina: '#e6c07a', academia: '#c4aee6', sanitarios: '#7bbbea', servicio: '#bdb4a5', auditorio: '#e0a58c', deportivo: '#9bcf8d', otro: '#d3c8ae' };
+  let spacesOpen = null; // null = decide por ancho
+  let spacesFilter = '';
+  let spacesLabels = false;
+  const cycle = new Map();
+
+  function kindIcon(kind, g) {
+    const icon = svg('svg', { viewBox: '0 0 24 24', class: 'cs-sp-icon', 'aria-hidden': 'true' });
+    svg('path', { d: iconPath(kind, g), fill: 'none', stroke: 'currentColor', 'stroke-width': 1.8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, icon);
+    return icon;
+  }
+
+  function paintSpaces(selectedName = '') {
+    const rooms = stage3d?.supported && focusId && !(viewLevelId === 'all' || (!activeEntry && !viewLevelId)) ? (stage3d.getRooms?.() || []) : [];
+    if (!rooms.length) { spaces.hidden = true; spaces.replaceChildren(); return; }
+    const open = spacesOpen ?? stage.clientWidth >= 560;
+    const needle = normalize(spacesFilter.trim());
+    // agrupa por (kind, texto): los repetidos se recorren al pulsar
+    const groups = new Map();
+    rooms.forEach((r) => {
+      const key = r.numeric ? 'salon' : r.kind;
+      const label = r.numeric ? r.text : (r.text || (r.kind === 'sanitarios' ? `Sanitarios${r.g === 'h' ? ' Hombres' : r.g === 'm' ? ' Mujeres' : ''}` : KIND_NAME[r.kind] || 'Espacio'));
+      if (needle && !normalize(`${label} ${KIND_NAME[key] || ''}`).includes(needle)) return;
+      if (!groups.has(key)) groups.set(key, new Map());
+      const items = groups.get(key);
+      const id = `${key}|${label}`;
+      if (!items.has(id)) items.set(id, { id, label, kind: r.kind, g: r.g, ids: [] });
+      items.get(id).ids.push(r.id);
+    });
+    const head = el('div', { className: 'cs-sp-head' });
+    const toggle = el('button', { className: 'cs-sp-toggle', type: 'button', attrs: { 'aria-expanded': String(open), 'aria-controls': `cs-sp-body-${uid}` } }, [
+      el('span', { className: 'cs-sp-title', text: `Espacios · ${rooms.length}` }),
+      el('span', { className: 'cs-sp-chevron', text: open ? '▾' : '▴', attrs: { 'aria-hidden': 'true' } }),
+    ]);
+    toggle.addEventListener('click', () => { spacesOpen = !open; paintSpaces(selectedName); });
+    head.append(toggle);
+    const body = el('div', { className: 'cs-sp-body', id: `cs-sp-body-${uid}`, attrs: open ? {} : { hidden: '' } });
+    if (open) {
+      const tools = el('div', { className: 'cs-sp-tools' });
+      const input = el('input', { className: 'cs-sp-filter', type: 'search', placeholder: 'Filtrar espacios', value: spacesFilter, attrs: { 'aria-label': 'Filtrar espacios del piso', autocomplete: 'off' } });
+      input.addEventListener('input', () => { spacesFilter = input.value; paintSpaces(selectedName); const again = spaces.querySelector('.cs-sp-filter'); again?.focus(); again?.setSelectionRange(spacesFilter.length, spacesFilter.length); });
+      const labelsBox = el('label', { className: 'cs-sp-switch' }, [el('input', { type: 'checkbox', attrs: spacesLabels ? { checked: '' } : {} }), el('span', { text: 'Etiquetas en el mapa' })]);
+      labelsBox.querySelector('input').checked = spacesLabels;
+      labelsBox.querySelector('input').addEventListener('change', (event) => { spacesLabels = event.target.checked; stage3d.setRoomLabels?.(spacesLabels); });
+      tools.append(input, labelsBox);
+      const list = el('div', { className: 'cs-sp-list' });
+      KIND_ORDER.filter((k) => groups.has(k)).forEach((k) => {
+        const items = [...groups.get(k).values()];
+        const total = items.reduce((n, it) => n + it.ids.length, 0);
+        const section = el('section', { className: `cs-sp-group cs-sp-group--${k}` }, [
+          el('h4', {}, [el('span', { className: 'cs-sp-dot', attrs: { 'aria-hidden': 'true' } }), el('span', { text: `${k === 'salon' ? 'Salones' : KIND_NAME[k] === 'Espacio' ? 'Otros espacios' : `${KIND_NAME[k]}${k === 'sanitarios' ? '' : 's'}`} · ${total}` })]),
+        ]);
+        section.querySelector('.cs-sp-dot').style.background = KIND_DOT[k];
+        const ul = el('ul', { className: k === 'salon' ? 'cs-sp-chips' : 'cs-sp-items' });
+        items.forEach((it) => {
+          const current = selectedName && normalize(it.label) === normalize(selectedName);
+          const btn = el('button', { className: `cs-sp-item${current ? ' is-current' : ''}`, type: 'button', attrs: current ? { 'aria-current': 'true' } : {} });
+          if (k !== 'salon') btn.append(kindIcon(it.kind, it.g));
+          btn.append(el('span', { className: 'cs-sp-name', text: it.label }));
+          if (it.ids.length > 1) btn.append(el('span', { className: 'cs-sp-count', text: `×${it.ids.length}` }));
+          btn.addEventListener('click', () => {
+            const building = byId[focusId];
+            const level = currentLevel();
+            const space = it.ids.length === 1 && level.spaces.find((sp) => normalize(sp.name) === normalize(it.label));
+            if (stage.clientWidth < 560) spacesOpen = false; // en pantallas chicas el menú se pliega para ver el espacio
+            if (space) { choose({ building, level, space }); return; }
+            const n = ((cycle.get(it.id) ?? -1) + 1) % it.ids.length;
+            cycle.set(it.id, n);
+            stage3d.focusRoom?.(it.ids[n]);
+            paintSpaces(it.label);
+          });
+          btn.addEventListener('pointerenter', () => stage3d.hoverRoom?.(it.ids[0]));
+          btn.addEventListener('pointerleave', () => stage3d.hoverRoom?.(null));
+          btn.addEventListener('focus', () => stage3d.hoverRoom?.(it.ids[0]));
+          btn.addEventListener('blur', () => stage3d.hoverRoom?.(null));
+          ul.append(el('li', {}, [btn]));
+        });
+        section.append(ul);
+        list.append(section);
+      });
+      if (!list.children.length) list.append(el('p', { className: 'cs-sp-empty', text: 'Sin resultados.' }));
+      body.append(tools, list);
+    }
+    spaces.hidden = false;
+    spaces.replaceChildren(head, body);
   }
 
   function showCampus() {
@@ -264,6 +375,7 @@ export function mount(container, campusData, options = {}) {
     stage3d.focusPoi(activePoi ? activePoi.id : null);
     if (!activePoi) stage3d.resetView();
     caption.hidden = true;
+    spaces.hidden = true;
     paintLegend('campus');
   }
 
@@ -279,13 +391,13 @@ export function mount(container, campusData, options = {}) {
       if (token !== stageToken) return;
       const modelLevel = model.levels.find((l) => l.id === level.id);
       const space = !all && activeEntry && activeEntry.level.id === level.id ? activeEntry.space : null;
-      const highlight = space ? { levelId: level.id, rect: locateModel(modelLevel, model.bbox, space), label: space.name } : null;
+      const located = space ? locateModel(modelLevel, model.bbox, space) : null;
+      const highlight = space ? { levelId: level.id, rect: located, label: space.name, roomId: located.roomId } : null;
       const opened = await stage3d.openBuilding(building.id, { levelId: all ? null : level.id, highlight });
       if (token !== stageToken) return;
       if (!opened) throw new Error('sin modelo');
-      const back = el('button', { className: 'campus-chip', type: 'button', text: '← Campus' });
-      back.addEventListener('click', reset);
-      caption.replaceChildren(el('span', { text: `${building.shortName || building.name} · ${all ? 'edificio completo' : level.label}` }), back);
+      paintCrumbs(building, level, all, space);
+      paintSpaces(space?.name || '');
       paintLegend('plan');
     } catch {
       if (token !== stageToken) return;
@@ -467,9 +579,19 @@ export function mount(container, campusData, options = {}) {
     controls.append(button);
   });
 
+  function pickRoom(pick) {
+    const building = byId[focusId];
+    const level = building.levels.find((l) => l.id === pick.levelId) || currentLevel();
+    const n = normalize(pick.text || '');
+    const space = n && level.spaces.find((sp) => normalize(sp.name) === n);
+    if (space) choose({ building, level, space });
+    else { viewLevelId = level.id; activeEntry = null; paintDetail(); renderStage(); }
+  }
+
   function onPick(pick) {
     if (pick.type === 'poi' && poiById[pick.id]) choosePoi(poiById[pick.id]);
     else if (pick.type === 'building' && byId[pick.id] && pick.id !== focusId) pickBuilding(pick.id);
+    else if (pick.type === 'room' && focusId) pickRoom(pick);
     else if (pick.type === 'level' && focusId) { viewLevelId = pick.levelId; activeEntry = activeEntry && activeEntry.level.id === pick.levelId ? activeEntry : null; paintDetail(); renderStage(); }
   }
 

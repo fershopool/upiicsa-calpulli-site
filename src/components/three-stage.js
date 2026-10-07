@@ -13,13 +13,22 @@ const NO_OP_API = ['openBuilding', 'closeBuilding', 'setLevel', 'setHighlight', 
 export const easeInOut = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
 
 // Ajuste del modelo detallado al slot: misma rotación, escala uniforme que iguala el lado mayor.
-export function fitToSlot(slot, size) {
+export function fitToSlot(slot, size, north) {
+  if (typeof north === 'number') {
+    // El modelo se gira para que el norte de su plano coincida con el norte del campus; la escala iguala el lado mayor.
+    const a = (north * Math.PI) / 180;
+    const swap = Math.abs(Math.sin(a)) > 0.7;
+    const rw = swap ? size.d : size.w;
+    const rd = swap ? size.w : size.d;
+    const sm = Math.max(slot.w, slot.d);
+    const mm = Math.max(rw, rd);
+    return { scale: sm > 0 && mm > 0 ? sm / mm : 1, rotY: (slot.rot || 0) + a, x: slot.x, z: slot.z, swap };
+  }
   const sm = Math.max(slot.w, slot.d);
   const mm = Math.max(size.w, size.d);
   const scale = sm > 0 && mm > 0 ? sm / mm : 1;
   const lr = Math.log((slot.w || 1) / (slot.d || 1));
   const lm = Math.log((size.w || 1) / (size.d || 1));
-  // Si los ejes mayores no coinciden (y no son casi cuadrados) se gira 90°.
   const swap = Math.abs(lr) > 0.12 && Math.abs(lm) > 0.12 && lr > 0 !== lm > 0;
   return { scale, rotY: (slot.rot || 0) + (swap ? Math.PI / 2 : 0), x: slot.x, z: slot.z, swap };
 }
@@ -40,6 +49,73 @@ export function fitDistance(r, fov, aspect, margin = 1.08) {
   return Math.max(v, h) * margin;
 }
 
+// Distancia mínima (exacta) para que 8 esquinas quepan en pantalla mirando a `center` desde (az, el).
+export function fitBoxDistance(corners, center, az, el, fov, aspect, margin = 1.08, inset = null) {
+  const dir = { x: Math.sin(az) * Math.cos(el), y: Math.sin(el), z: Math.cos(az) * Math.cos(el) };
+  const right = { x: Math.cos(az), y: 0, z: -Math.sin(az) };
+  const up = { x: -Math.sin(az) * Math.sin(el), y: Math.cos(el), z: -Math.cos(az) * Math.sin(el) };
+  let tv = Math.tan(fov / 2);
+  let th = tv * aspect;
+  if (inset && inset.w > 0 && inset.h > 0) { // área libre = canvas menos inset superior y laterales
+    tv *= Math.max(0.3, (inset.h - inset.top) / inset.h);
+    th *= Math.max(0.3, (inset.w - 2 * inset.side) / inset.w);
+  }
+  let D = 1;
+  for (const c of corners) {
+    const q = { x: c.x - center.x, y: c.y - center.y, z: c.z - center.z };
+    const dq = q.x * dir.x + q.y * dir.y + q.z * dir.z;
+    const x = Math.abs(q.x * right.x + q.z * right.z);
+    const y = Math.abs(q.x * up.x + q.y * up.y + q.z * up.z);
+    D = Math.max(D, (x * margin) / th + dq, (y * margin) / tv + dq);
+  }
+  return D;
+}
+
+// Azimut que alinea el eje largo (dirección mundo {x,z}) con el eje largo de la pantalla; elige el más cercano a `prefer`.
+export function pickAzimuth(long, aspect, prefer = 0.35) {
+  const a = aspect >= 1 ? Math.atan2(-long.z, long.x) : Math.atan2(-long.x, -long.z);
+  const wrap = (v) => Math.atan2(Math.sin(v), Math.cos(v));
+  return Math.abs(wrap(a - prefer)) <= Math.abs(wrap(a + Math.PI - prefer)) ? wrap(a) : wrap(a + Math.PI);
+}
+
+// Punto en polígono [[x,z],...] (par-impar).
+export function inPoly(x, z, poly) {
+  let c = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, zi] = poly[i];
+    const [xj, zj] = poly[j];
+    if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) c = !c;
+  }
+  return c;
+}
+
+// Room que contiene (x,z) local; menor área gana. rooms: [{x,z,w,d,poly?}]
+export function roomAt(rooms, x, z) {
+  let best = null;
+  for (const r of rooms) {
+    const ok = r.poly && r.poly.length > 2 ? inPoly(x, z, r.poly) : Math.abs(x - r.x) <= r.w / 2 && Math.abs(z - r.z) <= r.d / 2;
+    if (ok && (!best || r.w * r.d < best.w * best.d)) best = r;
+  }
+  return best;
+}
+
+export const KIND_NAME = { salon: 'Salón', laboratorio: 'Laboratorio', oficina: 'Oficina', academia: 'Academia', sanitarios: 'Sanitarios', servicio: 'Servicio', circulacion: 'Circulación', auditorio: 'Auditorio', deportivo: 'Deportivo', otro: 'Espacio' };
+const KIND_ICON = {
+  salon: 'M4 5h16v10H4z M8 19h8 M12 15v4',
+  laboratorio: 'M9 3h6 M10 3v5l-5 10a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-10V3',
+  oficina: 'M4 8h16v11H4z M9 8V5h6v3',
+  academia: 'M2 9l10-5 10 5-10 5z M6 11.5V16c3 2.5 9 2.5 12 0v-4.5',
+  sanitarios_h: 'M12 3.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z M8.5 10h7v6H14v5h-4v-5H8.5z',
+  sanitarios_m: 'M12 3.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z M12 10l5 8H7z M10.5 18v3h3v-3',
+  sanitarios_x: 'M7 3h10v6H7z M6 11h12l-2 8H8z',
+  servicio: 'M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z M12 2v3 M12 19v3 M2 12h3 M19 12h3',
+  circulacion: 'M4 12h15 M13 6l6 6-6 6',
+  auditorio: 'M3 5h18v9H3z M7 19h10',
+  deportivo: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M3 12h18 M12 3v18',
+  otro: 'M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
+};
+export const iconPath = (kind, g) => (kind === 'sanitarios' ? KIND_ICON[`sanitarios_${g === 'h' || g === 'm' ? g : 'x'}`] : KIND_ICON[kind] || KIND_ICON.otro);
+
 // Nivel cuyo suelo (bases ordenadas ascendente) contiene la altura local y.
 export function levelAt(levels, y) {
   let found = levels[0] ? levels[0].id : null;
@@ -48,7 +124,7 @@ export function levelAt(levels, y) {
 }
 
 // Evita solapes: gana mayor prioridad. items {id,x,y,w,h,pri}; (x,y) = ancla abajo-centro. Devuelve Set de ids visibles.
-export function layoutLabels(items, pad = 4) {
+export function layoutLabels(items, pad = 4, max = Infinity) {
   const shown = new Set();
   const boxes = [];
   for (const it of [...items].sort((a, b) => b.pri - a.pri)) {
@@ -56,6 +132,7 @@ export function layoutLabels(items, pad = 4) {
     if (boxes.some((o) => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0)) continue;
     boxes.push(b);
     shown.add(it.id);
+    if (shown.size >= max) break;
   }
   return shown;
 }
@@ -290,7 +367,12 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
 
   /* --- etiquetas HTML --- */
   const slotLabels = []; // permanentes (edificios, POIs)
-  let dynLabels = []; // del edificio abierto (pisos, salón)
+  let dynLabels = []; // del edificio abierto (pisos, destino)
+  let roomLabels = []; // espacios del nivel en corte
+  let roomLabelsOn = false; // etiquetas flotantes: opcionales (el menú de espacios las reemplaza)
+  let roomData = []; // rooms del nivel visible con polígono local
+  let openSide = 100;
+  let frameDist = 100;
   const tmpV = new T.Vector3();
 
   function mkLabel(kind, text, pri, show, button) {
@@ -329,11 +411,15 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     const W = canvas.clientWidth || container.clientWidth;
     const H = canvas.clientHeight || container.clientHeight;
     const items = [];
-    const all = slotLabels.concat(dynLabels);
+    const all = slotLabels.concat(dynLabels, roomLabels);
     for (const L of all) {
       L.ok = false;
       const d = camera.position.distanceTo(L.pos);
       if (!L.show(d)) continue;
+      if (L.kind === 'space' && !L.numeric) {
+        const near = d < frameDist * 0.5;
+        if (near !== !!L.near) { L.near = near; L.el.classList.toggle('t3-room--wide', near); L.w = 0; }
+      }
       tmpV.copy(L.pos).project(camera);
       if (tmpV.z > 1 || tmpV.z < -1) continue;
       const x = (tmpV.x * 0.5 + 0.5) * W;
@@ -346,7 +432,7 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
       L.ok = true;
       items.push({ id: L, x: L.x, y: L.y, w: L.w, h: L.h, pri: L.pri });
     }
-    const shown = layoutLabels(items);
+    const shown = layoutLabels(items, 4, 60);
     for (const L of all) {
       const on_ = L.ok && shown.has(L);
       if (on_ !== L.on) { L.on = on_; L.el.classList.toggle('is-off', !on_); }
@@ -357,6 +443,89 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     }
   }
   const dropLabels = (list) => { for (const L of list) L.el.remove(); list.length = 0; };
+
+  /* --- espacios (rooms) del nivel en corte --- */
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const tip = document.createElement('div');
+  tip.className = 't3-tip is-off';
+  tip.setAttribute('role', 'tooltip');
+  const tipName = document.createElement('strong');
+  const tipKind = document.createElement('span');
+  tip.append(tipName, tipKind);
+  labelLayer.append(tip);
+  const showTip = (r, x, y) => {
+    if (!r) { tip.classList.add('is-off'); return; }
+    tipName.textContent = r.text || KIND_NAME[r.kind] || 'Espacio';
+    tipKind.textContent = KIND_NAME[r.kind] || 'Espacio';
+    const W = container.clientWidth;
+    tip.style.transform = `translate(${Math.round(Math.min(W - 150, Math.max(4, x + 12)))}px,${Math.round(Math.max(4, y - 44))}px)`;
+    tip.classList.remove('is-off');
+  };
+  const roomInfo = (r, levelId) => ({ type: 'room', id: r.id, levelId, text: r.text || '', kind: r.kind });
+  let hoverRoomId = null;
+  const setRoomHover = (id) => {
+    if (id === hoverRoomId) return;
+    hoverRoomId = id;
+    if (built && built.setRoomHover) built.setRoomHover(id);
+    invalidate();
+  };
+
+  function mkRoomLabel(r, levelId) {
+    const el = document.createElement('button');
+    el.type = 'button';
+    const k = r.kind || 'otro';
+    el.className = `t3-label t3-room t3-room--${k}${r.kind === 'sanitarios' ? ` t3-room--g-${r.g === 'h' || r.g === 'm' ? r.g : 'x'}` : ''}${r.numeric ? ' t3-room--num' : ''} is-off`;
+    if (!r.numeric) {
+      const svg = document.createElementNS(SVGNS, 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('class', 't3-room__icon');
+      svg.setAttribute('aria-hidden', 'true');
+      const path = document.createElementNS(SVGNS, 'path');
+      path.setAttribute('d', iconPath(k, r.g));
+      svg.append(path);
+      el.append(svg);
+    }
+    const t = document.createElement('span');
+    t.className = 't3-room__text';
+    t.textContent = r.text || (k === 'sanitarios' ? 'WC' : KIND_NAME[k] || '');
+    el.append(t);
+    el.setAttribute('aria-label', `${r.text || KIND_NAME[k] || 'Espacio'}, ${KIND_NAME[k] || 'espacio'}`);
+    el.addEventListener('click', () => { if (onPick) onPick(roomInfo(r, levelId)); });
+    el.addEventListener('pointerenter', () => { setRoomHover(r.id); const b = el.getBoundingClientRect(); const c = container.getBoundingClientRect(); showTip(r, b.left - c.left + b.width / 2, b.top - c.top); });
+    el.addEventListener('pointerleave', () => { setRoomHover(null); showTip(null); });
+    labelLayer.append(el);
+    const area = (r.w || 0) * (r.d || 0);
+    const pri = r.kind === 'sanitarios' ? 60 : r.numeric ? 20 : 40 + Math.min(9, area / 50);
+    const show = (d) => {
+      if (hl && hl.roomId === r.id) return false;
+      if (hoverRoomId === r.id) return true;
+      if (!roomLabelsOn) return false;
+      if (r.numeric) return d < frameDist * 0.3;
+      if (r.kind === 'sanitarios') return true;
+      return d < frameDist * 0.5 || area >= 80;
+    };
+    return { el, kind: 'space', numeric: !!r.numeric, pri, show, pos: new T.Vector3(), w: 0, h: 0, on: false, key: '' };
+  }
+
+  function buildRoomLabels() {
+    dropLabels(roomLabels);
+    roomData = [];
+    if (!built || !curLevel || !built.roomsOf) return;
+    const list = built.roomsOf(curLevel) || [];
+    const bb = built.model.bbox || [0, 0, 0, 0];
+    const cx = (bb[0] + bb[2]) / 2;
+    const cy = (bb[1] + bb[3]) / 2;
+    const lv = (built.model.levels || []).find((l) => l.id === curLevel);
+    const polys = new Map(((lv && lv.rooms) || []).map((m) => [m.id, m.poly]));
+    for (const r of list) {
+      const poly = polys.get(r.id);
+      roomData.push({ ...r, poly: poly ? poly.map(([x, y]) => [x - cx, y - cy]) : null });
+      if (r.kind === 'circulacion' || (r.kind === 'otro' && !r.text)) continue; // pasillos y recintos sin nombre: sin etiqueta
+      const L = mkRoomLabel(r, curLevel);
+      L.pos.copy(built.group.localToWorld(new T.Vector3(r.x, r.y + 0.3, r.z)));
+      roomLabels.push(L);
+    }
+  }
 
   /* --- picking y hover --- */
   const raycaster = new T.Raycaster();
@@ -389,7 +558,13 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     const ref = own.get(h.object);
     if (ref.info.type === 'level') {
       const y = built.group.worldToLocal(h.point.clone()).y;
-      return { info: { type: 'level', levelId: levelAt(levelBases(), y) }, root: null };
+      const levelId = curLevel || levelAt(levelBases(), y);
+      if (curLevel && roomData.length) {
+        const lp = built.group.worldToLocal(h.point.clone());
+        const r = roomAt(roomData, lp.x, lp.z);
+        if (r) return { info: roomInfo(r, levelId), root: null };
+      }
+      return { info: { type: 'level', levelId }, root: null };
     }
     return { info: ref.info, root: ref.root };
   }
@@ -400,11 +575,14 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     const key = hit ? `${hit.info.type}:${hit.info.id || ''}:${hit.info.levelId || ''}` : '';
     if (key === hoverKey) return;
     hoverKey = key;
+    const isRoom = !!(hit && hit.info.type === 'room');
+    setRoomHover(isRoom ? hit.info.id : null);
+    showTip(isRoom ? hit.info : null, lastPtr.x, lastPtr.y);
     canvas.style.cursor = hit ? 'pointer' : '';
     hoverBox.visible = !!(hit && hit.root);
     if (hit && hit.root) { hoverBox.box.setFromObject(hit.root); }
     if (hoverPlane) {
-      hoverPlane.visible = !!(hit && hit.info.type === 'level');
+      hoverPlane.visible = !!(hit && hit.info.type === 'level' && !curLevel);
       if (hoverPlane.visible) hoverPlane.position.y = built.levelBase(hit.info.levelId) + 0.08;
     }
     invalidate();
@@ -413,6 +591,7 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
   let down = null;
   const ptrs = new Set();
   let lastMove = 0;
+  const lastPtr = { x: 0, y: 0 };
   on(canvas, 'pointerdown', (e) => {
     ptrs.add(e.pointerId);
     down = ptrs.size === 1 && e.button === 0 && !e.shiftKey && !e.ctrlKey && !e.metaKey ? { x: e.clientX, y: e.clientY, t: performance.now() } : null;
@@ -432,6 +611,9 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     const now = performance.now();
     if (now - lastMove < 70) return;
     lastMove = now;
+    const cr = container.getBoundingClientRect();
+    lastPtr.x = e.clientX - cr.left;
+    lastPtr.y = e.clientY - cr.top;
     setHover(pickAt(e.clientX, e.clientY));
   });
   on(canvas, 'pointerleave', () => setHover(null));
@@ -491,7 +673,7 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     dropLabels(dynLabels);
     const { size, model } = built;
     for (const lv of model.levels) {
-      const L = mkLabel('level', levelName(lv.id), 80, () => curLevel === null || lv.order <= (built.model.levels.find((x) => x.id === curLevel) || { order: 99 }).order,
+      const L = mkLabel('level', levelName(lv.id), 80, () => curLevel === null ? !hl : lv.id === curLevel,
         () => { if (onPick) onPick({ type: 'level', levelId: lv.id }); });
       L.levelId = lv.id;
       L.pos.copy(built.group.localToWorld(new T.Vector3(size.w / 2, built.levelBase(lv.id) + 1.6, size.d / 2)));
@@ -502,6 +684,10 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
 
   function clearBuilt() {
     dropLabels(dynLabels);
+    dropLabels(roomLabels);
+    roomData = [];
+    hoverRoomId = null;
+    showTip(null);
     hl = null;
     if (hoverPlane) { hoverPlane.geometry.dispose(); hoverPlane.material.dispose(); hoverPlane = null; }
     if (built) { scene.remove(built.group); built.dispose(); built = null; }
@@ -510,6 +696,40 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
     curLevel = null;
     hoverKey = '';
     hoverBox.visible = false;
+  }
+
+  // Encuadre de la caja del edificio (o de un nivel) con eje largo alineado a la pantalla.
+  function frameBox(levelId) {
+    const { size } = built;
+    const hw = size.w / 2;
+    const hd = size.d / 2;
+    let y0 = 0;
+    let y1 = size.h;
+    if (levelId) {
+      const lv = built.model.levels.find((l) => l.id === levelId);
+      y0 = built.levelBase(levelId);
+      y1 = y0 + ((lv && lv.h) || 3.4);
+    }
+    const corners = [];
+    for (const x of [-hw, hw]) for (const y of [y0, y1]) for (const z of [-hd, hd]) corners.push(built.group.localToWorld(new T.Vector3(x, y, z)));
+    const center = new T.Vector3();
+    corners.forEach((c) => center.add(c));
+    center.multiplyScalar(1 / corners.length);
+    const o = built.group.localToWorld(new T.Vector3(0, 0, 0));
+    const ax = built.group.localToWorld(size.w >= size.d ? new T.Vector3(1, 0, 0) : new T.Vector3(0, 0, 1)).sub(o);
+    const az = pickAzimuth({ x: ax.x, z: ax.z }, camera.aspect);
+    const el = (levelId ? 62 : 50) * DEG;
+    const cw = canvas.clientWidth || container.clientWidth;
+    const ch = canvas.clientHeight || container.clientHeight;
+    const inset = { top: 52, side: 8, w: cw, h: ch };
+    const dist = fitBoxDistance(corners, center, az, el, camera.fov * DEG, camera.aspect, 1.08, inset);
+    // el centro del edificio debe quedar en el centro del área libre: se desplaza el objetivo hacia arriba
+    const shift = (inset.top / ch) * Math.tan((camera.fov * DEG) / 2) * dist;
+    const upv = { x: -Math.sin(az) * Math.sin(el), y: Math.cos(el), z: -Math.cos(az) * Math.sin(el) };
+    center.set(center.x + upv.x * shift, center.y + upv.y * shift, center.z + upv.z * shift);
+    limits = { min: openSide * 0.12, max: Math.max(openSide * 3.2, dist * 1.5) };
+    if (levelId) frameDist = dist;
+    return { pos: framePose(center, dist, az, el), target: { x: center.x, y: center.y, z: center.z } };
   }
 
   const api = {
@@ -522,7 +742,7 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
       if (openId === id && built) {
         if (!opts.highlight) api.setHighlight(null, null, null);
         if (opts.levelId !== undefined) api.setLevel(opts.levelId);
-        if (opts.highlight) api.setHighlight(opts.highlight.levelId, opts.highlight.rect, opts.highlight.label);
+        if (opts.highlight) api.setHighlight(opts.highlight.levelId, opts.highlight.rect, opts.highlight.label, opts.highlight.roomId);
         return true;
       }
       setBusy(true, 'Cargando edificio…');
@@ -536,7 +756,7 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
       openId = id;
       const b = buildBuilding({ THREE: T, model, theme: curTheme });
       b.model = model;
-      const fit = fitToSlot(slot, b.size);
+      const fit = fitToSlot(slot, b.size, model.north);
       b.group.rotation.y = fit.rotY;
       b.group.scale.setScalar(fit.scale);
       b.group.position.set(fit.x, 0, fit.z);
@@ -556,15 +776,13 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
       buildLevelLabels();
       curLevel = null;
       const side = Math.max(slot.w, slot.d);
+      openSide = side;
       limits = { min: side * 0.12, max: side * 3.2 };
-      const bh = b.size.h * fit.scale;
-      const center = { x: slot.x, y: bh * 0.4, z: slot.z };
-      const dist = fitD(Math.hypot(slot.w, slot.d, bh) * 0.5);
-      limits = { min: side * 0.12, max: Math.max(side * 3.2, dist * 1.5) };
-      flyTo(framePose(center, dist, 35 * DEG, 55 * DEG), center, 1.2);
+      const fr = frameBox(null);
+      flyTo(fr.pos, fr.target, 1.2);
       if (opts.levelId !== undefined) api.setLevel(opts.levelId);
       refreshLevelLabels();
-      if (opts.highlight) api.setHighlight(opts.highlight.levelId, opts.highlight.rect, opts.highlight.label);
+      if (opts.highlight) api.setHighlight(opts.highlight.levelId, opts.highlight.rect, opts.highlight.label, opts.highlight.roomId);
       invalidate(true);
       return true;
     },
@@ -586,36 +804,46 @@ export async function createStage({ THREE, container, layout, byId = {}, loadInd
       curLevel = levelId || null;
       built.setLevel(curLevel);
       refreshLevelLabels();
-      if (curLevel) {
-        const y = built.group.localToWorld(new T.Vector3(0, built.levelBase(curLevel) + 1.5, 0)).y;
-        const dy = y - controls.target.y;
-        if (Math.abs(dy) > 0.5 && !hl) {
-          const t = controls.target;
-          flyTo({ x: camera.position.x, y: camera.position.y + dy, z: camera.position.z }, { x: t.x, y: y, z: t.z }, 0.6);
-        }
-      }
+      buildRoomLabels();
+      if (!hl) { const fr = frameBox(curLevel); flyTo(fr.pos, fr.target, 0.8); }
       invalidate(true);
     },
 
-    setHighlight(levelId, rect, label) {
+    setHighlight(levelId, rect, label, roomId) {
       if (!built) return;
       dynLabels = dynLabels.filter((L) => { if (L.kind === 'room') { L.el.remove(); return false; } return true; });
       hl = null;
-      const p = rect ? built.highlight(levelId, rect, label) : (built.highlight(levelId, null, label), null);
+      const p = rect || roomId ? built.highlight(levelId, rect || null, label, roomId) : (built.highlight(levelId, null, label), null);
       if (p) {
         const pos = built.group.localToWorld(new T.Vector3(p.x, p.y, p.z));
-        hl = { levelId, pos, label };
+        hl = { levelId, pos, label, roomId: roomId || null };
         if (label) {
           const L = mkLabel('room', label, 100, () => true);
           L.pos.copy(pos).y += 2.2;
           dynLabels.push(L);
         }
-        const rs = rect ? Math.max(rect.w || 0, rect.h || 0) * built.group.scale.x : 0;
+        const rr = roomId && built.roomsOf ? (built.roomsOf(levelId) || []).find((x) => x.id === roomId) : null;
+        const rs = (rect ? Math.max(rect.w || 0, rect.h || 0) : rr ? Math.max(rr.w, rr.d) : 0) * built.group.scale.x;
         const d = Math.max(18, 5 * rs);
         flyTo(framePose(pos, d, curAz(), 58 * DEG), pos, 1.0);
       }
       invalidate(true);
     },
+
+    getRooms() {
+      if (!built || !curLevel || !built.roomsOf) return [];
+      return (built.roomsOf(curLevel) || []).filter((r) => r.kind === 'sanitarios' || (r.text && r.kind !== 'circulacion')).map((r) => ({ id: r.id, text: r.text, kind: r.kind, g: r.g, area: Math.round(r.area || 0), numeric: !!r.numeric }));
+    },
+
+    hoverRoom(id) { setRoomHover(id || null); invalidate(true); },
+
+    focusRoom(id) {
+      if (!built || !curLevel || !built.roomsOf) return;
+      const r = (built.roomsOf(curLevel) || []).find((x) => x.id === id);
+      if (r) api.setHighlight(curLevel, null, r.text || KIND_NAME[r.kind] || 'Espacio', id);
+    },
+
+    setRoomLabels(on) { roomLabelsOn = !!on; invalidate(true); },
 
     focusPoi(id) {
       focusedPoi = id || null;
