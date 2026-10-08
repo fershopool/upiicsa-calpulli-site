@@ -3,19 +3,28 @@
 
 const S = 0.56; // metros por px del plano
 const DEG = Math.PI / 180;
-const MAX_TREES = 450;
+const MAX_TREES = 1600;
 const MAX_PETALS = 1500;
-const MAX_JAC = 90;
+const MAX_JAC = 130;
+const TREE_TRI_BUDGET = 243000; // triángulos máx. entre árboles, jacarandas, arbustos y flores
+const MAX_SHRUBS = 450, MAX_HEDGES = 300, MAX_BLOOM_PATCHES = 22;
+// paletas de copa por tono (0 claro, 1 medio, 2 oscuro): verdes naturales y sobrios
+const TONES = [['#6fa844', '#65a03f', '#79ad4c'], ['#478a3c', '#417d38', '#4f9443'], ['#2a5c34', '#2f6537', '#255230']];
+const UNDER = ['#6a9a49', '#4f7d3f', '#3d6b3a']; // sotobosque pintado en el suelo, por tono
+const CONIFER = ['#2c5a3a', '#34633f', '#27503a'];
+const LILACS = ['#a888d6', '#b095dc', '#9f7fd0', '#b79be0'];
+const BLOOMS = ['#b79be0', '#e8c552', '#e58a6e'];
+const CITY_TONES = ['#d6d0c3', '#cfc9bb', '#c9c3b5', '#d6d0c3', '#cfc9bb', '#d3b8a2', '#d8c49c', '#c3c2bf', '#e6e2da', '#caa994'];
 
 const THEMES = {
   light: {
-    sky: ['#f8ead0', '#d6e3ec', '#92bbe0'], fog: '#f1e5cd',
-    hemi: ['#d7e6f4', '#b9a98d', 0.8], sun: ['#ffd9a8', 2.1], az: -38,
+    sky: ['#f7e4c4', '#d8e3e6', '#8ab5dd'], fog: '#f2e3c6', glow: ['#ffd49a', 0.55],
+    hemi: ['#d4e3f2', '#b0aa86', 0.8], sun: ['#ffd292', 2.2], az: -38,
     tint: [1, 1, 1], windows: 0, void: '#ffffff',
   },
   dark: {
-    sky: ['#cf8f86', '#56649a', '#1b2551'], fog: '#59628f',
-    hemi: ['#7f8fc8', '#2b2a3b', 0.85], sun: ['#ffa57a', 1.35], az: -62,
+    sky: ['#cf8f86', '#56649a', '#1b2551'], fog: '#5b6490', glow: ['#ff9a78', 0.4],
+    hemi: ['#7f8fc8', '#2a3340', 0.85], sun: ['#ffa57a', 1.35], az: -62,
     tint: [0.8, 0.86, 1], windows: 1, void: '#7a80a8',
   },
 };
@@ -151,9 +160,9 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
   const toM = (pts) => pts.map(([x, y]) => [X(x), Z(y)]);
 
   // ---------- cielo, niebla, luces ----------
-  const fog = new THREE.Fog(0xf1e3c9, 550, 1500);
+  const fog = new THREE.Fog(0xf2e3c6, 550, 1500);
   const background = new THREE.Color(0xf1e3c9);
-  const skyGeo = G(new THREE.SphereGeometry(1900, 24, 16));
+  const skyGeo = G(new THREE.SphereGeometry(1900, 48, 24));
   skyGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(skyGeo.attributes.position.count * 3), 3));
   const skyMat = M(new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: false, depthWrite: false }), false);
   const sky = new THREE.Mesh(skyGeo, skyMat);
@@ -325,6 +334,11 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
       g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.moveTo(x1 - s * 22, y - 20); g.lineTo(x1, y); g.lineTo(x1 - s * 22, y + 20); g.stroke();
     }
   });
+  const boxShadowTex = canvasTex(64, 64, (g, w, h) => {
+    for (let i = 0; i < 12; i++) { const m = (i / 12) * 28; g.fillStyle = 'rgba(30,28,20,0.06)'; g.fillRect(m, m, w - 2 * m, h - 2 * m); }
+  });
+  const boxShadowM = M(new THREE.MeshBasicMaterial({ color: boxShadowTex ? 0xffffff : 0x1e1c14, map: boxShadowTex, transparent: true, opacity: boxShadowTex ? 0.9 : 0.12, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1.3, polygonOffsetUnits: -2.6 }), false);
+  const boxShadowG = G(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2));
   const rep = (t, rx, ry) => { if (t) { t.repeat.set(rx, ry); } return t; };
 
   // ---------- áreas verdes, canchas, estacionamientos ----------
@@ -334,7 +348,12 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
   const plazaM = decal('#ffffff', 1, { map: rep(paveTex, 1 / 3, 1 / 3) });
   const pitchM = decal('#ffffff', 2, { map: pitchTex });
   const trackM = decal('#ffffff', 2, { map: trackTex });
+  // Vegetación explícita (layout.vegetation): céspedes poligonales + árboles individuales. Sin ella, se usan greens/trees.
+  const veg = layout.vegetation && typeof layout.vegetation === 'object' ? layout.vegetation : null;
+  const vegTrees = veg && Array.isArray(veg.trees) ? veg.trees : [];
+  const vegLawns = veg && Array.isArray(veg.lawns) ? veg.lawns.filter((l) => l && Array.isArray(l.poly) && l.poly.length >= 3 && l.poly.every((q) => Array.isArray(q) && isFinite(q[0]) && isFinite(q[1]))) : [];
   for (const gr of layout.greens || []) {
+    if (vegLawns.length && (gr.kind === 'lawn' || gr.kind === 'dense')) { rects.push({ kind: gr.kind, x: gr.x, y: gr.y, w: gr.w, h: gr.h }); continue; }
     const w = gr.w * S, d = gr.h * S, cx = X(gr.x + gr.w / 2), cz = Z(gr.y + gr.h / 2);
     let g, m;
     if (gr.kind === 'field') { g = quad(cx, cz, w, d, layerY(2), 0); m = pitchM; }
@@ -344,6 +363,36 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
     else { g = quad(cx, cz, w, d, layerY(1), 1); m = lawnM; }
     group.add(mesh(g, m, 'verde-' + gr.kind));
     rects.push({ kind: gr.kind, x: gr.x, y: gr.y, w: gr.w, h: gr.h });
+  }
+  // Céspedes poligonales: pasto con franjas de corte sutiles, tono por polígono y borde suave más oscuro
+  const lawnPolyTex = canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#6aa650'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 4; i++) { g.fillStyle = i % 2 ? 'rgba(130,180,90,0.10)' : 'rgba(40,90,50,0.07)'; g.fillRect((i * w) / 4, 0, w / 4, h); }
+    for (let i = 0; i < 380; i++) {
+      g.fillStyle = rngT() > 0.5 ? 'rgba(135,182,92,0.16)' : 'rgba(46,96,52,0.16)';
+      g.beginPath(); g.ellipse(rngT() * w, rngT() * h, 2 + rngT() * 9, 2 + rngT() * 7, rngT() * 3, 0, 7); g.fill();
+    }
+  }, true);
+  const lawnPolyM = decal('#ffffff', 1, { map: rep(lawnPolyTex, 1 / 12, 1 / 12), vertexColors: true });
+  const lawnEdgeM = decal('#2f5a35', 1.4, { transparent: true, opacity: 0.14, depthWrite: false });
+  const lawnPolys = []; // en px, para flores
+  for (const l of vegLawns) {
+    try {
+      const sh = new THREE.Shape(l.poly.map(([x, y]) => new THREE.Vector2(X(x), -Z(y))));
+      const g = G(new THREE.ShapeGeometry(sh, 1));
+      g.rotateX(-Math.PI / 2); g.translate(0, layerY(1) + 0.004, 0);
+      const p = g.attributes.position, uv = g.attributes.uv, n = p.count, cols = new Float32Array(n * 3);
+      const hh = (Math.abs(Math.sin(l.poly[0][0] * 12.9898 + l.poly[0][1] * 78.233)) * 43758.5453) % 1;
+      const f = 0.92 + hh * 0.2, hue = (hh - 0.5) * 0.14;
+      for (let i = 0; i < n; i++) {
+        uv.setXY(i, p.getX(i), p.getZ(i)); // metros; rep(…, 1/12) da un ciclo cada 12 m
+        cols[i * 3] = f * (1 + hue); cols[i * 3 + 1] = f; cols[i * 3 + 2] = f * (1 - hue * 1.5);
+      }
+      g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+      group.add(mesh(g, lawnPolyM, 'cesped'));
+      group.add(mesh(ribbon(toM([...l.poly, l.poly[0]]), 2.6, layerY(1) + 0.006), lawnEdgeM, 'cesped-borde', { receive: false }));
+      lawnPolys.push(l.poly);
+    } catch (e) { /* polígono degenerado: se omite */ }
   }
   const lotM = decal('#ffffff', 2, { map: rep(stallTex, 1 / 2.6, 1 / 16) });
   for (const lot of layout.lots || []) {
@@ -456,7 +505,9 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
         bx.position.set(fx * w, h + sh / 2, fz * d); roofBits.push(bx);
       }
     }
-    gp.add(body, cor, pl, ...patioMeshes, ...roofBits);
+    const bsh = mesh(boxShadowG, boxShadowM, 'sombra-base', { receive: false });
+    bsh.scale.set(Math.max(w, d) * (ol ? 1.0 : 0) + (ol ? 0 : w) + 14, 1, Math.max(w, d) * (ol ? 1.0 : 0) + (ol ? 0 : d) + 14); bsh.position.y = layerY(1) + 0.004;
+    gp.add(bsh, body, cor, pl, ...patioMeshes, ...roofBits);
     gp.userData = { id: b.id, mats: [wall, roof, cornice, plinth, ...(gp.userData.extra ? [gp.userData.extra] : [])] };
     proxies.set(b.id, gp);
     proxyList.push(gp);
@@ -538,7 +589,7 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
       const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
       if (!len) continue;
       const nx = -(b[1] - a[1]) / len, ny = (b[0] - a[0]) / len;
-      for (let t = 18; t < len - 10 && jacs.length < MAX_JAC; t += 21 + rng() * 5) {
+      for (let t = 18; t < len - 10 && jacs.length < 90; t += 21 + rng() * 5) {
         side = -side;
         const off = r.w / 2 + (r.kind === 'street' ? 13 : 9) + rng() * 3;
         const px = a[0] + ((b[0] - a[0]) * t) / len + nx * off * side + (rng() - 0.5) * 3;
@@ -549,32 +600,127 @@ export function buildEnvironment({ THREE, layout, byId = {}, index = {}, theme =
       }
     }
   }
-  // Árboles normales según layout.trees
-  const normals = [];
-  const cap = MAX_TREES - jacs.length;
-  for (const t of layout.trees || []) {
-    const n = Math.round(num(t.n) * 1.8);
-    let ok = 0;
-    for (let tries = 0; tries < n * 14 && ok < n && normals.length < cap; tries++) {
-      const px = t.x + rng() * t.w, py = t.y + rng() * t.h;
-      if (blocked(px, py) || !free(px, py, 5.2)) continue;
-      placed.push({ x: px, y: py });
-      normals.push({ x: px, y: py, conifer: t.kind === 'conifer' });
-      ok++;
+  // Colisiones duras para árboles de layout.vegetation (ya vienen filtrados: aquí solo se descarta lo evidente)
+  function hardBlocked(px, py, mb) {
+    if (inBuilding(px, py, mb)) return true;
+    for (const r of rects) {
+      if (r.kind === 'lawn' || r.kind === 'dense' || r.kind === 'plaza') continue;
+      if (px > r.x && px < r.x + r.w && py > r.y && py < r.y + r.h) return true;
     }
+    for (const r of roads) {
+      const lim = r.w / 2 + (r.kind === 'path' ? 0.5 : 1.5);
+      for (let j = 0; j < r.pts.length - 1; j++) if (segDist(px, py, r.pts[j][0], r.pts[j][1], r.pts[j + 1][0], r.pts[j + 1][1]) < lim) return true;
+    }
+    return false;
+  }
+  function nearPath(px, py, d) {
+    for (const r of roads) {
+      if (r.kind !== 'path' && r.kind !== 'street') continue;
+      for (let j = 0; j < r.pts.length - 1; j++) if (segDist(px, py, r.pts[j][0], r.pts[j][1], r.pts[j + 1][0], r.pts[j + 1][1]) < d) return true;
+    }
+    return false;
+  }
+  // Árboles: {x,y (px), r (m, radio de copa), t (tono 0..2), k (ash|ficus|conifer|palm)}
+  const rv = mulberry32(8812); // variación visual: no altera el reparto
+  let palms = 0;
+  const pickKind = (rm) => {
+    const u = rv();
+    if (rm < 3.6 && u < 0.07 && palms < 14) { palms++; return 'palm'; }
+    if (u < 0.2) return 'conifer';
+    return rv() < 0.42 ? 'ash' : 'ficus';
+  };
+  const trees = [];
+  if (vegTrees.length) {
+    const capN = MAX_TREES - jacs.length;
+    for (const v of vegTrees) {
+      if (trees.length >= capN) break;
+      if (!Array.isArray(v)) continue;
+      const px = +v[0], py = +v[1];
+      if (!isFinite(px) || !isFinite(py)) continue;
+      const rpx = Math.min(18, Math.max(3, num(v[2], 6))), tt = Math.min(2, Math.max(0, Math.round(num(v[3], 1)))), rm = Math.min(9, Math.max(2.2, rpx * S * 1.15));
+      if (hardBlocked(px, py, 2)) continue;
+      let clash = false;
+      for (const j of jacs) if (Math.hypot(px - j.x, py - j.y) < 9 + rpx * 0.5) { clash = true; break; }
+      if (clash) continue;
+      if (rpx >= 6 && jacs.length < MAX_JAC && rv() < 0.07 && nearPath(px, py, 45)) { jacs.push({ x: px, y: py, R: Math.min(8, Math.max(5.2, rm * 1.05)) }); continue; }
+      trees.push({ x: px, y: py, r: rm, t: tt, k: pickKind(rm) });
+    }
+  } else {
+    const cap = MAX_TREES - jacs.length;
+    for (const t of layout.trees || []) {
+      const n = Math.round(num(t.n) * 1.8);
+      let ok = 0;
+      for (let tries = 0; tries < n * 14 && ok < n && trees.length < cap; tries++) {
+        const px = t.x + rng() * t.w, py = t.y + rng() * t.h;
+        if (blocked(px, py) || !free(px, py, 5.2)) continue;
+        placed.push({ x: px, y: py });
+        const u = rv();
+        trees.push({ x: px, y: py, r: 1.9 + rng() * 2.2, t: u < 0.3 ? 0 : u < 0.75 ? 1 : 2, k: t.kind === 'conifer' ? 'conifer' : rv() < 0.4 ? 'ash' : 'ficus' });
+        ok++;
+      }
+    }
+  }
+  const FL = 12; // flores por jacaranda
+  const LO_R = 3.6; // copas más chicas usan lóbulos de 20 triángulos
+  const costOf = (tr) => 24 + (tr.k === 'conifer' ? 42 : tr.k === 'palm' ? 140 : (tr.k === 'ash' || tr.r <= 5.5 ? 3 : 4) * (tr.r < LO_R ? 20 : 80));
+  const jacCost = jacs.length * (3 * 24 + 6 * 80 + FL * 20);
+  const allowed = TREE_TRI_BUDGET - jacCost - 40000;
+  let tot = 0; for (const tr of trees) tot += costOf(tr);
+  if (tot > allowed) {
+    const keep = Math.max(0.1, allowed / tot);
+    const kept = trees.filter((_, i) => (i * 0.6180339887) % 1 < keep);
+    trees.length = 0; trees.push(...kept);
+  }
+
+  // Pintura de suelo verde: césped + manchas de sotobosque bajo cada árbol, en una sola textura sobre la placa
+  const PAINT_K = 0.75;
+  const paintTex = canvasTex(Math.round(PW * PAINT_K), Math.round(PH * PAINT_K), (g, w, h) => {
+    const rp = mulberry32(606), k = PAINT_K;
+    g.save();
+    g.beginPath();
+    for (const poly of [layout.ground, layout.plate]) if (poly) { poly.forEach(([x, y], i) => (i ? g.lineTo(x * k, y * k) : g.moveTo(x * k, y * k))); g.closePath(); }
+    g.clip();
+    for (const l of vegLawns) {
+      g.beginPath(); l.poly.forEach(([x, y], i) => (i ? g.lineTo(x * k, y * k) : g.moveTo(x * k, y * k))); g.closePath();
+      g.fillStyle = 'rgba(96,152,72,0.55)'; g.strokeStyle = 'rgba(96,152,72,0.25)'; g.lineJoin = 'round';
+      for (const lw of [16, 9, 4]) { g.lineWidth = lw * k; g.stroke(); }
+      g.fill();
+    }
+    for (const tr of trees) {
+      const rpx = (tr.r / S) * 1.5 * k, cx = tr.x * k, cy = tr.y * k;
+      const gr = g.createRadialGradient(cx, cy, rpx * 0.15, cx, cy, rpx);
+      gr.addColorStop(0, UNDER[tr.t] + 'cc'); gr.addColorStop(0.55, UNDER[tr.t] + '88'); gr.addColorStop(1, UNDER[tr.t] + '00');
+      g.fillStyle = gr; g.fillRect(cx - rpx, cy - rpx, rpx * 2, rpx * 2);
+    }
+    for (let i = 0; i < 1400; i++) { // ruido leve
+      g.fillStyle = rp() > 0.5 ? 'rgba(120,170,80,0.07)' : 'rgba(40,90,50,0.07)';
+      g.beginPath(); g.arc(rp() * w, rp() * h, 2 + rp() * 7, 0, 7); g.fill();
+    }
+    g.restore();
+  });
+  if (paintTex) {
+    paintTex.anisotropy = 4;
+    const paintM = decal('#ffffff', 0.5, { map: paintTex, transparent: true, depthWrite: false });
+    const pm = mesh(quad(0, 0, PW * S, PH * S, 0.012, 0), paintM, 'pintura-suelo-verde', { receive: true });
+    pm.renderOrder = 0; group.add(pm);
   }
 
   // ---------- geometrías y mallas instanciadas de árboles ----------
-  const blob = G(new THREE.IcosahedronGeometry(1, 1));
-  { const p = blob.attributes.position;
+  const wob = (g, a) => {
+    const p = g.attributes.position;
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
-      const k = 1 + 0.14 * Math.sin(x * 3.1 + 1.3) * Math.cos(z * 2.7) + 0.08 * Math.sin(y * 4.2 + x * 2);
+      const k = 1 + a * Math.sin(x * 3.1 + 1.3) * Math.cos(z * 2.7) + 0.57 * a * Math.sin(y * 4.2 + x * 2);
       p.setXYZ(i, x * k, y * k, z * k);
-    } }
+    }
+    return g;
+  };
+  const blob = G(wob(new THREE.IcosahedronGeometry(1, 1), 0.14));
+  const blobLo = G(wob(new THREE.IcosahedronGeometry(1, 0), 0.1));
   const flowerG = G(new THREE.IcosahedronGeometry(1, 0));
   const trunkG = G(new THREE.CylinderGeometry(0.16, 0.28, 1, 6).translate(0, 0.5, 0));
   const coneG = G(new THREE.ConeGeometry(1, 1, 7, 1).translate(0, 0.5, 0));
+  const boxG = G(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0));
   const uTime = { value: 0 };
   function sway(mat, amp) {
     mat.onBeforeCompile = (s) => {
@@ -595,82 +741,171 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
   const flowerM = M(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 }), false);
   const coneM = M(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 }), false);
   const trunkM = M(new THREE.MeshStandardMaterial({ color: '#6b5440', roughness: 1 }));
+  const shrubM = M(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95 }), false);
+  const hedgeM = M(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 }), false);
+  const bloomM = M(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }), false);
   sway(crownM, 0.05); sway(jacCrownM, 0.04); sway(flowerM, 0.04); sway(coneM, 0.03);
-  const treeMats = [crownM, jacCrownM, flowerM, coneM, trunkM];
+  const shadowTex = canvasTex(128, 128, (g) => {
+    const r = g.createRadialGradient(64, 64, 4, 64, 64, 62);
+    r.addColorStop(0, 'rgba(22,40,24,0.62)'); r.addColorStop(0.55, 'rgba(26,46,28,0.38)'); r.addColorStop(1, 'rgba(26,46,28,0)');
+    g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  });
+  const SHADOW_OP = shadowTex ? 0.9 : 0.22;
+  const shadowM = M(new THREE.MeshBasicMaterial({ color: shadowTex ? 0xffffff : 0x1d3320, map: shadowTex, transparent: true, opacity: SHADOW_OP, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -6 }), false);
+  const shadowG = G(new THREE.CircleGeometry(1, 20).rotateX(-Math.PI / 2));
+  const treeMats = [crownM, jacCrownM, flowerM, coneM, trunkM, shrubM, hedgeM, bloomM];
 
-  const nBlobs = normals.filter((t) => !t.conifer).length * 3;
-  const nCone = normals.filter((t) => t.conifer).length * 3;
-  const nTrunk = normals.length + jacs.length * 3;
-  const nJBlob = jacs.length * 6, nFlower = jacs.length * 18;
-  const mk = (g, m, n, name) => {
-    const im = new THREE.InstancedMesh(g, m, Math.max(1, n));
-    im.name = name; im.count = n; im.castShadow = true; im.receiveShadow = false; im.frustumCulled = false;
-    group.add(im); return im;
-  };
-  const trunkI = mk(trunkG, trunkM, nTrunk, 'troncos');
-  const crownI = mk(blob, crownM, nBlobs, 'copas');
-  const coneI = mk(coneG, coneM, nCone, 'coniferas');
-  const jCrownI = mk(blob, jacCrownM, nJBlob, 'copas-jacaranda');
-  const flowerI = mk(flowerG, flowerM, nFlower, 'flores-jacaranda');
-  flowerI.castShadow = false;
-  let cB = 0, cC = 0, cT = 0, cJ = 0, cF = 0;
-  const dummy = new THREE.Object3D();
-  const col = new THREE.Color();
-  const greens = ['#3f7a3c', '#4f8f45', '#5fa14f', '#2f6b3a'];
-  const lilacs = ['#a888d6', '#b095dc', '#9f7fd0', '#b79be0'];
-  const put = (im, i, x, y, z, sx, sy, sz, ry = 0) => {
-    dummy.position.set(x, y, z); dummy.rotation.set(0, ry, 0); dummy.scale.set(sx, sy, sz); dummy.updateMatrix();
-    im.setMatrixAt(i, dummy.matrix);
-  };
-  const tint = (im, i, hex, dl) => { col.set(hex); col.offsetHSL((rng() - 0.5) * 0.03, 0, dl); im.setColorAt(i, col); };
-
-  for (const t of normals) {
-    const x = X(t.x), z = Z(t.y), ht = 1.6 + rng() * 2.0, r = 1.9 + rng() * 2.2, ry = rng() * 6.28;
-    put(trunkI, cT++, x, 0, z, 0.8 + rng() * 0.5, ht + r * 0.4, 0.8 + rng() * 0.5, ry);
-    if (t.conifer) {
-      const hh = 6 + rng() * 3, rr = 1.9 + rng() * 0.8;
-      for (let k = 0; k < 3; k++) {
-        put(coneI, cC, x, ht * 0.7 + k * hh * 0.24, z, rr * (1 - k * 0.27), hh * (0.5 - k * 0.08), rr * (1 - k * 0.27), ry);
-        tint(coneI, cC++, '#2c5a3a', (rng() - 0.5) * 0.06);
-      }
-    } else {
-      const hex = greens[Math.floor(rng() * greens.length)];
-      put(crownI, cB, x, ht + r * 0.75, z, r, r * 0.86, r, ry); tint(crownI, cB++, hex, (rng() - 0.5) * 0.08);
-      for (let k = 0; k < 2; k++) {
-        const a = rng() * 6.28, rr = r * (0.6 + rng() * 0.15);
-        put(crownI, cB, x + Math.cos(a) * r * 0.62, ht + r * 0.45 + rng() * 0.3, z + Math.sin(a) * r * 0.62, rr, rr * 0.82, rr, rng() * 6.28);
-        tint(crownI, cB++, greens[Math.floor(rng() * greens.length)], (rng() - 0.5) * 0.08);
-      }
+  // altura del suelo bajo un punto (plataforma 0, terreno -0.06, suelo urbano -0.11)
+  const baseY = (px, py) => (layout.plate && inPoly(px, py, layout.plate) ? 0 : layout.ground && inPoly(px, py, layout.ground) ? -0.06 : -0.11);
+  const shY = (px, py) => baseY(px, py) + (baseY(px, py) === 0 ? 0.075 : 0.03);
+  const lobesBig = [], lobesHi = [], lobesLo = [], cones = [], trunks = [], shadows = [], shrubs = [];
+  const TV = new THREE.Color();
+  function addTree(tr) {
+    const gy = baseY(tr.x, tr.y), x = X(tr.x), z = Z(tr.y);
+    const pal = TONES[tr.t], R = tr.r * (0.88 + rv() * 0.26), ry = rv() * 6.28;
+    const hexOf = () => pal[Math.floor(rv() * pal.length)];
+    const push = (dx, y, dz, sx, sy, sz, dl, rz = 0, rot) => {
+      (R < LO_R ? lobesLo : R >= 4.2 ? lobesBig : lobesHi).push({ x: x + dx, y: gy + y, z: z + dz, sx, sy, sz, ry: rot === undefined ? rv() * 6.28 : rot, rz, hex: hexOf(), dl: dl + (rv() - 0.5) * 0.05 });
+    };
+    const trunk = (h, w) => trunks.push({ x, y: gy, z, sx: w, sy: h, sz: w, ry });
+    let sr = R * 1.15;
+    if (tr.k === 'ficus') {
+      const ht = 1.2 + R * 0.3, cy = ht + R * 0.6, n = R > 5 ? 3 : 2;
+      trunk(ht + R * 0.35, 0.8 + R * 0.14);
+      push(0, cy + R * 0.12, 0, R * 0.98, R * 0.74, R * 0.98, 0.02);
+      for (let q = 0; q < n; q++) { const a = ry + (q * 6.28) / n + rv() * 0.8; push(Math.cos(a) * R * 0.6, cy - R * 0.1 + rv() * R * 0.12, Math.sin(a) * R * 0.6, R * 0.66, R * 0.54, R * 0.66, -0.03); }
+    } else if (tr.k === 'ash') {
+      const ht = 2 + R * 0.75, a = ry;
+      trunk(ht + R * 0.6, 0.7 + R * 0.12);
+      push(0, ht + R * 0.8, 0, R * 0.82, R * 0.95, R * 0.82, -0.02);
+      push(R * 0.12, ht + R * 1.75, R * 0.08, R * 0.62, R * 0.8, R * 0.62, 0.03);
+      push(Math.cos(a) * R * 0.45, ht + R * 1.2, Math.sin(a) * R * 0.45, R * 0.55, R * 0.65, R * 0.55, 0);
+      sr = R * 0.95;
+    } else if (tr.k === 'conifer') {
+      const h = 4.5 + R * 2.4, rr = R * 0.9 + 0.5, ht = 0.9;
+      trunk(ht + 1, 0.8);
+      for (let k = 0; k < 3; k++) cones.push({ x, y: gy + ht + k * h * 0.27, z, sx: rr * (1 - k * 0.26), sy: h * (0.5 - 0.07 * k), sz: rr * (1 - k * 0.26), ry, hex: CONIFER[Math.floor(rv() * 3)], dl: (1 - tr.t) * 0.025 + (rv() - 0.5) * 0.04 });
+      sr = rr * 1.1;
+    } else { // palmera
+      const ht = 4.5 + rv() * 2.5;
+      trunk(ht, 0.7);
+      for (let q = 0; q < 7; q++) { const a = ry + q * 0.9; lobesHi.push({ x: x + Math.cos(a) * 1.0, y: gy + ht + 0.1, z: z + Math.sin(a) * 1.0, sx: 1.7, sy: 0.14, sz: 0.5, ry: -a, rz: -0.45, hex: '#5c8f45', dl: (rv() - 0.5) * 0.08 }); }
+      sr = 2.2;
+    }
+    shadows.push({ x: x + sr * 0.2, y: shY(tr.x, tr.y), z: z - sr * 0.16, r: sr });
+    if (tr.k !== 'palm' && tr.k !== 'conifer' && R >= 3.4 && tr.t >= 1 && rv() < 0.28 && shrubs.length < MAX_SHRUBS) {
+      for (let q = 0; q < 1 + (rv() < 0.4 ? 1 : 0); q++) { const a = rv() * 6.28; shrubs.push({ x: x + Math.cos(a) * R * 0.85, y: gy + 0.3, z: z + Math.sin(a) * R * 0.85, s: 0.7 + rv() * 0.6, hex: TONES[2][q % 3] }); }
     }
   }
+  for (const tr of trees) addTree(tr);
+
+  const mk = (g, m, n, name, cast = true) => {
+    const im = new THREE.InstancedMesh(g, m, Math.max(1, n));
+    im.name = name; im.count = n; im.castShadow = cast; im.receiveShadow = false; im.frustumCulled = false;
+    group.add(im); return im;
+  };
+  const nTrunk = trunks.length + jacs.length * 3;
+  const nJBlob = jacs.length * 6, nFlower = jacs.length * FL;
+  const trunkI = mk(trunkG, trunkM, nTrunk, 'troncos');
+  const crownBigI = mk(blob, crownM, lobesBig.length, 'copas-grandes');
+  const crownHiI = mk(blob, crownM, lobesHi.length, 'copas', false);
+  const crownLoI = mk(blobLo, crownM, lobesLo.length, 'copas-chicas', false);
+  const coneI = mk(coneG, coneM, cones.length, 'coniferas', false);
+  const jCrownI = mk(blob, jacCrownM, nJBlob, 'copas-jacaranda');
+  const flowerI = mk(flowerG, flowerM, nFlower, 'flores-jacaranda', false);
+  const shrubI = mk(blobLo, shrubM, shrubs.length, 'arbustos', false);
+  let cT = 0, cJ = 0, cF = 0;
+  const dummy = new THREE.Object3D();
+  dummy.rotation.order = 'YXZ';
+  const col = new THREE.Color();
+  const put = (im, i, x, y, z, sx, sy, sz, ry = 0, rx = 0, rz = 0) => {
+    dummy.position.set(x, y, z); dummy.rotation.set(rx, ry, rz); dummy.scale.set(sx, sy, sz); dummy.updateMatrix();
+    im.setMatrixAt(i, dummy.matrix);
+  };
+  const tint = (im, i, hex, dl) => { col.set(hex); col.offsetHSL((rv() - 0.5) * 0.03, 0, dl); im.setColorAt(i, col); };
+  const fill = (im, arr) => arr.forEach((o, i) => { put(im, i, o.x, o.y, o.z, o.sx, o.sy, o.sz, o.ry, 0, o.rz || 0); tint(im, i, o.hex, o.dl); });
+  fill(crownBigI, lobesBig); fill(crownHiI, lobesHi); fill(crownLoI, lobesLo); fill(coneI, cones);
+  for (const o of trunks) put(trunkI, cT++, o.x, o.y, o.z, o.sx, o.sy, o.sz, o.ry);
+  shrubs.forEach((o, i) => { put(shrubI, i, o.x, o.y, o.z, o.s * 1.2, o.s * 0.8, o.s * 1.2, rv() * 6.28); tint(shrubI, i, o.hex, (rv() - 0.5) * 0.06); });
+
   const jacData = [];
   for (const j of jacs) {
-    const x = X(j.x), z = Z(j.y), ht = 4 + rng() * 1.4, R = 5.6 + rng() * 2.4, cy = ht + 1.5;
-    put(trunkI, cT++, x, 0, z, 1.5, ht, 1.5, rng() * 6.28);
-    for (let k = 0; k < 2; k++) { // ramas en horquilla
-      dummy.position.set(x, ht * 0.8, z); dummy.rotation.order = 'YXZ';
-      dummy.rotation.set(0.7, rng() * 6.28 + k * 3.14, 0); dummy.scale.set(1.0, 2.8, 1.0); dummy.updateMatrix();
-      trunkI.setMatrixAt(cT++, dummy.matrix);
-    }
-    dummy.rotation.order = 'XYZ';
+    const x = X(j.x), z = Z(j.y), gy = baseY(j.x, j.y), ht = 4 + rng() * 1.4, R0 = 5.6 + rng() * 2.4, R = j.R || R0, cy = gy + ht + 1.5;
+    put(trunkI, cT++, x, gy, z, 1.5, ht, 1.5, rng() * 6.28);
+    for (let k = 0; k < 2; k++) put(trunkI, cT++, x, gy + ht * 0.8, z, 1.0, 2.8, 1.0, rng() * 6.28 + k * 3.14, 0.7); // ramas en horquilla
     for (let k = 0; k < 4; k++) {
       const a = (k / 4) * 6.28 + rng() * 0.6, rr = R * (0.6 + rng() * 0.08);
       put(jCrownI, cJ, x + Math.cos(a) * R * 0.52, cy + rng() * 0.5, z + Math.sin(a) * R * 0.52, rr, rr * 0.48, rr, rng() * 6.28);
-      tint(jCrownI, cJ++, lilacs[Math.floor(rng() * 4)], (rng() - 0.5) * 0.06);
+      tint(jCrownI, cJ++, LILACS[Math.floor(rng() * 4)], (rng() - 0.5) * 0.06);
     }
-    put(jCrownI, cJ, x, cy + 0.7, z, R * 0.7, R * 0.34, R * 0.7, rng() * 6.28); tint(jCrownI, cJ++, lilacs[Math.floor(rng() * 4)], 0.02);
+    put(jCrownI, cJ, x, cy + 0.7, z, R * 0.7, R * 0.34, R * 0.7, rng() * 6.28); tint(jCrownI, cJ++, LILACS[Math.floor(rng() * 4)], 0.02);
     put(jCrownI, cJ, x, cy - 0.9, z, R * 0.58, R * 0.22, R * 0.58, 0); tint(jCrownI, cJ++, '#58814a', 0);
-    for (let k = 0; k < 18; k++) {
-      const a = rng() * 6.28, d = Math.sqrt(rng()) * R * 0.85, s = 0.35 + rng() * 0.3;
+    for (let k = 0; k < FL; k++) {
+      const a = rng() * 6.28, d = Math.sqrt(rng()) * R * 0.85, s = 0.4 + rng() * 0.3;
       put(flowerI, cF, x + Math.cos(a) * d, cy + 0.55 + (1 - (d / R) ** 2) * R * 0.28 + rng() * 0.3, z + Math.sin(a) * d, s, s * 0.8, s, rng() * 6.28);
       tint(flowerI, cF++, rng() > 0.3 ? '#d6c7f5' : '#c4aeea', (rng() - 0.5) * 0.05);
     }
     jacData.push({ x, z, R, top: cy + R * 0.35 });
+    shadows.push({ x: x + R * 0.2, y: shY(j.x, j.y) + 0.004, z: z - R * 0.15, r: R * 1.05 });
   }
-  for (const im of [trunkI, crownI, coneI, jCrownI, flowerI]) {
+  for (const im of [trunkI, crownBigI, crownHiI, crownLoI, coneI, jCrownI, flowerI, shrubI]) {
     im.instanceMatrix.needsUpdate = true;
     if (im.instanceColor) im.instanceColor.needsUpdate = true;
   }
+
+  // Sombra de contacto bajo copas (decales suaves, sin shadow map)
+  const shadowI = mk(shadowG, shadowM, shadows.length, 'sombras-copas', false);
+  shadowI.renderOrder = 1;
+  shadows.forEach((o, i) => put(shadowI, i, o.x, o.y, o.z, o.r, 1, o.r, 0));
+  shadowI.instanceMatrix.needsUpdate = true;
+
+  // Setos bajos pegados a fachadas y matas junto a andadores
+  const hedges = [];
+  {
+    const r4 = mulberry32(4242);
+    for (const b of bldRects) {
+      const c = Math.cos(b.rot), s = Math.sin(b.rot);
+      for (let side = 0; side < 4; side++) {
+        const horiz = side < 2, L = horiz ? b.w : b.h, sg = side % 2 ? 1 : -1;
+        const off = (horiz ? b.h : b.w) / 2 + 3.4;
+        for (let u = -L / 2 + 8; u < L / 2 - 8; u += 12) {
+          if (r4() > 0.5 || hedges.length >= MAX_HEDGES) continue;
+          const lx = horiz ? u : sg * off, ly = horiz ? sg * off : u;
+          const px = b.cx + lx * c - ly * s, py = b.cy + lx * s + ly * c;
+          if (hardBlocked(px, py, 1.5)) continue;
+          let nearPoi = false; for (const p of poiPx) if (Math.hypot(px - p.x, py - p.y) < 14) nearPoi = true;
+          if (nearPoi) continue;
+          hedges.push({ x: X(px), z: Z(py), len: 5.2 + r4() * 1.2, h: 0.55 + r4() * 0.35, ry: -(b.rot + (horiz ? 0 : Math.PI / 2)), gy: baseY(px, py) });
+        }
+      }
+    }
+  }
+  const hedgeI = mk(boxG, hedgeM, hedges.length, 'setos', false);
+  hedges.forEach((o, i) => { put(hedgeI, i, o.x, o.gy, o.z, o.len, o.h, 0.95, o.ry); tint(hedgeI, i, TONES[2][i % 3], (rv() - 0.5) * 0.05); });
+  hedgeI.instanceMatrix.needsUpdate = true; if (hedgeI.instanceColor) hedgeI.instanceColor.needsUpdate = true;
+
+  // Manchas de flor muy sutiles (lila / amarillo / coral) en prados
+  const blooms = [];
+  {
+    const r3 = mulberry32(333);
+    const cand = lawnPolys.length ? lawnPolys : (layout.greens || []).filter((g) => g.kind === 'lawn').map((g) => [[g.x, g.y], [g.x + g.w, g.y], [g.x + g.w, g.y + g.h], [g.x, g.y + g.h]]);
+    let patches = 0;
+    for (let tries = 0; tries < 500 && patches < MAX_BLOOM_PATCHES && cand.length; tries++) {
+      const poly = cand[Math.floor(r3() * cand.length)];
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (const [qx, qy] of poly) { x0 = Math.min(x0, qx); y0 = Math.min(y0, qy); x1 = Math.max(x1, qx); y1 = Math.max(y1, qy); }
+      const px = x0 + r3() * (x1 - x0), py = y0 + r3() * (y1 - y0);
+      if (!inPoly(px, py, poly) || hardBlocked(px, py, 3)) continue;
+      let ok = true; for (const t of trees) if (Math.hypot(px - t.x, py - t.y) < t.r / S + 3) { ok = false; break; }
+      if (!ok) continue;
+      const hex = BLOOMS[patches % 3];
+      for (let q = 0; q < 6; q++) blooms.push({ x: X(px) + (r3() - 0.5) * 2.6, z: Z(py) + (r3() - 0.5) * 2.6, s: 0.28 + r3() * 0.18, hex });
+      patches++;
+    }
+  }
+  const bloomI = mk(blobLo, bloomM, blooms.length, 'flores-jardin', false);
+  blooms.forEach((o, i) => { put(bloomI, i, o.x, 0.2, o.z, o.s * 1.3, o.s * 0.6, o.s * 1.3, i); tint(bloomI, i, o.hex, (rv() - 0.5) * 0.06); });
+  bloomI.instanceMatrix.needsUpdate = true; if (bloomI.instanceColor) bloomI.instanceColor.needsUpdate = true;
 
   // Alfombra de pétalos bajo las jacarandas
   const carpetM = M(new THREE.MeshBasicMaterial({ color: carpetTex ? 0xffffff : 0xa98ad4, map: carpetTex, transparent: true, opacity: carpetTex ? 1 : 0.35, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -10 }), false);
@@ -695,6 +930,9 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
   }
   if (petalI.instanceColor) petalI.instanceColor.needsUpdate = true;
   group.add(petalI);
+  const triOf = (g) => (g.index ? g.index.count : g.attributes.position.count) / 3;
+  const treeTris = Math.round([[trunkI, trunkG], [crownBigI, blob], [crownHiI, blob], [crownLoI, blobLo], [coneI, coneG], [jCrownI, blob], [flowerI, flowerG], [shrubI, blobLo], [hedgeI, boxG], [bloomI, blobLo]].reduce((a, [im, g]) => a + im.count * triOf(g), 0));
+  const treeCount = trees.length + jacs.length;
 
   // ---------- barrio alrededor (cajas instanciadas, bajo contraste) ----------
   const CITY_MAX = 250, STREET_TREES = 60, CELL = 64;
@@ -720,7 +958,7 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
     const rx = Math.ceil(900 / CELL), rz = Math.ceil(650 / CELL);
     for (let i = -rx; i < rx; i++) for (let k = -rz; k < rz; k++) cells.push({ i, k, d: Math.hypot((i + 0.5) * CELL, (k + 0.5) * CELL) });
     cells.sort((a, b) => a.d - b.d);
-    const tones = ['#d6d0c3', '#cfc9bb', '#c9c3b5', '#d6d0c3', '#cfc9bb', '#cdbfb0'];
+    const tones = CITY_TONES;
     for (const c of cells) {
       const x0 = c.i * CELL + 7, z0 = c.k * CELL + 7, bw = CELL - 14;
       if (inCampus(x0 + bw / 2, z0 + bw / 2, 80 + bw * 0.5) || near(x0 + bw / 2, z0 + bw / 2, 34)) continue;
@@ -755,7 +993,7 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
   cityT.forEach((t, i) => {
     dummy.position.set(t.x, -0.1, t.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(1, t.s + 1.2, 1); dummy.updateMatrix(); stTrunk.setMatrixAt(i, dummy.matrix);
     dummy.position.set(t.x, t.s + 2.4, t.z); dummy.scale.set(t.s * 1.1, t.s * 0.9, t.s * 1.1); dummy.updateMatrix(); stCrown.setMatrixAt(i, dummy.matrix);
-    col.set(greens[i % 4]); col.offsetHSL(0, -0.1, 0.04); stCrown.setColorAt(i, col);
+    col.set(TONES[1 + (i % 2)][i % 3]); col.offsetHSL(0, -0.1, 0.04); stCrown.setColorAt(i, col);
   });
   stTrunk.instanceMatrix.needsUpdate = stCrown.instanceMatrix.needsUpdate = true; if (stCrown.instanceColor) stCrown.instanceColor.needsUpdate = true;
 
@@ -763,15 +1001,19 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
   let motion = true, openId = '', openT = 0, curTheme = 'light';
   const activeIds = new Set();
   const skyCol = [new THREE.Color(), new THREE.Color(), new THREE.Color()];
-  const tmpC = new THREE.Color();
+  const tmpC = new THREE.Color(), glowC = new THREE.Color();
   function paintSky(t) {
     skyCol[0].set(t.sky[0]); skyCol[1].set(t.sky[1]); skyCol[2].set(t.sky[2]);
     const p = skyGeo.attributes.position, c = skyGeo.attributes.color;
+    const sa = Math.sin(t.az * DEG), ca = Math.cos(t.az * DEG);
     for (let i = 0; i < p.count; i++) {
       const y = p.getY(i) / 1900;
       if (y <= 0) tmpC.copy(skyCol[0]);
       else if (y < 0.25) tmpC.copy(skyCol[0]).lerp(skyCol[1], smooth(0, 0.25, y));
       else tmpC.copy(skyCol[1]).lerp(skyCol[2], smooth(0.25, 0.95, y));
+      const hl = Math.hypot(p.getX(i), p.getZ(i)) || 1;
+      const gl = Math.max(0, (p.getX(i) * sa + p.getZ(i) * ca) / hl) ** 5 * (1 - smooth(0, 0.32, y)) * t.glow[1];
+      if (gl > 0) tmpC.lerp(glowC.set(t.glow[0]), Math.min(0.85, gl));
       c.setXYZ(i, tmpC.r, tmpC.g, tmpC.b);
     }
     c.needsUpdate = true;
@@ -788,6 +1030,7 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
     for (const r of registry) r.m.color.copy(r.base).multiply(tmpC.setRGB(...t.tint));
     for (const m of winMats) m.emissiveIntensity = t.windows * (1 - 0.0);
     flowerM.emissive.set(0x000000);
+    shadowM.opacity = SHADOW_OP * (curTheme === 'dark' ? 0.7 : 1);
   }
   function setPoiActive(ids = []) {
     activeIds.clear(); for (const id of ids || []) activeIds.add(id);
@@ -807,6 +1050,7 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
     const f = 1 - 0.5 * openT; // el entorno cercano baja protagonismo
     for (const m of treeMats) { const tr = f < 0.999; if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } m.opacity = f; }
     carpetM.opacity = (carpetTex ? 1 : 0.35) * f;
+    shadowM.opacity = SHADOW_OP * (curTheme === 'dark' ? 0.7 : 1) * f;
     petalM.opacity = f; if (petalM.transparent !== f < 0.999) { petalM.transparent = f < 0.999; petalM.needsUpdate = true; }
   }
   const ds = new THREE.Object3D();
@@ -857,6 +1101,6 @@ transformed.z += cos(uTime * 0.7 + ph * 1.3) * ${amp} * 0.7 * hw;
     // extras opcionales para three-stage.js
     sun, hemi, fog, background, sky, focusShadow, setMotion,
     exposure: 0.88,
-    stats: { trees: normals.length + jacs.length + cityT.length, cityBuildings: cityB.length, jacarandas: jacs.length, petals: nPetals },
+    stats: { trees: treeCount + cityT.length, treeTris, shrubs: shrubs.length, hedges: hedges.length, blooms: blooms.length, lawns: lawnPolys.length, cityBuildings: cityB.length, jacarandas: jacs.length, petals: nPetals },
   };
 }
